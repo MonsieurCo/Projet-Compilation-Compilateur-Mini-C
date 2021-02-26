@@ -70,16 +70,16 @@ L?\"(\\.|[^\\"])*\"     { /* A completer */ }
 "*="                    { /* A completer */ }
 "/="                    { /* A completer */ }
 "%="                    { /* A completer */ }
-"&="                    { return LAND; }
+"&="                    { return BAND; }
 "^="                    { /* A completer */ }
-"|="                    { return LOR }
+"|="                    { return BOR }
 ">>"                    { return RSHIFT; }
 "<<"                    { return LSHIFT; }
 "++"                    { /* A completer */ }
 "--"                    { /* A completer */ }
 "->"                    { /* A completer */ }
-"&&"                    { return BAND; }
-"||"                    { return BOR; }
+"&&"                    { return LAND; }
+"||"                    { return LOR; }
 "<="                    { return LEQ; }
 ">="                    { return GEQ }
 "=="                    { return EQ; }
