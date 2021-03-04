@@ -4,10 +4,13 @@ H                       [a-fA-F0-9]
 E                       [Ee][+-]?{D}+
 FS                      (f|F|l|L)
 IS                      (u|U|l|L)*
+P                       ("("(D|L|H|E|FS|IS)+")"|"{"(D|L|H|E|FS|IS)+"}"|"["(D|L|H|E|FS|IS)+"]")
+
 
 %{
 #include <stdio.h>
 #include "y.tab.h"
+// P                       ("("(D|L|H|E|FS|IS)+")"|"{"(D|L|H|E|FS|IS)+"}"|"["(D|L|H|E|FS|IS)+"]")
 
 
 /* Ne g�re pas les commentaires. A rajouter */
@@ -17,50 +20,57 @@ IS                      (u|U|l|L)*
 
 %%
 "auto"                  { /* A completer */ }
-"break"                 { return BREAK; }
-"case"                  { return CASE; }
+"break"                 { printf(yytext); return BREAK; }
+"case"                  { printf(yytext); return CASE; }
 "char"                  { /* A completer */ } 
-"const"                 { return CONSTANTE; } //surement pas la bonne const
+"const"                 { printf(yytext); return CONSTANTE; } //surement pas la bonne const
 "continue"              { /* A completer */ }
-"default"               { return DEFAULT; }
+"default"               { printf(yytext); return DEFAULT; }
 "do"                    { /* A completer */ }
 "double"                { /* A completer */ }
-"else"                  { return ELSE; }
+"else"                  { printf(yytext); return ELSE; }
 "enum"                  { /* A completer */ }
-"extern"                { /* A completer */ }
+"extern"                { printf(yytext); return EXTERN; }
 "float"                 { /* A completer */ }
-"for"                   { return FOR; }
+"for"                   { printf(yytext); return FOR; }
 "goto"                  { /* A completer */ }
-"if"                    { return IF; }
-"int"                   { return INT; }
+"if"                    { printf(yytext); return IF; }
+"int"                   { printf(yytext); return INT; }
 "long"                  { /* A completer */ }
 "register"              { /* A completer */ }
-"return"                { return RETURN; }
+"return"                { printf(yytext); return RETURN; }
 "short"                 { /* A completer */ }
 "signed"                { /* A completer */ }
 "sizeof"                { /* A completer */ }
 "static"                { /* A completer */ }
 "struct"                { /* A completer */ }
-"switch"                { return SWITCH; }
+"switch"                { printf(yytext); return SWITCH; }
 "typedef"               { /* A completer */ }
 "union"                 { /* A completer */ }
 "unsigned"              { /* A completer */ }
-"void"                  { return VOID;}
+"void"                  { printf(yytext); return VOID;}
 "volatile"              { /* A completer */ }
-"while"                 { return WHILE;}
+"while"                 { printf(yytext); return WHILE;}
 
-{L}({L}|{D})*           { return IDENTIFICATEUR; }    // surement identificateur 
 
-0[xX]{H}+{IS}?          { printf(yytext);/* A completer */ }
-0{D}+{IS}?              { printf(yytext);/* A completer */ } // surement const
-{D}+{IS}?               { printf(yytext);/* A completer */ }
-L?'(\\.|[^\\'])+'       { printf(yytext);/* A completer */ }
+{P}+                    { printf(yytext);}
 
-{D}+{E}{FS}?            { printf(yytext);/* A completer */ }
-{D}*"."{D}+({E})?{FS}?  { printf(yytext);/* A completer */ } //float ?
-{D}+"."{D}*({E})?{FS}?  { printf(yytext);/* A completer */ }
+{L}({L}|{D})*           { printf(yytext); return IDENTIFICATEUR; }    // surement identificateur 
+
+0[xX]{H}+{IS}?          {printf(yytext); return CONSTANTE; }
+0{D}+{IS}?              {printf(yytext); return CONSTANTE;} // surement const
+{D}+{IS}?               {printf(yytext); return CONSTANTE; }
+L?'(\\.|[^\\'])+'       {/* A completer */ }
+
+{D}+{E}{FS}?            {/* A completer */ }
+{D}*"."{D}+({E})?{FS}?  {/* A completer */ } //float ?
+{D}+"."{D}*({E})?{FS}?  {/* A completer */ }
 
 L?\"(\\.|[^\\"])*\"     { /* A completer */ }
+"+"                     {printf("yytext"); return PLUS;}
+"-"                     {printf(yytext); return MOINS;}
+"*"                     {printf(yytext); return MUL;}
+"/"                     {printf(yytext); return DIV;}
 
 "..."                   { /* A completer */ }
 ">>="                   { /* A completer */ }
@@ -70,23 +80,29 @@ L?\"(\\.|[^\\"])*\"     { /* A completer */ }
 "*="                    { /* A completer */ }
 "/="                    { /* A completer */ }
 "%="                    { /* A completer */ }
-"&="                    { return BAND; }
+"&="                    { printf(yytext); return BAND; }
 "^="                    { /* A completer */ }
-"|="                    { return BOR; }
-">>"                    { return RSHIFT; }
-"<<"                    { return LSHIFT; }
+"|="                    { printf(yytext); return BOR; }
+">>"                    { printf(yytext); return RSHIFT; }
+"<<"                    { printf(yytext); return LSHIFT; }
 "++"                    { /* A completer */ }
 "--"                    { /* A completer */ }
 "->"                    { /* A completer */ }
-"&&"                    { return LAND; }
-"||"                    { return LOR; }
-"<="                    { return LEQ; }
-">="                    { return GEQ; }
-"=="                    { return EQ; }
-"!="                    { return NEQ; }
+"&&"                    { printf(yytext); return LAND; }
+"||"                    { printf(yytext); return LOR; }
+"<="                    { printf(yytext); return LEQ; }
+">="                    { printf(yytext); return GEQ; }
+"=="                    { printf(yytext); return EQ; }
+"!="                    { printf(yytext); return NEQ; }
+">"                     { printf(yytext); return GT; }
+"<"                     { printf(yytext); return LT; }
+"!"                     {printf(yytext); return NOT;}
+"("*")"|"{"*"}"         {printf(yytext);}
+","|";"                 {printf(yytext);}
 
-[ \t\v\n\f]             { return yytext; }
-.                       { return ; }
+[ \t\v\n\f]             { printf(yytext); return yytext; }
+("é"|"à"|"è"|"ù")+      {printf("erreur caractère %c non pris en charge \n", yytext[0]);}        
+.                       { printf(yytext); }
 %%
 
 

@@ -7,3 +7,6 @@ ensuite on execute l'exe en prenant un test en entré
 2 ) flex ANSI-C.l
 3 ) gcc -o testeur lex.yy.c -lfl
 4 ) ./testeur < ./Tests/add.c 
+
+
+   //         ("é"|"à"|"è"|"ù")+      {printf("erreur caractère %c non pris en charge \n", yytext[0]);}
