@@ -1,0 +1,9 @@
+tout d'abord il faut yacc le fichier yacc 
+puis flex le fichier flex et pour finir compiler le fichier obtenu lex.yy.c
+
+ensuite on execute l'exe en prenant un test en entré
+
+1 ) yacc -d miniC.y 
+2 ) flex ANSI-C.l
+3 ) gcc -o testeur lex.yy.c -lfl
+4 ) ./testeur < ./Tests/add.c 
