@@ -1,8 +1,8 @@
-D                       [0-9]            // digit
+D                       [0-9]
 L                       [a-zA-Z_]
-H                       [a-fA-F0-9]   // hexadecimal
+H                       [a-fA-F0-9]
 E                       [Ee][+-]?{D}+
-FS                      (f|F|l|L)       // surement les trucs en modr Float et Long
+FS                      (f|F|l|L)
 IS                      (u|U|l|L)*
 
 %{
@@ -19,8 +19,8 @@ IS                      (u|U|l|L)*
 "auto"                  { /* A completer */ }
 "break"                 { return BREAK; }
 "case"                  { return CASE; }
-"char"                  { /* A completer */ }
-"const"                 { return CONSTANTE; }
+"char"                  { /* A completer */ } 
+"const"                 { return CONSTANTE; } //surement pas la bonne const
 "continue"              { /* A completer */ }
 "default"               { return DEFAULT; }
 "do"                    { /* A completer */ }
@@ -49,16 +49,16 @@ IS                      (u|U|l|L)*
 "volatile"              { /* A completer */ }
 "while"                 { return WHILE;}
 
-{L}({L}|{D})*           { /* A completer */ }    // surement identificateur 
+{L}({L}|{D})*           { return IDENTIFICATEUR; }    // surement identificateur 
 
-0[xX]{H}+{IS}?          { /* A completer */ }
-0{D}+{IS}?              { /* A completer */ }
-{D}+{IS}?               { /* A completer */ }
-L?'(\\.|[^\\'])+'       { /* A completer */ }
+0[xX]{H}+{IS}?          { printf(yytext);/* A completer */ }
+0{D}+{IS}?              { printf(yytext);/* A completer */ } // surement const
+{D}+{IS}?               { printf(yytext);/* A completer */ }
+L?'(\\.|[^\\'])+'       { printf(yytext);/* A completer */ }
 
-{D}+{E}{FS}?            { /* A completer */ }
-{D}*"."{D}+({E})?{FS}?  { /* A completer */ }
-{D}+"."{D}*({E})?{FS}?  { /* A completer */ }
+{D}+{E}{FS}?            { printf(yytext);/* A completer */ }
+{D}*"."{D}+({E})?{FS}?  { printf(yytext);/* A completer */ } //float ?
+{D}+"."{D}*({E})?{FS}?  { printf(yytext);/* A completer */ }
 
 L?\"(\\.|[^\\"])*\"     { /* A completer */ }
 
@@ -72,7 +72,7 @@ L?\"(\\.|[^\\"])*\"     { /* A completer */ }
 "%="                    { /* A completer */ }
 "&="                    { return BAND; }
 "^="                    { /* A completer */ }
-"|="                    { return BOR }
+"|="                    { return BOR; }
 ">>"                    { return RSHIFT; }
 "<<"                    { return LSHIFT; }
 "++"                    { /* A completer */ }
@@ -81,11 +81,13 @@ L?\"(\\.|[^\\"])*\"     { /* A completer */ }
 "&&"                    { return LAND; }
 "||"                    { return LOR; }
 "<="                    { return LEQ; }
-">="                    { return GEQ }
+">="                    { return GEQ; }
 "=="                    { return EQ; }
 "!="                    { return NEQ; }
 
-[ \t\v\n\f]             { /* A completer */ }
-.                       { return yytext[0]; }
+[ \t\v\n\f]             { return yytext; }
+.                       { return ; }
 %%
+
+
 
