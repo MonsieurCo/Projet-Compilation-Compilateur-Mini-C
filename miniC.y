@@ -44,13 +44,21 @@ type	:
 		VOID
 	|	INT
 ;
+
+params_liste_creator :    //modification de la grammaires en raison des problèmes mis en lumière par le forum
+	params_liste_creator ',' parm
+	| parm
+;
+
 liste_parms	:	
-		liste_parms ',' parm
+		params_liste_creator
 	|	
 ;
-parm	:	
+
+parm	:	 
 		INT IDENTIFICATEUR
 ;
+
 liste_instructions :	
 		liste_instructions instruction
 	|
@@ -100,9 +108,14 @@ expression	:
 	|	variable
 	|	IDENTIFICATEUR '(' liste_expressions ')'
 ;
-liste_expressions	:	
-		liste_expressions ',' expression
-	|
+//cf correction de Fissore Davide merci à lui 
+liste_expressions :      // pour accepter epsilon ou une liste d'expressions
+    expr_liste_creator
+    | 
+;
+expr_liste_creator :                         // création de la liste d'expressions valide
+    expr_liste_creator ',' expression  // liste à n éléments
+    | expression                              // liste à un seul élément
 ;
 condition	:	
 		NOT '(' condition ')'

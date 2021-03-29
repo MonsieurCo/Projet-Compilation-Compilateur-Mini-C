@@ -4,17 +4,26 @@ H                       [a-fA-F0-9]
 E                       [Ee][+-]?{D}+
 FS                      (f|F|l|L)
 IS                      (u|U|l|L)*
-P                       ("("(D|L|H|E|FS|IS)+")"|"{"(D|L|H|E|FS|IS)+"}"|"["(D|L|H|E|FS|IS)+"]")
+T                       (D|L|H|E|FS|IS)+
+P                       (\(T\) | \{T\} | \[T\] | \(P\) | \{P\} | \[P\])+
 
 
 %{
 #include <stdio.h>
 #include "y.tab.h"
 // P                       ("("(D|L|H|E|FS|IS)+")"|"{"(D|L|H|E|FS|IS)+"}"|"["(D|L|H|E|FS|IS)+"]")
-
+//"("*")"|"{"*"}"
 
 /* Ne g�re pas les commentaires. A rajouter */
 /* Supprimer les lignes dont vous n'avez pas besoin. */
+
+int nbaccolade = 0;
+int lastopenACC;
+int lastopenCRO;
+int lastopenPAR;
+
+int nbcrochet = 0;
+int nbparenthese = 0;
 
 %}
 
@@ -53,7 +62,6 @@ P                       ("("(D|L|H|E|FS|IS)+")"|"{"(D|L|H|E|FS|IS)+"}"|"["(D|L|H
 "while"                 { printf(yytext); return WHILE;}
 
 
-{P}+                    { printf(yytext);}
 
 {L}({L}|{D})*           { printf(yytext); return IDENTIFICATEUR; }    // surement identificateur 
 
@@ -67,7 +75,7 @@ L?'(\\.|[^\\'])+'       {/* A completer */ }
 {D}+"."{D}*({E})?{FS}?  {/* A completer */ }
 
 L?\"(\\.|[^\\"])*\"     { /* A completer */ }
-"+"                     {printf("yytext"); return PLUS;}
+"+"                     {printf(yytext); return PLUS;}
 "-"                     {printf(yytext); return MOINS;}
 "*"                     {printf(yytext); return MUL;}
 "/"                     {printf(yytext); return DIV;}
@@ -96,14 +104,49 @@ L?\"(\\.|[^\\"])*\"     { /* A completer */ }
 "!="                    { printf(yytext); return NEQ; }
 ">"                     { printf(yytext); return GT; }
 "<"                     { printf(yytext); return LT; }
-"!"                     {printf(yytext); return NOT;}
-"("*")"|"{"*"}"         {printf(yytext);}
-","|";"                 {printf(yytext);}
+"!"                     {printf(yytext); return NOT;} 
 
-[ \t\v\n\f]             { printf(yytext); return yytext; }
-("é"|"à"|"è"|"ù")+      {printf("erreur caractère %c non pris en charge \n", yytext[0]);}        
-.                       { printf(yytext); }
+
+","|";"|""                 {printf(yytext);}
+"="                     {printf(yytext);}
+
+
+
+"{"                      {if(nbparenthese > 0){
+                                printf("  <--erreur à la ligne %d \n",yylineno);
+                                return 0;}
+                            nbaccolade++;printf(yytext);lastopenACC = yylineno; }
+"["                      {nbcrochet++;printf(yytext);lastopenCRO = yylineno; }
+"("                      {nbparenthese++;printf(yytext); lastopenPAR = yylineno; }
+"}"                      {nbaccolade--; printf(yytext);
+                            if(nbaccolade < 0){
+                                printf("  <--erreur à la ligne %d \n",yylineno);}; }
+"]"                      {nbcrochet--; printf(yytext);
+                            if(nbcrochet < 0){
+                                printf("  <--erreur à la ligne %d \n",yylineno);}; }
+")"                      {nbparenthese--; printf(yytext);
+                            if(nbparenthese < 0){
+                                printf("  <--erreur à la ligne %d \n",yylineno);
+                                return 0;}; }
+
+
+\n                        {printf(yytext);yylineno++;}
+[ \t\v\f]                { printf(yytext); 
+                        return yytext; }
+
+<<EOF>>     {
+            if(nbaccolade > 0 ) 
+                {printf(" \n erreur à la ligne %d\n",lastopenACC);}
+            if(nbcrochet > 0) 
+                {printf(" \n erreur à la ligne %d\n",lastopenCRO);}
+            if(nbparenthese > 0) 
+                {printf(" \n erreur à la ligne %d\n",lastopenPAR); }
+                return 0;}
+
+.                       {printf("erreur"); }
+
 %%
+
 
 
 
