@@ -1,4 +1,12 @@
 %{
+#include <stdio.h> 
+#include <stdlib.h>
+
+
+extern int chars;
+
+void yyerror (char *s);
+
 %}
 %token IDENTIFICATEUR CONSTANTE VOID INT FOR WHILE IF ELSE SWITCH CASE DEFAULT
 %token BREAK RETURN PLUS MOINS MUL DIV LSHIFT RSHIFT BAND BOR LAND LOR LT GT 
@@ -22,7 +30,7 @@ liste_declarations	:
 	|	
 ;
 liste_fonctions	:	
-		liste_fonctions fonction
+		liste_fonctions fonction      {printf("fonction déclaré");}
 |               fonction
 ;
 declaration	:	
@@ -73,7 +81,9 @@ instruction	:
 ;
 iteration	:	
 		FOR '(' affectation ';' condition ';' affectation ')' instruction
-	|	WHILE '(' condition ')' instruction
+	|	WHILE '(' condition ')' instruction {printf("coucou");}
+	|   error '\n' {yyerror("reenter last");
+                        yyerrok; };
 ;
 selection	:	
 		IF '(' condition ')' instruction %prec THEN
@@ -145,4 +155,20 @@ binary_comp	:
 	|	EQ
 	|	NEQ
 ;
+
 %%
+
+
+
+extern int yylineno;
+void yyerror(char *s){
+	 fprintf(stderr, " line %d: %s\n", yylineno, s);
+	 exit(1);
+}
+
+int yywrap() {
+	return 1;
+} 
+int main(void) {
+ while(yyparse());
+}

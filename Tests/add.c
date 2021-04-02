@@ -1,12 +1,16 @@
 extern int printd( int i );
 
 int main() {
+//hello world 
 
+
+/*fsdfsdf
+*/
   int i,j;
   i = 45000;
   j = -123;
   printd(i+j);
-  printd([45000+j)];
+  printd(45000+j);
   printd(i+123);
   printd(45000+123);
   printd(i+(j+0));

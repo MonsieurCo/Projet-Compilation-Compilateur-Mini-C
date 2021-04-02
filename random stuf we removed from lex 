@@ -1,0 +1,43 @@
+<<EOF>>     {
+            if(nbaccolade > 0 ) 
+                {printf(" \n erreur à la ligne %d\n",lastopenACC);}
+            if(nbcrochet > 0) 
+                {printf(" \n erreur à la ligne %d\n",lastopenCRO);}
+            if(nbparenthese > 0) 
+                {printf(" \n erreur à la ligne %d\n",lastopenPAR); }
+                return 0;}
+
+
+
+            "{"                      {if(nbparenthese > 0){
+                                printf("  <--erreur à la ligne %d \n",yylineno);
+                                return 0;}
+                            nbaccolade++;printf(yytext);lastopenACC = yylineno; }
+"["                      {nbcrochet++;printf(yytext);lastopenCRO = yylineno; }
+"("                      {nbparenthese++;printf(yytext); lastopenPAR = yylineno; }
+"}"                      {nbaccolade--; printf(yytext);
+                            if(nbaccolade < 0){
+                                printf("  <--erreur à la ligne %d \n",yylineno);}; }
+"]"                      {nbcrochet--; printf(yytext);
+                            if(nbcrochet < 0){
+                                printf("  <--erreur à la ligne %d \n",yylineno);}; }
+")"                      {nbparenthese--; printf(yytext);
+                            if(nbparenthese < 0){
+                                printf("  <--erreur à la ligne %d \n",yylineno);
+                                return 0;}; }
+
+extern int chars;
+
+void yyerror (char *s);
+
+extern int yylineno;
+void yyerror(char *s){
+	 fprintf(stderr, " line %d: %s\n", yylineno, s);
+}
+
+"{" {printf(yytext); }
+"}" {printf(yytext); }
+"[" {printf(yytext); }
+"]" {printf(yytext); }
+"(" {printf(yytext); }
+")" {printf(yytext); }

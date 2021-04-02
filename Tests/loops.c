@@ -10,7 +10,7 @@ int main() {
   for ( i = -10; i <= 10; i = i+1 )
     printd(i);
   i = 0;
-  while (i>= -20)  {
+  while (i>= -20 ) {
     printd(i);
     i = i-1;
   }

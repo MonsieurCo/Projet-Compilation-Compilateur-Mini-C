@@ -65,16 +65,19 @@ int nbparenthese = 0;
 
 {L}({L}|{D})*           { printf(yytext); return IDENTIFICATEUR; }    // surement identificateur 
 
-0[xX]{H}+{IS}?          {printf(yytext); return CONSTANTE; }
+0[xX]{H}+{IS}?          {printf(yytext); return CONSTANTE;}
 0{D}+{IS}?              {printf(yytext); return CONSTANTE;} // surement const
 {D}+{IS}?               {printf(yytext); return CONSTANTE; }
 L?'(\\.|[^\\'])+'       {/* A completer */ }
 
-{D}+{E}{FS}?            {/* A completer */ }
+
+
+{D}+{E}{FS}?            {printf(yytext); return CONSTANTE; }
 {D}*"."{D}+({E})?{FS}?  {/* A completer */ } //float ?
 {D}+"."{D}*({E})?{FS}?  {/* A completer */ }
 
 L?\"(\\.|[^\\"])*\"     { /* A completer */ }
+
 "+"                     {printf(yytext); return PLUS;}
 "-"                     {printf(yytext); return MOINS;}
 "*"                     {printf(yytext); return MUL;}
@@ -107,46 +110,27 @@ L?\"(\\.|[^\\"])*\"     { /* A completer */ }
 "!"                     {printf(yytext); return NOT;} 
 
 
-","|";"|""                 {printf(yytext);}
-"="                     {printf(yytext);}
+","|";"|":"                 {printf(yytext);return yytext[0]; }
+"="                     {printf(yytext);return yytext[0];}
+
+
+"{" {printf(yytext); return yytext[0];}
+"}" {printf(yytext); return yytext[0];}    
+"[" {printf(yytext); return yytext[0];}
+"]" {printf(yytext); return yytext[0];}
+"(" {printf(yytext); return yytext[0];}
+")" {printf(yytext); return yytext[0];}
+
+(\/\/.*)|(\/\*+(.|[\r\n])*[\*\/]) {printf(yytext);}
 
 
 
-"{"                      {if(nbparenthese > 0){
-                                printf("  <--erreur à la ligne %d \n",yylineno);
-                                return 0;}
-                            nbaccolade++;printf(yytext);lastopenACC = yylineno; }
-"["                      {nbcrochet++;printf(yytext);lastopenCRO = yylineno; }
-"("                      {nbparenthese++;printf(yytext); lastopenPAR = yylineno; }
-"}"                      {nbaccolade--; printf(yytext);
-                            if(nbaccolade < 0){
-                                printf("  <--erreur à la ligne %d \n",yylineno);}; }
-"]"                      {nbcrochet--; printf(yytext);
-                            if(nbcrochet < 0){
-                                printf("  <--erreur à la ligne %d \n",yylineno);}; }
-")"                      {nbparenthese--; printf(yytext);
-                            if(nbparenthese < 0){
-                                printf("  <--erreur à la ligne %d \n",yylineno);
-                                return 0;}; }
+\n                        {printf(yytext);  yylineno++;}
+[ \t\v\f]                { printf(yytext); }
 
-
-\n                        {printf(yytext);yylineno++;}
-[ \t\v\f]                { printf(yytext); 
-                        return yytext; }
-
-<<EOF>>     {
-            if(nbaccolade > 0 ) 
-                {printf(" \n erreur à la ligne %d\n",lastopenACC);}
-            if(nbcrochet > 0) 
-                {printf(" \n erreur à la ligne %d\n",lastopenCRO);}
-            if(nbparenthese > 0) 
-                {printf(" \n erreur à la ligne %d\n",lastopenPAR); }
-                return 0;}
-
-.                       {printf("erreur"); }
+.                       {printf("erreur ligne %d",yylineno);exit(1);}
 
 %%
-
 
 
 
