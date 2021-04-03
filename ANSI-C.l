@@ -128,9 +128,8 @@ L?\"(\\.|[^\\"])*\"     { /* A completer */ }
 \n                        {printf(yytext);  yylineno++;}
 [ \t\v\f]                { printf(yytext); }
 
-.                       {printf("erreur ligne %d",yylineno);exit(1);}
+.                       {printf("sytaxe error");}
 
 %%
-
 
 
