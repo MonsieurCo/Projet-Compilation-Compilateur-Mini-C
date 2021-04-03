@@ -8,6 +8,13 @@ extern int chars;
 void yyerror (char *s);
 
 %}
+
+%union{
+	int val;
+	char* id
+}
+
+
 %token IDENTIFICATEUR CONSTANTE VOID INT FOR WHILE IF ELSE SWITCH CASE DEFAULT
 %token BREAK RETURN PLUS MOINS MUL DIV LSHIFT RSHIFT BAND BOR LAND LOR LT GT 
 %token GEQ LEQ EQ NEQ NOT EXTERN
@@ -42,7 +49,7 @@ liste_declarateurs	:
 ;
 declarateur	:	
 		IDENTIFICATEUR
-	|	declarateur '[' CONSTANTE ']'
+	|	declarateur '[' CONSTANTE ']'    
 ;
 fonction	:	
 		type IDENTIFICATEUR '(' liste_parms ')' '{' liste_declarations liste_instructions '}'
@@ -98,7 +105,7 @@ saut	:
 	|	RETURN expression ';'
 ;
 affectation	:	
-		variable '=' expression
+		variable '=' expression   {}
 ;
 bloc	:	
 		'{' liste_declarations liste_instructions '}'
@@ -114,7 +121,7 @@ expression	:
 		'(' expression ')'
 	|	expression binary_op expression %prec OP
 	|	MOINS expression
-	|	CONSTANTE
+	|	CONSTANTE              { printf("la CONSTANTE vaut %d", $1.val);}
 	|	variable
 	|	IDENTIFICATEUR '(' liste_expressions ')'
 ;

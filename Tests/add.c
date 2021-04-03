@@ -5,9 +5,10 @@ int main() {
 
 
 /*fsdfsdf
-*/
 
-é
+de
+
+de*/
   int i,j;
   i = 45000;
   j = -123;

@@ -17,48 +17,22 @@ P                       (\(T\) | \{T\} | \[T\] | \(P\) | \{P\} | \[P\])+
 /* Ne g�re pas les commentaires. A rajouter */
 /* Supprimer les lignes dont vous n'avez pas besoin. */
 
-int nbaccolade = 0;
-int lastopenACC;
-int lastopenCRO;
-int lastopenPAR;
-
-int nbcrochet = 0;
-int nbparenthese = 0;
 
 %}
 
 %%
-"auto"                  { /* A completer */ }
 "break"                 { printf(yytext); return BREAK; }
 "case"                  { printf(yytext); return CASE; }
-"char"                  { /* A completer */ } 
 "const"                 { printf(yytext); return CONSTANTE; } //surement pas la bonne const
-"continue"              { /* A completer */ }
 "default"               { printf(yytext); return DEFAULT; }
-"do"                    { /* A completer */ }
-"double"                { /* A completer */ }
 "else"                  { printf(yytext); return ELSE; }
-"enum"                  { /* A completer */ }
 "extern"                { printf(yytext); return EXTERN; }
-"float"                 { /* A completer */ }
 "for"                   { printf(yytext); return FOR; }
-"goto"                  { /* A completer */ }
 "if"                    { printf(yytext); return IF; }
 "int"                   { printf(yytext); return INT; }
-"long"                  { /* A completer */ }
-"register"              { /* A completer */ }
 "return"                { printf(yytext); return RETURN; }
-"short"                 { /* A completer */ }
-"signed"                { /* A completer */ }
-"sizeof"                { /* A completer */ }
-"static"                { /* A completer */ }
-"struct"                { /* A completer */ }
 "switch"                { printf(yytext); return SWITCH; }
-"typedef"               { /* A completer */ }
-"union"                 { /* A completer */ }
-"unsigned"              { /* A completer */ }
 "void"                  { printf(yytext); return VOID;}
-"volatile"              { /* A completer */ }
 "while"                 { printf(yytext); return WHILE;}
 
 
@@ -83,22 +57,11 @@ L?\"(\\.|[^\\"])*\"     { /* A completer */ }
 "*"                     {printf(yytext); return MUL;}
 "/"                     {printf(yytext); return DIV;}
 
-"..."                   { /* A completer */ }
-">>="                   { /* A completer */ }
-"<<="                   { /* A completer */ }
-"+="                    { /* A completer */ }
-"-="                    { /* A completer */ }
-"*="                    { /* A completer */ }
-"/="                    { /* A completer */ }
-"%="                    { /* A completer */ }
+
 "&="                    { printf(yytext); return BAND; }
-"^="                    { /* A completer */ }
 "|="                    { printf(yytext); return BOR; }
 ">>"                    { printf(yytext); return RSHIFT; }
 "<<"                    { printf(yytext); return LSHIFT; }
-"++"                    { /* A completer */ }
-"--"                    { /* A completer */ }
-"->"                    { /* A completer */ }
 "&&"                    { printf(yytext); return LAND; }
 "||"                    { printf(yytext); return LOR; }
 "<="                    { printf(yytext); return LEQ; }
@@ -121,14 +84,18 @@ L?\"(\\.|[^\\"])*\"     { /* A completer */ }
 "(" {printf(yytext); return yytext[0];}
 ")" {printf(yytext); return yytext[0];}
 
-(\/\/.*)|(\/\*+(.|[\r\n])*[\*\/]) {printf(yytext);}
+(\/\/.*)|(\/\*+(.|[\r\n])*[\*\/]) {int count = 0;
+                                    for (int i=0; yytext[i]; i++){
+                                        count += (yytext[i] == '\n');}
+                                    yylineno+=count;
+                                    printf(yytext);}
 
 
 
 \n                        {printf(yytext);  yylineno++;}
 [ \t\v\f]                { printf(yytext); }
 
-.                       {printf("sytaxe error %c",yytext[0]);exit(1)}
+.                       {printf("Illegal caracter line: %d\n",yylineno);exit(1);}
 
 %%
 
