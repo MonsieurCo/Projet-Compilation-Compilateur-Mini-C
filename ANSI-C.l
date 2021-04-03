@@ -86,7 +86,8 @@ L?\"(\\.|[^\\"])*\"     { /* A completer */ }
 
 (\/\/.*)|(\/\*+(.|[\r\n])*[\*\/]) {int count = 0;
                                     for (int i=0; yytext[i]; i++){
-                                        count += (yytext[i] == '\n');}
+                                        count += (yytext[i] == '\n');
+                                        }
                                     yylineno+=count;
                                     printf(yytext);}
 
