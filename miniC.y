@@ -30,7 +30,7 @@ liste_declarations	:
 	|	
 ;
 liste_fonctions	:	
-		liste_fonctions fonction      {printf("fonction déclaré");}
+		liste_fonctions fonction      {}
 |               fonction
 ;
 declaration	:	
@@ -81,7 +81,7 @@ instruction	:
 ;
 iteration	:	
 		FOR '(' affectation ';' condition ';' affectation ')' instruction
-	|	WHILE '(' condition ')' instruction {printf("coucou");}
+	|	WHILE '(' condition ')' instruction {}
 	|   error '\n' {yyerror("reenter last");
                         yyerrok; };
 ;

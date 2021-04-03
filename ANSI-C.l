@@ -128,7 +128,7 @@ L?\"(\\.|[^\\"])*\"     { /* A completer */ }
 \n                        {printf(yytext);  yylineno++;}
 [ \t\v\f]                { printf(yytext); }
 
-.                       {printf("sytaxe error");}
+.                       {printf("sytaxe error %c",yytext[0]);exit(1)}
 
 %%
 
