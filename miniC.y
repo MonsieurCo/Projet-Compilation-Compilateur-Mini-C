@@ -69,7 +69,6 @@ void table_reset();
 
 
 
-
 %%
 programme	:	
 		liste_declarations liste_fonctions 
