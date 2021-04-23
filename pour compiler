@@ -6,7 +6,7 @@ ensuite on execute l'exe en prenant un test en entré
 
 1 ) yacc -d miniC.y 
 2 ) flex ANSI-C.l
-3 ) gcc -o testeur lex.yy.c -lfl
+3 ) gcc -o testeur lex.yy.c y.tab.c -lfl
 4 ) ./testeur < ./Tests/add.c 
 
 

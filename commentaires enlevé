@@ -1,0 +1,25 @@
+//{ printf( "résultat %d\n",$2.val); }
+//{ printf( "résultat %d %d\n",$1.val, $3.val); }
+  //{ printf( "résultat %d\n",$2.val); }
+   //{ printf( "résultat %d\n",$3.val); }
+   //{ printf( "résultat %d\n",$1); } 
+    //{ printf( "résultat %d\n",$1); }	
+
+
+
+
+
+    switch($2){
+														case "+"  : $$ = $1 + $3; break;
+														case "-" : $$ = $1 - $3; break;
+														case "*" : $$ = $1 * $3; break; 
+														case "/" : $$ = $1 / $3 ; break;
+														case "<<": $$ = $1 << $3 ; break;
+														case ">>": $$ = $1 >> $3 ; break;
+														case "&=": $$ = $1 &= $3 ; break;
+														case "|=": $$ = $1 |= $3 ; break;
+																						}
+
+
+
+                                                                                         ./testeur < Tests/break.c ; ./testeur < Tests/compteur.c ; ./testeur < Tests/cond.c ; ./testeur < Tests/expr.c ; ./testeur < Tests/functions.c ; ./testeur < Tests/loops.c ; ./testeur < Tests/lsh.c ; ./testeur < Tests/mul.c ; ./testeur < Tests/neg.c ; ./testeur < Tests/rsh.c ; ./testeur < Tests/sub.c ; ./testeur < Tests/switch.c ; ./testeur < Tests/tableaux-multi.c ; ./testeur < Tests/tableaux.c ; ./testeur < Tests/variables.c 

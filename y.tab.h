@@ -49,77 +49,77 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    IDENTIFICATEUR = 258,
-    CONSTANTE = 259,
-    VOID = 260,
-    INT = 261,
-    FOR = 262,
-    WHILE = 263,
-    IF = 264,
-    ELSE = 265,
-    SWITCH = 266,
-    CASE = 267,
-    DEFAULT = 268,
-    BREAK = 269,
-    RETURN = 270,
-    PLUS = 271,
-    MOINS = 272,
-    MUL = 273,
-    DIV = 274,
-    LSHIFT = 275,
-    RSHIFT = 276,
-    BAND = 277,
-    BOR = 278,
-    LAND = 279,
-    LOR = 280,
-    LT = 281,
-    GT = 282,
-    GEQ = 283,
-    LEQ = 284,
-    EQ = 285,
-    NEQ = 286,
-    NOT = 287,
-    EXTERN = 288,
-    THEN = 289,
-    OP = 290,
-    REL = 291
+    VOID = 258,
+    INT = 259,
+    PLUS = 260,
+    MOINS = 261,
+    MUL = 262,
+    DIV = 263,
+    LSHIFT = 264,
+    RSHIFT = 265,
+    BAND = 266,
+    BOR = 267,
+    LAND = 268,
+    LOR = 269,
+    LT = 270,
+    GT = 271,
+    GEQ = 272,
+    LEQ = 273,
+    EQ = 274,
+    NEQ = 275,
+    EXTERN = 276,
+    THEN = 277,
+    ELSE = 278,
+    OP = 279,
+    REL = 280,
+    WHILE = 281,
+    FOR = 282,
+    IF = 283,
+    NOT = 284,
+    IDENTIFICATEUR = 285,
+    CONSTANTE = 286,
+    BREAK = 287,
+    RETURN = 288,
+    DEFAULT = 289,
+    CASE = 290,
+    SWITCH = 291
   };
 #endif
 /* Tokens.  */
-#define IDENTIFICATEUR 258
-#define CONSTANTE 259
-#define VOID 260
-#define INT 261
-#define FOR 262
-#define WHILE 263
-#define IF 264
-#define ELSE 265
-#define SWITCH 266
-#define CASE 267
-#define DEFAULT 268
-#define BREAK 269
-#define RETURN 270
-#define PLUS 271
-#define MOINS 272
-#define MUL 273
-#define DIV 274
-#define LSHIFT 275
-#define RSHIFT 276
-#define BAND 277
-#define BOR 278
-#define LAND 279
-#define LOR 280
-#define LT 281
-#define GT 282
-#define GEQ 283
-#define LEQ 284
-#define EQ 285
-#define NEQ 286
-#define NOT 287
-#define EXTERN 288
-#define THEN 289
-#define OP 290
-#define REL 291
+#define VOID 258
+#define INT 259
+#define PLUS 260
+#define MOINS 261
+#define MUL 262
+#define DIV 263
+#define LSHIFT 264
+#define RSHIFT 265
+#define BAND 266
+#define BOR 267
+#define LAND 268
+#define LOR 269
+#define LT 270
+#define GT 271
+#define GEQ 272
+#define LEQ 273
+#define EQ 274
+#define NEQ 275
+#define EXTERN 276
+#define THEN 277
+#define ELSE 278
+#define OP 279
+#define REL 280
+#define WHILE 281
+#define FOR 282
+#define IF 283
+#define NOT 284
+#define IDENTIFICATEUR 285
+#define CONSTANTE 286
+#define BREAK 287
+#define RETURN 288
+#define DEFAULT 289
+#define CASE 290
+#define SWITCH 291
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -128,7 +128,7 @@ union YYSTYPE
 #line 16 "miniC.y"
 
 	int val;
-	char* id
+	char* id;
 
 #line 134 "y.tab.h"
 
