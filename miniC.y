@@ -1,12 +1,16 @@
 %{
 #include <stdio.h> 
 #include <stdlib.h>
+#include <stdio.h> "table.h"
 
+
+#define TAILLE 103 /* nombre premier de préférence */
 
 extern int chars;
 
-void yyerror (char *s);
 
+void yyerror (char *s);
+void table_reset();
 %}
 
 %union{
@@ -28,6 +32,7 @@ void yyerror (char *s);
 %left OP
 %left REL
 %start programme
+%type <int> CONSTANTE
 %%
 programme	:	
 		liste_declarations liste_fonctions
@@ -114,15 +119,16 @@ appel	:
 		IDENTIFICATEUR '(' liste_expressions ')' ';'
 ;
 variable	:	
-		IDENTIFICATEUR
+		IDENTIFICATEUR  
 	|	variable '[' expression ']'
 ;
 expression	:	
 		'(' expression ')'
 	|	expression binary_op expression %prec OP
 	|	MOINS expression
-	|	CONSTANTE              { printf("la CONSTANTE vaut %d", $1.val);}
-	|	variable
+	|	CONSTANTE              { printf( "résultat %d\n",$1.val); }
+									
+	|	variable		
 	|	IDENTIFICATEUR '(' liste_expressions ')'
 ;
 //cf correction de Fissore Davide merci à lui 
@@ -177,5 +183,8 @@ int yywrap() {
 	return 1;
 } 
 int main(void) {
- while(yyparse());
+	table_reset();
+	while(yyparse());
 }
+
+
