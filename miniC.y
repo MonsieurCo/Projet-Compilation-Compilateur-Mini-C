@@ -21,7 +21,7 @@ void table_reset();
 
 %token VOID INT 
 %token PLUS MOINS MUL DIV LSHIFT RSHIFT BAND BOR LAND LOR LT GT 
-%token GEQ LEQ EQ NEQ EXTERN
+%token GEQ LEQ EQ NEQ
 %left PLUS MOINS
 %left MUL DIV
 %left LSHIFT RSHIFT
@@ -46,6 +46,7 @@ void table_reset();
 %token <id> DEFAULT
 %token <id> CASE
 %token <id> SWITCH
+%token <id> EXTERN
 
 %type <id> binary_rel
 %type <id> binary_comp
@@ -65,36 +66,43 @@ void table_reset();
 %type <id> declarateur 
 %type <id> instruction
 %type <id> declaration
-
-
+%type <id> expr_liste_creator
+%type <id> liste_expressions
+%type <id> liste_instructions
+%type <id> liste_parms
+%type <id> params_liste_creator
+%type <id> fonction
+%type <id> liste_fonctions	
+%type <id> liste_declarations
+%type <id> programme
 
 
 %%
 programme	:	
-		liste_declarations liste_fonctions 
+		liste_declarations liste_fonctions  {$$=$1;}
 ;
 liste_declarations	:	
-		liste_declarations declaration {} 
-	|	
+		liste_declarations declaration  {$$=$2;}
+	|				{$$=" ";}
 ;
 liste_fonctions	:	
-		liste_fonctions fonction      
-|               fonction
+		liste_fonctions fonction      {$$=$1;} 
+|               fonction			{$$=$1;}
 ;
 declaration	:	
-		type liste_declarateurs ';' {printf("%s %s;\n",$1,$2); $$ = $2;}
+		type liste_declarateurs ';' {$$ = $1;}
 ;
 liste_declarateurs	:	
-		liste_declarateurs ',' declarateur {$$ = strcat($1,strcat(",",$3));}
+		liste_declarateurs ',' declarateur {$$=$1;}//{$$ = strcat($1,strcat(",",$3));}
 	|	declarateur  {$$ = $1; }
 ;
 declarateur	:	
 		IDENTIFICATEUR   { $$ = $1;}
-	|	declarateur '[' CONSTANTE ']'  {printf("%s [%s]",$1,$3); $$="0";}  
+	|	declarateur '[' CONSTANTE ']'  {$$="0";}  
 ;
 fonction	:	
-		type IDENTIFICATEUR '(' liste_parms ')' '{' liste_declarations liste_instructions '}'
-	|	EXTERN type IDENTIFICATEUR '(' liste_parms ')' ';' 
+		type IDENTIFICATEUR '(' liste_parms ')' '{' liste_declarations liste_instructions '}' {$$=$1;}
+	|	EXTERN type IDENTIFICATEUR '(' liste_parms ')' ';' {$$=EXTERN;}
 ;
 type	:	
 		VOID {$$ = "void";}
@@ -102,22 +110,22 @@ type	:
 ;
 
 params_liste_creator :    //modification de la grammaires en raison des problèmes mis en lumière par le forum
-	params_liste_creator ',' parm {printf($3);}
-	| parm	{printf($1);}
+	params_liste_creator ',' parm {$$=$3;}
+	| parm	{$$=$1;}
 ;
 
 liste_parms	:	
-		params_liste_creator
-	|	
+		params_liste_creator {$$=$1;}
+	|				{$$=" ";}
 ;
 
 parm	:	 
-		INT IDENTIFICATEUR {$$ = $2;}
+		INT IDENTIFICATEUR  {$$ = $2;}
 ;
 
 liste_instructions :	
-		liste_instructions instruction {printf($2);}
-	|
+		liste_instructions instruction {$$=$2;}
+	|				{$$=" ";}
 ;
 instruction	:	
 		iteration {$$=$1;}
@@ -128,14 +136,14 @@ instruction	:
 	|	appel {$$=$1;}
 ;
 iteration	:	
-		FOR '(' affectation ';' condition ';' affectation ')' instruction 	{ printf("\nfor ( %s ; %s ; %s)\n", $3, $5, $7); $$=FOR;}
-	|	WHILE '(' condition ')' instruction { printf("\nwhile ( %s )\n", $3); $$= WHILE;}
+		FOR '(' affectation ';' condition ';' affectation ')' instruction 	{$$=FOR;}
+	|	WHILE '(' condition ')' instruction {$$= WHILE;}
 	|   error '\n' {yyerror("reenter last");
                         yyerrok; };
 ;
 selection	:	
-		IF '(' condition ')' instruction %prec THEN {printf("\nif (%s)\n",$3);$$=IF;}
-	|	IF '(' condition ')' instruction ELSE instruction {printf("\nif (%s)\n",$3); $$=ELSE;}
+		IF '(' condition ')' instruction %prec THEN {$$=IF;}
+	|	IF '(' condition ')' instruction ELSE instruction {$$=ELSE;}
 	|	SWITCH '(' expression ')' instruction {$$=SWITCH;}
 	|	CASE CONSTANTE ':' instruction {$$=CASE;}
 	|	DEFAULT ':' instruction {$$=DEFAULT;}
@@ -146,7 +154,7 @@ saut	:
 	|	RETURN expression ';' {$$=RETURN;}
 ;
 affectation	:	 
-		variable '=' expression   {printf("%s = %s \n",$1,$3);$$ = $3;}
+		variable '=' expression   {$$ = $3;}
 ;
 bloc	:	
 		'{' liste_declarations liste_instructions '}' {$$="0";}
@@ -160,26 +168,26 @@ variable	:
 ;
 expression	:	
 		'(' expression ')'	{$$ = $2;}                      
-	|	expression binary_op expression %prec OP	{ printf("TO DO\n"); $$="0";}
+	|	expression binary_op expression %prec OP	{$$="0";}
 	|	MOINS expression	{$$ = $2;}                                   
 	|	CONSTANTE       {$$=$1;}                                                  							
 	|	variable	 {$$ = $1;}                                 
-	|	IDENTIFICATEUR '(' liste_expressions ')' {printf("TO DO\n");$$ = $1;}                                  
+	|	IDENTIFICATEUR '(' liste_expressions ')' {$$ = $1;}                                  
 ;
 //cf correction de Fissore Davide merci à lui 
 liste_expressions :      // pour accepter epsilon ou une liste d'expressions
-    expr_liste_creator
-    | 
+    expr_liste_creator {$$=$1;}
+    | 			{$$=" ";}
 ;
 expr_liste_creator :                         // création de la liste d'expressions valide
-    expr_liste_creator ',' expression  // liste à n éléments
-    | expression                              // liste à un seul élément
+    expr_liste_creator ',' expression {$$=$1;} // liste à n éléments
+    | expression                   {$$=$1;}           // liste à un seul élément
 ;
 condition	:	
 		NOT '(' condition ')' {printf("!%s",$3);$$ = $3;}
-	|	condition binary_rel condition %prec REL {printf("TO DO\n");$$="0";}
+	|	condition binary_rel condition %prec REL {$$="0";}
 	|	'(' condition ')' {printf("(%s)",$2); $$ = $2;}
-	|	expression binary_comp expression {printf("%s %s %s",$1,$2,$3); $$ = $1;}
+	|	expression binary_comp expression {$$ = $1;}
 ;
 binary_op	:	
 		PLUS  {$$ = "+"; }
