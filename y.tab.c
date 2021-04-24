@@ -589,14 +589,14 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    75,    75,    78,    79,    82,    83,    86,    89,    90,
-      93,    94,    97,    98,   101,   102,   106,   107,   111,   112,
-     116,   120,   121,   124,   125,   126,   127,   128,   129,   132,
-     133,   134,   138,   139,   140,   141,   142,   145,   146,   147,
-     150,   153,   156,   159,   160,   163,   164,   165,   166,   167,
-     168,   172,   173,   176,   177,   180,   181,   182,   183,   186,
-     187,   188,   189,   190,   191,   192,   193,   196,   197,   200,
-     201,   202,   203,   204,   205
+       0,    74,    74,    77,    78,    81,    82,    85,    88,    89,
+      92,    93,    96,    97,   100,   101,   105,   106,   110,   111,
+     115,   119,   120,   123,   124,   125,   126,   127,   128,   131,
+     132,   133,   137,   138,   139,   140,   141,   144,   145,   146,
+     149,   152,   155,   158,   159,   162,   163,   164,   165,   166,
+     167,   171,   172,   175,   176,   179,   180,   181,   182,   185,
+     186,   187,   188,   189,   190,   191,   192,   195,   196,   199,
+     200,   201,   202,   203,   204
 };
 #endif
 
@@ -1506,369 +1506,375 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 3:
-#line 78 "miniC.y"
-                                               {}
+  case 2:
+#line 74 "miniC.y"
+                                                   {}
 #line 1513 "y.tab.c"
     break;
 
-  case 7:
-#line 86 "miniC.y"
-                                            {printf("%s %s;\n",(yyvsp[-2].id),(yyvsp[-1].id)); (yyval.id) = (yyvsp[-1].id);}
+  case 3:
+#line 77 "miniC.y"
+                                               {}
 #line 1519 "y.tab.c"
     break;
 
-  case 8:
-#line 89 "miniC.y"
-                                                   {(yyval.id) = strcat((yyvsp[-2].id),strcat(",",(yyvsp[0].id)));}
+  case 7:
+#line 85 "miniC.y"
+                                            {printf("%s %s;\n",(yyvsp[-2].id),(yyvsp[-1].id)); (yyval.id) = (yyvsp[-1].id);}
 #line 1525 "y.tab.c"
     break;
 
-  case 9:
-#line 90 "miniC.y"
-                             {(yyval.id) = (yyvsp[0].id); }
+  case 8:
+#line 88 "miniC.y"
+                                                   {(yyval.id) = strcat((yyvsp[-2].id),strcat(",",(yyvsp[0].id)));}
 #line 1531 "y.tab.c"
     break;
 
-  case 10:
-#line 93 "miniC.y"
-                                 { (yyval.id) = (yyvsp[0].id);}
+  case 9:
+#line 89 "miniC.y"
+                             {(yyval.id) = (yyvsp[0].id); }
 #line 1537 "y.tab.c"
     break;
 
-  case 11:
-#line 94 "miniC.y"
-                                               {printf("%s [%s]",(yyvsp[-3].id),(yyvsp[-1].id)); (yyval.id)="0";}
+  case 10:
+#line 92 "miniC.y"
+                                 { (yyval.id) = (yyvsp[0].id);}
 #line 1543 "y.tab.c"
     break;
 
-  case 14:
-#line 101 "miniC.y"
-                     {(yyval.id) = "void";}
+  case 11:
+#line 93 "miniC.y"
+                                               {printf("%s [%s]",(yyvsp[-3].id),(yyvsp[-1].id)); (yyval.id)="0";}
 #line 1549 "y.tab.c"
     break;
 
-  case 15:
-#line 102 "miniC.y"
-                    {(yyval.id) = "int";}
+  case 14:
+#line 100 "miniC.y"
+                     {(yyval.id) = "void";}
 #line 1555 "y.tab.c"
     break;
 
-  case 16:
-#line 106 "miniC.y"
-                                      {printf((yyvsp[0].id));}
+  case 15:
+#line 101 "miniC.y"
+                    {(yyval.id) = "int";}
 #line 1561 "y.tab.c"
     break;
 
-  case 17:
-#line 107 "miniC.y"
-                {printf((yyvsp[0].id));}
+  case 16:
+#line 105 "miniC.y"
+                                      {printf((yyvsp[0].id));}
 #line 1567 "y.tab.c"
     break;
 
-  case 20:
-#line 116 "miniC.y"
-                                   {(yyval.id) = (yyvsp[0].id);}
+  case 17:
+#line 106 "miniC.y"
+                {printf((yyvsp[0].id));}
 #line 1573 "y.tab.c"
     break;
 
-  case 21:
-#line 120 "miniC.y"
-                                               {printf((yyvsp[0].id));}
+  case 20:
+#line 115 "miniC.y"
+                                   {(yyval.id) = (yyvsp[0].id);}
 #line 1579 "y.tab.c"
     break;
 
-  case 23:
-#line 124 "miniC.y"
-                          {(yyval.id)=(yyvsp[0].id);}
+  case 21:
+#line 119 "miniC.y"
+                                               {printf((yyvsp[0].id));}
 #line 1585 "y.tab.c"
     break;
 
-  case 24:
-#line 125 "miniC.y"
+  case 23:
+#line 123 "miniC.y"
                           {(yyval.id)=(yyvsp[0].id);}
 #line 1591 "y.tab.c"
     break;
 
-  case 25:
-#line 126 "miniC.y"
-                     {(yyval.id)=(yyvsp[0].id);}
+  case 24:
+#line 124 "miniC.y"
+                          {(yyval.id)=(yyvsp[0].id);}
 #line 1597 "y.tab.c"
     break;
 
-  case 26:
-#line 127 "miniC.y"
-                                {(yyval.id)=(yyvsp[-1].id);}
+  case 25:
+#line 125 "miniC.y"
+                     {(yyval.id)=(yyvsp[0].id);}
 #line 1603 "y.tab.c"
     break;
 
-  case 27:
-#line 128 "miniC.y"
-                     {(yyval.id)=(yyvsp[0].id);}
+  case 26:
+#line 126 "miniC.y"
+                                {(yyval.id)=(yyvsp[-1].id);}
 #line 1609 "y.tab.c"
     break;
 
-  case 28:
-#line 129 "miniC.y"
-                      {(yyval.id)=(yyvsp[0].id);}
+  case 27:
+#line 127 "miniC.y"
+                     {(yyval.id)=(yyvsp[0].id);}
 #line 1615 "y.tab.c"
     break;
 
-  case 29:
-#line 132 "miniC.y"
-                                                                                        { printf("\nfor ( %s ; %s ; %s)\n", (yyvsp[-6].id), (yyvsp[-4].id), (yyvsp[-2].id)); (yyval.id)=FOR;}
+  case 28:
+#line 128 "miniC.y"
+                      {(yyval.id)=(yyvsp[0].id);}
 #line 1621 "y.tab.c"
     break;
 
-  case 30:
-#line 133 "miniC.y"
-                                                    { printf("\nwhile ( %s )\n", (yyvsp[-2].id)); (yyval.id)= WHILE;}
+  case 29:
+#line 131 "miniC.y"
+                                                                                        { printf("\nfor ( %s ; %s ; %s)\n", (yyvsp[-6].id), (yyvsp[-4].id), (yyvsp[-2].id)); (yyval.id)=FOR;}
 #line 1627 "y.tab.c"
     break;
 
-  case 31:
-#line 134 "miniC.y"
-                       {yyerror("reenter last");
-                        yyerrok; }
-#line 1634 "y.tab.c"
+  case 30:
+#line 132 "miniC.y"
+                                                    { printf("\nwhile ( %s )\n", (yyvsp[-2].id)); (yyval.id)= WHILE;}
+#line 1633 "y.tab.c"
     break;
 
-  case 32:
-#line 138 "miniC.y"
-                                                            {printf("\nif (%s)\n",(yyvsp[-2].id));(yyval.id)=IF;}
+  case 31:
+#line 133 "miniC.y"
+                       {yyerror("reenter last");
+                        yyerrok; }
 #line 1640 "y.tab.c"
     break;
 
-  case 33:
-#line 139 "miniC.y"
-                                                                  {printf("\nif (%s)\n",(yyvsp[-4].id)); (yyval.id)=ELSE;}
+  case 32:
+#line 137 "miniC.y"
+                                                            {printf("\nif (%s)\n",(yyvsp[-2].id));(yyval.id)=IF;}
 #line 1646 "y.tab.c"
     break;
 
-  case 34:
-#line 140 "miniC.y"
-                                                      {(yyval.id)=SWITCH;}
+  case 33:
+#line 138 "miniC.y"
+                                                                  {printf("\nif (%s)\n",(yyvsp[-4].id)); (yyval.id)=ELSE;}
 #line 1652 "y.tab.c"
     break;
 
-  case 35:
-#line 141 "miniC.y"
-                                               {(yyval.id)=CASE;}
+  case 34:
+#line 139 "miniC.y"
+                                                      {(yyval.id)=SWITCH;}
 #line 1658 "y.tab.c"
     break;
 
-  case 36:
-#line 142 "miniC.y"
-                                        {(yyval.id)=DEFAULT;}
+  case 35:
+#line 140 "miniC.y"
+                                               {(yyval.id)=CASE;}
 #line 1664 "y.tab.c"
     break;
 
-  case 37:
-#line 145 "miniC.y"
-                          {(yyval.id)=BREAK;}
+  case 36:
+#line 141 "miniC.y"
+                                        {(yyval.id)=DEFAULT;}
 #line 1670 "y.tab.c"
     break;
 
-  case 38:
-#line 146 "miniC.y"
-                           {(yyval.id)=RETURN;}
+  case 37:
+#line 144 "miniC.y"
+                          {(yyval.id)=BREAK;}
 #line 1676 "y.tab.c"
     break;
 
-  case 39:
-#line 147 "miniC.y"
-                                      {(yyval.id)=RETURN;}
+  case 38:
+#line 145 "miniC.y"
+                           {(yyval.id)=RETURN;}
 #line 1682 "y.tab.c"
     break;
 
-  case 40:
-#line 150 "miniC.y"
-                                          {printf("%s = %s \n",(yyvsp[-2].id),(yyvsp[0].id));(yyval.id) = (yyvsp[0].id);}
+  case 39:
+#line 146 "miniC.y"
+                                      {(yyval.id)=RETURN;}
 #line 1688 "y.tab.c"
     break;
 
-  case 41:
-#line 153 "miniC.y"
-                                                              {(yyval.id)="0";}
+  case 40:
+#line 149 "miniC.y"
+                                          {printf("%s = %s \n",(yyvsp[-2].id),(yyvsp[0].id));(yyval.id) = (yyvsp[0].id);}
 #line 1694 "y.tab.c"
     break;
 
-  case 42:
-#line 156 "miniC.y"
-                                                             {(yyval.id)=(yyvsp[-4].id);}
+  case 41:
+#line 152 "miniC.y"
+                                                              {(yyval.id)="0";}
 #line 1700 "y.tab.c"
     break;
 
-  case 43:
-#line 159 "miniC.y"
-                                {(yyval.id) = (yyvsp[0].id);}
+  case 42:
+#line 155 "miniC.y"
+                                                             {(yyval.id)=(yyvsp[-4].id);}
 #line 1706 "y.tab.c"
     break;
 
-  case 44:
-#line 160 "miniC.y"
-                                            {(yyval.id) ="0";/* $$ = $1[$3] ;*/}
+  case 43:
+#line 158 "miniC.y"
+                                {(yyval.id) = (yyvsp[0].id);}
 #line 1712 "y.tab.c"
     break;
 
-  case 45:
-#line 163 "miniC.y"
-                                        {(yyval.id) = (yyvsp[-1].id);}
+  case 44:
+#line 159 "miniC.y"
+                                            {(yyval.id) ="0";/* $$ = $1[$3] ;*/}
 #line 1718 "y.tab.c"
     break;
 
-  case 46:
-#line 164 "miniC.y"
-                                                                { printf("TO DO\n"); (yyval.id)="0";}
+  case 45:
+#line 162 "miniC.y"
+                                        {(yyval.id) = (yyvsp[-1].id);}
 #line 1724 "y.tab.c"
     break;
 
-  case 47:
-#line 165 "miniC.y"
-                                        {(yyval.id) = (yyvsp[0].id);}
+  case 46:
+#line 163 "miniC.y"
+                                                                { printf("TO DO\n"); (yyval.id)="0";}
 #line 1730 "y.tab.c"
     break;
 
-  case 48:
-#line 166 "miniC.y"
-                                {(yyval.id)=(yyvsp[0].id);}
+  case 47:
+#line 164 "miniC.y"
+                                        {(yyval.id) = (yyvsp[0].id);}
 #line 1736 "y.tab.c"
     break;
 
-  case 49:
-#line 167 "miniC.y"
-                                 {(yyval.id) = (yyvsp[0].id);}
+  case 48:
+#line 165 "miniC.y"
+                                {(yyval.id)=(yyvsp[0].id);}
 #line 1742 "y.tab.c"
     break;
 
-  case 50:
-#line 168 "miniC.y"
-                                                         {printf("TO DO\n");(yyval.id) = (yyvsp[-3].id);}
+  case 49:
+#line 166 "miniC.y"
+                                 {(yyval.id) = (yyvsp[0].id);}
 #line 1748 "y.tab.c"
     break;
 
-  case 55:
-#line 180 "miniC.y"
-                                      {printf("!%s",(yyvsp[-1].id));(yyval.id) = (yyvsp[-1].id);}
+  case 50:
+#line 167 "miniC.y"
+                                                         {printf("TO DO\n");(yyval.id) = (yyvsp[-3].id);}
 #line 1754 "y.tab.c"
     break;
 
-  case 56:
-#line 181 "miniC.y"
-                                                         {printf("TO DO\n");(yyval.id)="0";}
+  case 55:
+#line 179 "miniC.y"
+                                      {printf("!%s",(yyvsp[-1].id));(yyval.id) = (yyvsp[-1].id);}
 #line 1760 "y.tab.c"
     break;
 
-  case 57:
-#line 182 "miniC.y"
-                                  {printf("(%s)",(yyvsp[-1].id)); (yyval.id) = (yyvsp[-1].id);}
+  case 56:
+#line 180 "miniC.y"
+                                                         {printf("TO DO\n");(yyval.id)="0";}
 #line 1766 "y.tab.c"
     break;
 
-  case 58:
-#line 183 "miniC.y"
-                                                  {printf("%s %s %s",(yyvsp[-2].id),(yyvsp[-1].id),(yyvsp[0].id)); (yyval.id) = (yyvsp[-2].id);}
+  case 57:
+#line 181 "miniC.y"
+                                  {printf("(%s)",(yyvsp[-1].id)); (yyval.id) = (yyvsp[-1].id);}
 #line 1772 "y.tab.c"
     break;
 
-  case 59:
-#line 186 "miniC.y"
-                      {(yyval.id) = "+"; }
+  case 58:
+#line 182 "miniC.y"
+                                                  {printf("%s %s %s",(yyvsp[-2].id),(yyvsp[-1].id),(yyvsp[0].id)); (yyval.id) = (yyvsp[-2].id);}
 #line 1778 "y.tab.c"
     break;
 
-  case 60:
-#line 187 "miniC.y"
-                        {(yyval.id) = "-"; }
+  case 59:
+#line 185 "miniC.y"
+                      {(yyval.id) = "+"; }
 #line 1784 "y.tab.c"
     break;
 
-  case 61:
-#line 188 "miniC.y"
-                        {(yyval.id) = "*"; }
+  case 60:
+#line 186 "miniC.y"
+                        {(yyval.id) = "-"; }
 #line 1790 "y.tab.c"
     break;
 
-  case 62:
-#line 189 "miniC.y"
-                        {(yyval.id) = "/"; }
+  case 61:
+#line 187 "miniC.y"
+                        {(yyval.id) = "*"; }
 #line 1796 "y.tab.c"
     break;
 
-  case 63:
-#line 190 "miniC.y"
-                        {(yyval.id) = "<<"; }
+  case 62:
+#line 188 "miniC.y"
+                        {(yyval.id) = "/"; }
 #line 1802 "y.tab.c"
     break;
 
-  case 64:
-#line 191 "miniC.y"
-                        {(yyval.id) = ">>"; }
+  case 63:
+#line 189 "miniC.y"
+                        {(yyval.id) = "<<"; }
 #line 1808 "y.tab.c"
     break;
 
-  case 65:
-#line 192 "miniC.y"
-                        {(yyval.id) = "&="; }
+  case 64:
+#line 190 "miniC.y"
+                        {(yyval.id) = ">>"; }
 #line 1814 "y.tab.c"
     break;
 
-  case 66:
-#line 193 "miniC.y"
-                        {(yyval.id) = "|="; }
+  case 65:
+#line 191 "miniC.y"
+                        {(yyval.id) = "&="; }
 #line 1820 "y.tab.c"
     break;
 
-  case 67:
-#line 196 "miniC.y"
-                     {(yyval.id) = "&&"; }
+  case 66:
+#line 192 "miniC.y"
+                        {(yyval.id) = "|="; }
 #line 1826 "y.tab.c"
     break;
 
-  case 68:
-#line 197 "miniC.y"
-                        {(yyval.id) = "||"; }
+  case 67:
+#line 195 "miniC.y"
+                     {(yyval.id) = "&&"; }
 #line 1832 "y.tab.c"
     break;
 
-  case 69:
-#line 200 "miniC.y"
-                        {(yyval.id) = "<"; }
+  case 68:
+#line 196 "miniC.y"
+                        {(yyval.id) = "||"; }
 #line 1838 "y.tab.c"
     break;
 
-  case 70:
-#line 201 "miniC.y"
-                        {(yyval.id) = ">"; }
+  case 69:
+#line 199 "miniC.y"
+                        {(yyval.id) = "<"; }
 #line 1844 "y.tab.c"
     break;
 
-  case 71:
-#line 202 "miniC.y"
-                        {(yyval.id) = ">="; }
+  case 70:
+#line 200 "miniC.y"
+                        {(yyval.id) = ">"; }
 #line 1850 "y.tab.c"
     break;
 
-  case 72:
-#line 203 "miniC.y"
-                        {(yyval.id) = "<="; }
+  case 71:
+#line 201 "miniC.y"
+                        {(yyval.id) = ">="; }
 #line 1856 "y.tab.c"
     break;
 
-  case 73:
-#line 204 "miniC.y"
-                        {(yyval.id) = "="; }
+  case 72:
+#line 202 "miniC.y"
+                        {(yyval.id) = "<="; }
 #line 1862 "y.tab.c"
     break;
 
-  case 74:
-#line 205 "miniC.y"
-                        {(yyval.id) = "!="; }
+  case 73:
+#line 203 "miniC.y"
+                        {(yyval.id) = "="; }
 #line 1868 "y.tab.c"
     break;
 
+  case 74:
+#line 204 "miniC.y"
+                        {(yyval.id) = "!="; }
+#line 1874 "y.tab.c"
+    break;
 
-#line 1872 "y.tab.c"
+
+#line 1878 "y.tab.c"
 
       default: break;
     }
@@ -2100,7 +2106,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 208 "miniC.y"
+#line 207 "miniC.y"
 
 
 
