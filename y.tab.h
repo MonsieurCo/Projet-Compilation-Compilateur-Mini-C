@@ -1,14 +1,14 @@
-/* A Bison parser, made by GNU Bison 2.3.  */
+/* A Bison parser, made by GNU Bison 3.5.1.  */
 
-/* Skeleton interface for Bison's Yacc-like parsers in C
+/* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989, 1990, 2000, 2001, 2002, 2003, 2004, 2005, 2006
-   Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
+   Inc.
 
-   This program is free software; you can redistribute it and/or modify
+   This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
-   any later version.
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
 
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -16,9 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.  */
+   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -33,101 +31,117 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* Tokens.  */
+/* Undocumented macros, especially those whose name start with YY_,
+   are private implementation details.  Do not rely on them.  */
+
+#ifndef YY_YY_Y_TAB_H_INCLUDED
+# define YY_YY_Y_TAB_H_INCLUDED
+/* Debug traces.  */
+#ifndef YYDEBUG
+# define YYDEBUG 0
+#endif
+#if YYDEBUG
+extern int yydebug;
+#endif
+
+/* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-   /* Put the tokens into the symbol table, so that GDB and other debuggers
-      know about them.  */
-   enum yytokentype {
-     VOID = 258,
-     INT = 259,
-     PLUS = 260,
-     MOINS = 261,
-     MUL = 262,
-     DIV = 263,
-     LSHIFT = 264,
-     RSHIFT = 265,
-     BAND = 266,
-     BOR = 267,
-     LAND = 268,
-     LOR = 269,
-     LT = 270,
-     GT = 271,
-     GEQ = 272,
-     LEQ = 273,
-     EQ = 274,
-     NEQ = 275,
-     THEN = 276,
-     ELSE = 277,
-     OP = 278,
-     REL = 279,
-     WHILE = 280,
-     FOR = 281,
-     IF = 282,
-     NOT = 283,
-     IDENTIFICATEUR = 284,
-     CONSTANTE = 285,
-     BREAK = 286,
-     RETURN = 287,
-     DEFAULT = 288,
-     CASE = 289,
-     SWITCH = 290,
-     EXTERN = 291
-   };
+  enum yytokentype
+  {
+    IDENTIFICATEUR = 258,
+    CONSTANTE = 259,
+    VOID = 260,
+    INT = 261,
+    FOR = 262,
+    WHILE = 263,
+    IF = 264,
+    ELSE = 265,
+    SWITCH = 266,
+    CASE = 267,
+    DEFAULT = 268,
+    BREAK = 269,
+    RETURN = 270,
+    PLUS = 271,
+    MOINS = 272,
+    MUL = 273,
+    DIV = 274,
+    LSHIFT = 275,
+    RSHIFT = 276,
+    BAND = 277,
+    BOR = 278,
+    LAND = 279,
+    LOR = 280,
+    LT = 281,
+    GT = 282,
+    GEQ = 283,
+    LEQ = 284,
+    EQ = 285,
+    NEQ = 286,
+    NOT = 287,
+    EXTERN = 288,
+    THEN = 289,
+    OP = 290,
+    REL = 291
+  };
 #endif
 /* Tokens.  */
-#define VOID 258
-#define INT 259
-#define PLUS 260
-#define MOINS 261
-#define MUL 262
-#define DIV 263
-#define LSHIFT 264
-#define RSHIFT 265
-#define BAND 266
-#define BOR 267
-#define LAND 268
-#define LOR 269
-#define LT 270
-#define GT 271
-#define GEQ 272
-#define LEQ 273
-#define EQ 274
-#define NEQ 275
-#define THEN 276
-#define ELSE 277
-#define OP 278
-#define REL 279
-#define WHILE 280
-#define FOR 281
-#define IF 282
-#define NOT 283
-#define IDENTIFICATEUR 284
-#define CONSTANTE 285
-#define BREAK 286
-#define RETURN 287
-#define DEFAULT 288
-#define CASE 289
-#define SWITCH 290
-#define EXTERN 291
+#define IDENTIFICATEUR 258
+#define CONSTANTE 259
+#define VOID 260
+#define INT 261
+#define FOR 262
+#define WHILE 263
+#define IF 264
+#define ELSE 265
+#define SWITCH 266
+#define CASE 267
+#define DEFAULT 268
+#define BREAK 269
+#define RETURN 270
+#define PLUS 271
+#define MOINS 272
+#define MUL 273
+#define DIV 274
+#define LSHIFT 275
+#define RSHIFT 276
+#define BAND 277
+#define BOR 278
+#define LAND 279
+#define LOR 280
+#define LT 281
+#define GT 282
+#define GEQ 283
+#define LEQ 284
+#define EQ 285
+#define NEQ 286
+#define NOT 287
+#define EXTERN 288
+#define THEN 289
+#define OP 290
+#define REL 291
 
-
-
-
+/* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef union YYSTYPE
-#line 16 "miniC.y"
+union YYSTYPE
 {
+#line 19 "miniC.y"
+
 	int val;
 	char* id;
-}
-/* Line 1529 of yacc.c.  */
-#line 126 "y.tab.h"
-	YYSTYPE;
-# define yystype YYSTYPE /* obsolescent; will be withdrawn */
-# define YYSTYPE_IS_DECLARED 1
+	struct _tree *tree;
+
+#line 135 "y.tab.h"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
+# define YYSTYPE_IS_DECLARED 1
 #endif
+
 
 extern YYSTYPE yylval;
 
+int yyparse (void);
+
+#endif /* !YY_YY_Y_TAB_H_INCLUDED  */

@@ -10,6 +10,7 @@ P                       (\(T\) | \{T\} | \[T\] | \(P\) | \{P\} | \[P\])+
 
 %{
 #include <stdio.h>
+#include "table.h"
 #include "y.tab.h"
 // P                       ("("(D|L|H|E|FS|IS)+")"|"{"(D|L|H|E|FS|IS)+"}"|"["(D|L|H|E|FS|IS)+"]")
 //"("*")"|"{"*"}"
