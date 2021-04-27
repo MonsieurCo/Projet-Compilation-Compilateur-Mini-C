@@ -961,7 +961,7 @@ YY_RULE_SETUP
 case 23:
 YY_RULE_SETUP
 #line 56 "ANSI-C.l"
-{return PLUS;}
+{ return PLUS;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
@@ -981,72 +981,72 @@ YY_RULE_SETUP
 case 27:
 YY_RULE_SETUP
 #line 62 "ANSI-C.l"
-{  return BAND; }
+{ return BAND;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 63 "ANSI-C.l"
-{  return BOR; }
+{ return BOR;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 64 "ANSI-C.l"
-{  return RSHIFT; }
+{ return RSHIFT;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 65 "ANSI-C.l"
-{  return LSHIFT; }
+{ return LSHIFT;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 66 "ANSI-C.l"
-{  return LAND; }
+{ return LAND;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 67 "ANSI-C.l"
-{  return LOR; }
+{ return LOR;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 68 "ANSI-C.l"
-{  return LEQ; }
+{ return LEQ;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 69 "ANSI-C.l"
-{  return GEQ; }
+{ return GEQ;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
 #line 70 "ANSI-C.l"
-{  return EQ; }
+{ return EQ;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 71 "ANSI-C.l"
-{  return NEQ; }
+{ return NEQ;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 72 "ANSI-C.l"
-{  return GT; }
+{ return GT;}
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 73 "ANSI-C.l"
-{  return LT; }
+{ return LT;}
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 74 "ANSI-C.l"
-{  return NOT;} 
+{ return NOT;} 
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 77 "ANSI-C.l"
-{return yytext[0]; }
+{return yytext[0];}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP

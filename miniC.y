@@ -26,172 +26,165 @@ void table_reset();
 %token <id> VOID INT FOR WHILE IF ELSE SWITCH CASE DEFAULT
 %token <id> BREAK RETURN PLUS MOINS MUL DIV LSHIFT RSHIFT BAND BOR LAND LOR LT GT 
 %token <id> GEQ LEQ EQ NEQ NOT EXTERN
-%left PLUS MOINS
-%left MUL DIV
+%left PLUS MOINS 
+%left MUL DIV 
+
 %left LSHIFT RSHIFT
 %left BOR BAND
 %left LAND LOR
 %nonassoc THEN
 %nonassoc ELSE
 %left OP
-%left REL
+%left REL 
+
 %start programme
-
-
-%type <id> binary_rel
-%type <id> binary_comp
-%type <id> binary_op
-%type <id> type
-%type <tree> expression
-%type <tree> variable 
-%type <tree> affectation
-%type <id> condition
-%type <id> parm
-%type <id> appel
-%type <id> bloc
-%type <id> saut
-%type <id> selection
-%type <id> iteration
-%type <id> liste_declarateurs 
-%type <id> declarateur 
-%type <id> instruction
-%type <id> declaration
-%type <id> expr_liste_creator
-%type <id> liste_expressions
-%type <id> liste_instructions
-%type <id> liste_parms
-%type <id> params_liste_creator
-%type <id> fonction
-%type <id> liste_fonctions	
-%type <id> liste_declarations
-%type <id> programme
+ 
+%type <tree> saut selection instruction variable expression condition affectation bloc liste_instructions liste_declarations liste_expressions expr_liste_creator appel
+%type<tree> iteration
+%type <id> binary_rel binary_comp binary_op type parm 
+%type <tree> liste_declarateurs 
+%type <tree> declarateur 
+%type <tree> declaration
+%type <tree> liste_parms
+%type <tree> params_liste_creator
+%type <tree> fonction
+%type <tree> liste_fonctions	
+%type <tree> programme
 
 
 %%
 programme	:	
-		liste_declarations liste_fonctions  {}
+		liste_declarations liste_fonctions  {$$=initialiseTree("coucou",$1); $$->fil->suivants=reverse($2); visualise($$,0,0);}
 ;
 liste_declarations	:	
-		liste_declarations declaration  {}
-	|				{}
+		liste_declarations declaration  {$$ = $2; $$->suivants = $1;}
+	|				{$$ = initialiseTree("...",NULL);}
 ;
 liste_fonctions	:	
-		liste_fonctions fonction      {} 
-|               fonction			{}
+		liste_fonctions fonction      {$$ = $2; $$->suivants = $1;} 
+|               fonction			{$$=$1;}
 ;
 declaration	:	
-		type liste_declarateurs ';' {}
+		type liste_declarateurs ';' {$$=initialiseTree($1,NULL); $$->fil=reverse($2);}
 ;
 liste_declarateurs	:	
-		liste_declarateurs ',' declarateur {}//{$$ = strcat($1,strcat(",",$3));}
-	|	declarateur  {}
+		liste_declarateurs ',' declarateur {$$ = $3; $$->suivants = $1;}//{$$ = strcat($1,strcat(",",$3));}
+	|	declarateur  {$$ = $1;}
 ;
 declarateur	:	
-		IDENTIFICATEUR   { $$ = IDENTIFICATEUR;}
+		IDENTIFICATEUR   { $$ = initialiseTree($1,NULL);}
 	|	declarateur '[' CONSTANTE ']'  {}  
 ;
 fonction	:	
-		type IDENTIFICATEUR '(' liste_parms ')' '{' liste_declarations liste_instructions '}' {}
-	|	EXTERN type IDENTIFICATEUR '(' liste_parms ')' ';' {}
+		type IDENTIFICATEUR '(' liste_parms ')' '{' liste_declarations liste_instructions '}' {$$=initialiseTree("pomme",$4);$$->fil->suivants=reverse($7);$$->fil->suivants->suivants=reverse($8);}
+	|	EXTERN type IDENTIFICATEUR '(' liste_parms ')' ';' {$$=initialiseTree("extern",$2);$$->fil->suivants=$3;$$->fil->suivants->suivants=$5;}
 ;
 type	:	
-		VOID {}
-	|	INT {}
+		VOID {$$="void";}
+	|	INT {$$ = "int";}
 ;
 
 params_liste_creator :    //modification de la grammaires en raison des problèmes mis en lumière par le forum
-	params_liste_creator ',' parm {}
-	| parm	{}
+	params_liste_creator ',' parm {$$ = $3; $$->suivants = $1;}
+	| parm	{$$ = initialiseTree($1,NULL);}
 ;
 
 liste_parms	:	
-		params_liste_creator {}
-	|				{}
+		params_liste_creator {$$=reverse($1);}
+	|				{$$ = initialiseTree("...",NULL);}
 ;
 
 parm	:	 
-		INT IDENTIFICATEUR  {}
+		INT IDENTIFICATEUR  {$$=initialiseTree("int",initialiseTree($2,NULL));}
 ;
 
 liste_instructions :	
-		liste_instructions instruction {}
-	|				{}
+		liste_instructions instruction {$$ = $2; $$->suivants = $1;}
+	|				{$$ = initialiseTree("...",NULL);}
 ;
 instruction	:	
-		iteration {}
-	|	selection {}
-	|	saut {}
-	|	affectation ';' {}
-	|	bloc {}
-	|	appel {}
+		iteration {$$=$1;}
+	|	selection {$$ = $1;}
+	|	saut { $$ = $1;}
+	|	affectation ';' { $$ = $1;}
+	|	bloc {$$=$1;}
+	|	appel {$$=$1;}
 ;
 iteration	:	
-		FOR '(' affectation ';' condition ';' affectation ')' instruction 	{}
-	|	WHILE '(' condition ')' instruction {}
+		FOR '(' affectation ';' condition ';' affectation ')' instruction 	{$$=initialiseTree("for",$3); $$->fil->suivants=$5;$$->fil->suivants->suivants=$7;$$->fil->suivants->suivants->suivants=$9;}
+	|	WHILE '(' condition ')' instruction {$$=initialiseTree("while",$3); $$->fil->suivants=$5;}
 	|   error '\n' {yyerror("reenter last");
                         yyerrok; };
 ;
 selection	:	
-		IF '(' condition ')' instruction %prec THEN {}
-	|	IF '(' condition ')' instruction ELSE instruction {}
-	|	SWITCH '(' expression ')' instruction {}
-	|	CASE CONSTANTE ':' instruction {}
-	|	DEFAULT ':' instruction {}
+		IF '(' condition ')' instruction %prec THEN {$$ = initialiseTree("if",$3);$$->fil->suivants = $5;}
+	|	IF '(' condition ')' instruction ELSE instruction {$$ = initialiseTree("if",$3);$$->fil->suivants = $5;$$->fil->suivants->suivants = initialiseTree("else",$7);} 
+	|	SWITCH '(' expression ')' instruction {$$ = initialiseTree("switch",$3); $$->fil->suivants = $5;}
+	|	CASE CONSTANTE ':' instruction {$$ = initialiseTree("case",$1); $$->fil->suivants = $4;}//
+	|	DEFAULT ':' instruction {$$ = initialiseTree("default",$3);}
 ;
 saut	:	
-		BREAK ';' {}
-	|	RETURN ';' {}
-	|	RETURN expression ';' {}
+		BREAK ';' {$$=initialiseTree("break",NULL);}
+	|	RETURN ';' {$$ = initialiseTree("return",NULL);}
+	|	RETURN expression ';' {$$ = initialiseTree("return",$2);}
 ;
 affectation	:	 
-		variable '=' expression  {printf(" %s =  %s %s %s\n ",$1->nom,$3->fil->nom,$3->nom,$3->fil->suivants->nom);} // {	struct Tree t = initialiseTree("=");t->fil = $1 ;t->fil->suivants = $2; $$ =t;}
+		variable '=' expression  {$$ = initialiseTree("=",$1);$$->fil->suivants = $3;} // {	struct Tree t = initialiseTree("=");t->fil = $1 ;t->fil->suivants = $2; $$ =t;}
 ;
 bloc	:	
-		'{' liste_declarations liste_instructions '}' {}
+		'{' liste_declarations liste_instructions '}' { $$ = initialiseTree("bloc",initialiseTree("decla",NULL)); ;$$->fil->suivants = reverse($3);}
 ;
 appel	:	
-		IDENTIFICATEUR '(' liste_expressions ')' ';' {}
+		IDENTIFICATEUR '(' liste_expressions ')' ';' {$$=initialiseTree($1,NULL);$$->fil=reverse($3);}
 ;
 variable	:	
-		IDENTIFICATEUR  {$$ = initialiseTree($1,NULL);}  //$$ = "0";
+		IDENTIFICATEUR  {$$ = initialiseTree($1,NULL);}  
 	|	variable '[' expression ']' {}
 ;
 expression	:	
 		'(' expression ')'	{$$ = $2;}                       
-	|	expression binary_op expression %prec OP	{$$ = initialiseTree($2,$1); $$->fil->suivants = $3;} //t->fil->suivants = $3; 
-	|	MOINS expression	{$$ = initialiseTree("-",$2);}                                   
+	
+	|	expression PLUS expression	{$$ = initialiseTree("+",$1); $$->fil->suivants = $3;} //t->fil->suivants = $3; 
+	|	expression MOINS expression	{$$ = initialiseTree("-",$1); $$->fil->suivants = $3;} //t->fil->suivants = $3; 			
+	|	expression DIV expression{$$ = initialiseTree("/",$1); $$->fil->suivants = $3;} //t->fil->suivants = $3; 				
+	|	expression MUL expression	{$$ = initialiseTree("*",$1); $$->fil->suivants = $3;} //t->fil->suivants = $3; 			
+	|	expression RSHIFT expression	{$$ = initialiseTree(">>",$1); $$->fil->suivants = $3;} //t->fil->suivants = $3; 			
+	|	expression LSHIFT expression	{$$ = initialiseTree("<<",$1); $$->fil->suivants = $3;} //t->fil->suivants = $3; 			
+	|	expression BAND expression	{$$ = initialiseTree("&=",$1); $$->fil->suivants = $3;} //t->fil->suivants = $3; 			
+	|	expression BOR expression	{$$ = initialiseTree("|=",$1); $$->fil->suivants = $3;} //t->fil->suivants = $3; 			
+	|	MOINS expression %prec MUL	{$$ = initialiseTree("-",$2);}                                   
 	|	CONSTANTE       {$$ = initialiseTree($1,NULL);}                                                 							
 	|	variable	 {$$ =  $1;}                                  
 	|	IDENTIFICATEUR '(' liste_expressions ')' {$$ = initialiseTree(NULL,NULL);}                                  
 ;
 //cf correction de Fissore Davide merci à lui 
 liste_expressions :      // pour accepter epsilon ou une liste d'expressions
-    expr_liste_creator {}
-    | 			{}
+    expr_liste_creator {$$ = $1;}
+    | 			{$$ = initialiseTree("...",NULL);}
 ;
 expr_liste_creator :                         // création de la liste d'expressions valide
-    expr_liste_creator ',' expression {} // liste à n éléments
-    | expression                   {}           // liste à un seul élément
+    expr_liste_creator ',' expression {$$ = $3; $$->suivants = $1;} // liste à n éléments
+    | expression                   {$$=$1;}           // liste à un seul élément
 ;
 condition	:	
-		NOT '(' condition ')' {}
-	|	condition binary_rel condition %prec REL {}
-	|	'(' condition ')' {}
-	|	expression binary_comp expression {}
+		NOT '(' condition ')' {$$ = initialiseTree("not",$3);}
+	|	condition binary_rel condition %prec REL {$$ = initialiseTree($2,$1); $$->fil->suivants = $3;}
+	|	'(' condition ')' { $$ = $2;}
+	|	expression binary_comp expression {$$ = initialiseTree($2,$1); $$->fil->suivants = $3;}
 ;
 binary_op	:	
 		PLUS  {$$="+";}// $$ = new node(nom=PLUS, fils=[null]) struct tree t = initialiseTree($1); 
-	|   MOINS	{$$="-";}
+	|   MOINS	{$$="-";} // void visualise(tree *t) printf("-"); printf("*"); printf("/"); printf("<<"); printf(">>"); printf("|="); printf("&="); printf("&&"); printf("<");
 	|	MUL	{$$="*";}
 	|	DIV	{$$ = "/";}
 	|   LSHIFT	{$$ = "<<";}
 	|   RSHIFT	{$$ = ">>"; }
-	|	BAND	{$$="|=";}
-	|	BOR	{$$="&=";}
+	|	BAND	{$$="&=";}
+	|	BOR	{$$="|=";}
 ;
 binary_rel	:	
-		LAND {$$ = "&&"; }
-	|	LOR	{$$ = "||"; }
+		LAND {$$ = "&&"; } 
+	|	LOR	{$$ = "||"; } //printf("||"); printf(">"); printf(">="); printf("<="); printf("="); printf("!=");
 ;
 binary_comp	:	
 		LT	{$$ = "<"; }

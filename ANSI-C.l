@@ -53,28 +53,28 @@ L?'(\\.|[^\\'])+'       {/* A completer */ }
 
 L?\"(\\.|[^\\"])*\"     { /* A completer */ }
 
-"+"                     {return PLUS;}
+"+"                     { return PLUS;}
 "-"                     { return MOINS;}
 "*"                     { return MUL;}
 "/"                     { return DIV;}
 
 
-"&="                    {  return BAND; }
-"|="                    {  return BOR; }
-">>"                    {  return RSHIFT; }
-"<<"                    {  return LSHIFT; }
-"&&"                    {  return LAND; }
-"||"                    {  return LOR; }
-"<="                    {  return LEQ; }
-">="                    {  return GEQ; }
-"=="                    {  return EQ; }
-"!="                    {  return NEQ; }
-">"                     {  return GT; }
-"<"                     {  return LT; }
-"!"                     {  return NOT;} 
+"&="                    { return BAND;}
+"|="                    { return BOR;}
+">>"                    { return RSHIFT;}
+"<<"                    { return LSHIFT;}
+"&&"                    { return LAND;}
+"||"                    { return LOR;}
+"<="                    { return LEQ;}
+">="                    { return GEQ;}
+"=="                    { return EQ;}
+"!="                    { return NEQ;}
+">"                     { return GT;}
+"<"                     { return LT;}
+"!"                     { return NOT;} 
 
 
-","|";"|":"                 {return yytext[0]; }
+","|";"|":"             {return yytext[0];}
 "="                     {return yytext[0];}
 
 

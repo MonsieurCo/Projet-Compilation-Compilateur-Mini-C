@@ -1,7 +1,7 @@
-extern int printd( int i );
+
 
 /*----------------------------*/
-/* un petit programme exemple
+/* un petit programme exemple extern int printd( int i );
   pour montrer le langage miniC.*/
 /*----------------------------*/
 

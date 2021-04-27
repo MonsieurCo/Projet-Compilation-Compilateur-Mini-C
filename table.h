@@ -33,6 +33,7 @@ symbole * inserer( char *nom );
 int hash( char *nom );
 
 void table_reset();
-
+void visualise(tree *t, int n, int m);
+tree *reverse(tree *t);
 
 #endif

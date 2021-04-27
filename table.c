@@ -80,3 +80,108 @@ tree *initialiseTree(char* name, tree *fil){
 	return t;
 
 }
+
+// void visualise(tree *t,int n, int m){
+// 	//for(int i =0 ; i < n ;i++){
+// 	//	printf(" ");
+// 	//}
+	
+// 	printf("\n");
+	
+// 	tree *suivants = t->suivants;
+// 	while(suivants != NULL){
+// 		printf("\t");
+// 		visualise(suivants,n,m+1);
+// 		suivants = suivants->suivants;
+// 	}
+// 	if(t->fil != NULL){
+// 		visualise(t->fil,n+1,m);
+// 	}
+
+	
+// 	printf("|%d %d: ",n,m);
+// 	printf(t->nom);
+
+// }
+
+void printTabs(int count)
+{
+    for (int i = 0; i < count; i++)
+    {
+        putchar('\t');
+    }
+}
+
+void printTreeRecursive(tree *node, int level)
+{
+    while (node != NULL)
+    {
+        printTabs(level);
+        printf("Node: %s\n", node->nom);
+
+        if (node->fil != NULL)
+        {
+            printTabs(level);
+            printf("Children:\n");
+            printTreeRecursive(node->fil, level + 1);
+        }
+
+        node = node->suivants;
+    }
+}
+
+void visualise(tree *node,int x,int y)
+{
+	printTreeRecursive(node, 0);
+	
+}
+
+
+// tree *reverse2(tree *t){
+// 	visualise(t,0,0);
+// 	tree *current = t;
+// 	tree *prev , *next = NULL;
+// 	while(current != NULL){
+// 		next = current->suivants;
+// 		current->suivants = prev;
+// 		prev = current;
+// 		current = next;
+// 	}
+// 	t = prev;
+// 	return prev;
+// }
+
+
+tree *reverse(tree *t)
+{
+    struct node *revHead;
+    if (t == NULL || t->suivants == NULL)
+    {
+        return t;
+    }
+
+    revHead = reverse(t->suivants);
+    t->suivants->suivants= t;
+    t->suivants = NULL; 
+
+    return revHead;
+}
+
+
+
+void visualiseTree2(tree *t){
+	printf(t->nom);
+	printf("\n");
+	tree *suivant = t->suivants;
+	while(suivant != NULL){
+		visualiseTree2(suivant);
+		suivant = suivant->suivants;
+	}
+	printf("\n");
+	if(t->fil != NULL){
+		visualiseTree2(t->fil);
+	}
+	return;
+	
+}
+
