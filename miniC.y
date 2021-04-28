@@ -50,7 +50,7 @@ void table_reset();
 %type <tree> fonction
 %type <tree> liste_fonctions	
 %type <tree> programme
-
+%type <tree> tableau_variable tableau_declarateur
 
 %%
 programme	:	
@@ -73,8 +73,13 @@ liste_declarateurs	:
 ;
 declarateur	:	
 		IDENTIFICATEUR   { $$ = initialiseTree($1,NULL);}
-	|	declarateur '[' CONSTANTE ']'  {}  
+	|	tableau_declarateur  { $$=initialiseTree("tab",reverse($1));}  //declarateur '[' CONSTANTE ']' 
 ;
+tableau_declarateur:
+	IDENTIFICATEUR  {$$ = initialiseTree($1,NULL);}  
+	|tableau_declarateur '[' CONSTANTE ']' {$$ = initialiseTree($3,NULL); $$->suivants = $1;}
+;
+
 fonction	:	
 		type IDENTIFICATEUR '(' liste_parms ')' '{' liste_declarations liste_instructions '}' {$$=initialiseTree("pomme",$4);$$->fil->suivants=reverse($7);$$->fil->suivants->suivants=reverse($8);}
 	|	EXTERN type IDENTIFICATEUR '(' liste_parms ')' ';' {$$=initialiseTree("extern",$2);$$->fil->suivants=$3;$$->fil->suivants->suivants=$5;}
@@ -139,7 +144,11 @@ appel	:
 ;
 variable	:	
 		IDENTIFICATEUR  {$$ = initialiseTree($1,NULL);}  
-	|	variable '[' expression ']' {}
+	|	tableau_variable { $$=initialiseTree("tab",reverse($1));}
+;
+tableau_variable	:
+	IDENTIFICATEUR  {$$ = initialiseTree($1,NULL);}  
+	|tableau_variable '[' expression ']' {$$ = $3; $$->suivants = $1;}
 ;
 expression	:	
 		'(' expression ')'	{$$ = $2;}                       

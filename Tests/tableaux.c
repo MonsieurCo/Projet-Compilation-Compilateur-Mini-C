@@ -1,8 +1,8 @@
 /* TEST TABLEAUX MINIC */
 
-int tab[300];
+int poir[300];
 
 int main() {
-  tab[3] = tab[200];
-  tab[400] = tab[0];
+  poir[3] = poir[200];
+  poir[400] = poir[0];
 }
