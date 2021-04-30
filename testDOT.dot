@@ -1,0 +1,36 @@
+//fichier DOT représentant le graph du fichier c analysé
+digraph test {
+
+node_coucou [label="coucou"];
+node_pomme [label="pomme"];
+node_eq [label="="];
+node_x [label="x"];
+node_900 [label="900"];
+node_if [label="if"];
+node_< [label="<"];
+node_x [label="x"];
+node_10 [label="10"];
+node_bloc [label="bloc"];
+node_decla [label="decla"];
+node_if [label="if"];
+node_> [label=">"];
+node_z [label="z"];
+node_10 [label="10"];
+node_bloc [label="bloc"];
+node_decla [label="decla"];
+node_eq [label="="];
+node_y [label="y"];
+node_500 [label="500"];
+node_eq [label="="];
+node_a [label="a"];
+node_63 [label="63"];
+node_return [label="return"];
+node_a [label="a"];
+node_else [label="else"];
+node_bloc [label="bloc"];
+node_decla [label="decla"];
+node_return [label="return"];
+node_minus [label="-"];
+node_1 [label="1"];
+node_coucou -> node_pomme
+}

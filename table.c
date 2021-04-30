@@ -185,3 +185,83 @@ void visualiseTree2(tree *t){
 	
 }
 
+//une fonction permetant de definir un node dans un fichier .dot
+void ecritNode(FILE *fichier,tree *t){
+	char* name = t->nom;
+	if(0 == strcmp("=",name)){
+		fprintf(fichier,"node_eq [label=\"%s\"];\n",name);
+	}
+	else if(0 == strcmp("-",name)){
+		fprintf(fichier,"node_minus [label=\"%s\"];\n",name);
+	}
+	else if(0 != strcmp("...",name)){
+	fprintf(fichier,"node_%s [label=\"%s\"];\n",name,name);
+	}
+
+
+}
+
+void relieFils(FILE *fichier, tree *pere,tree* fils){
+	while(fils != NULL){
+		if(0 == strcmp("=",fils->nom)){
+		fprintf(fichier,"node_eq -> node_%s\n",pere->nom,fils->nom);
+	}
+	else if(0 == strcmp("-",fils->nom)){
+		fprintf(fichier,"node_minus -> node_%s\n",pere->nom,fils->nom);
+	}
+	else if (0 != strcmp("...",fils->nom)){
+		fprintf(fichier,"node_%s -> node_%s\n",pere->nom,fils->nom);}
+		fils = fils->suivants;
+	}
+	if(pere->fil != NULL &&pere->fil->fil != NULL ){
+	relieFils(fichier,pere->fil,pere->fil->fil);}
+
+
+}
+
+
+
+void writeDot(tree *t){
+
+FILE *fd =  fopen("testDOT.dot","w");
+
+	fprintf(fd,"//fichier DOT représentant le graph du fichier c analysé\n");
+	fprintf(fd,"digraph test {\n\n");
+	tree *node = t;
+	printdot(fd,node);
+	relieFils(fd,node,node->fil);
+	fprintf(fd,"}");
+	fclose(fd);
+
+
+
+}
+
+
+void printdot(FILE *fd , tree * node ){
+	 while (node != NULL){
+        ecritNode(fd,node);
+
+        if (node->fil != NULL)
+        {
+           printdot(fd,node->fil);
+        }
+        node = node->suivants;
+    }
+
+}
+
+
+
+char* node_name(tree * t){
+	char *name =  t->nom;
+	char* ret = "";
+	if(0 == strcmp("=",name)){
+		sprintf(ret,"node_eq");
+	}
+	else if(0 == strcmp("-",name)){
+		sprintf(ret,"node_minus");
+	}
+	return ret;
+
+}

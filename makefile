@@ -8,7 +8,7 @@ all:
 	$(YC) -d miniC.y
 	$(FL) ANSI-C.l
 	$(CC) -g lex.yy.c y.tab.c table.c -ll  -o $(TARGET) -w 
-	./testeur < Tests/tableaux.c
+	./testeur < Tests/testdyl.c
 
 clean:
 	rm $(TARGET)

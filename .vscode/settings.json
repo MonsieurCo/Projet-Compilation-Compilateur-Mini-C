@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "table.h": "c"
+        "table.h": "c",
+        "typeinfo": "c"
     }
 }

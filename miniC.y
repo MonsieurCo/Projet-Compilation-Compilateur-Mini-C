@@ -54,7 +54,7 @@ void table_reset();
 
 %%
 programme	:	
-		liste_declarations liste_fonctions  {$$=initialiseTree("coucou",$1); $$->fil->suivants=reverse($2); visualise($$,0,0);}
+		liste_declarations liste_fonctions  {$$=initialiseTree("coucou",$1); $$->fil->suivants=reverse($2); visualise($$,0,0);writeDot($$);} //; visualise($$,0,0)
 ;
 liste_declarations	:	
 		liste_declarations declaration  {$$ = $2; $$->suivants = $1;}

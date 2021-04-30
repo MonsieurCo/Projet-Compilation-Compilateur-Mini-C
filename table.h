@@ -35,5 +35,9 @@ int hash( char *nom );
 void table_reset();
 void visualise(tree *t, int n, int m);
 tree *reverse(tree *t);
+void writeDot(tree *t);
+void printdot(FILE *fd , tree * node );
+void relieFils(FILE *fichier, tree *pere,tree*fils);
+void ecritNode(FILE *fichier,tree *t);
 
 #endif
