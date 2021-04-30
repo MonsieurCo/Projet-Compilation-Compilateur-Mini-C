@@ -75,6 +75,7 @@ tree *initialiseTree(char* name, tree *fil){
 	//t->bloc = NULL;
 	t->fil = fil;//(tree*)malloc(sizeof(tree));
 	t->suivants = NULL;//(tree*)malloc(sizeof(tree));
+	t->node_name = NULL;
 	//t->typeNode = NULL;
 
 	return t;
@@ -205,35 +206,26 @@ void visualiseTree2(tree *t){
 
 //une fonction permetant de definir un node dans un fichier .dot
 void ecritNode(FILE *fichier,tree *t,int n){
-	char* name = t->nom;
-	if(0 == strcmp("=",name)){
-		fprintf(fichier,"node_%d [label=\"%s\"];\n",n,name);
+	char name[60];
+	sprintf(name,"node_%d",n);
+	printf(t->node_name);
+	t->node_name = name;
+	if(0 != strcmp("...",t->nom)){
+		
+	fprintf(fichier,"%s [label=\"%s\"];\n",t->node_name,t->nom);
 	}
-	else if(0 == strcmp("-",name)){
-		fprintf(fichier,"node_%d [label=\"%s\"];\n",n,name);
-	}
-	else if(0 != strcmp("...",name)){
-	fprintf(fichier,"node_%d [label=\"%s\"];\n",n,name);
-	}
-
+	
 
 }
 
-void relieFils(FILE *fichier, tree *pere,tree* fils,int n){
+void relieFils(FILE *fichier, tree *pere,tree* fils){
 	while(fils != NULL){
-		if(0 == strcmp("=",fils->nom)){
-			fprintf(fichier,"node_eq -> node_%s\n",pere->nom,fils->nom);
+		if (0 != strcmp("...",fils->nom)){
+			fprintf(fichier,"%s -> %s\n",pere->node_name,fils->node_name);
 		}
-		else if(0 == strcmp("-",fils->nom)){
-			fprintf(fichier,"node_minus -> node_%s\n",pere->nom,fils->nom);
-		}
-		else if (0 != strcmp("...",fils->nom)){
-			fprintf(fichier,"node_%s -> node_%s\n",pere->nom,fils->nom);
-		}
-		n++;
+	
 		if(fils != NULL &&fils->fil != NULL ){
-			relieFils(fichier,fils,fils->fil,n);
-			n++;
+			relieFils(fichier,fils,fils->fil);
 		}
 		fils = fils->suivants;
 	}
@@ -253,7 +245,7 @@ FILE *fd =  fopen("testDOT.dot","w");
 	fprintf(fd,"digraph test {\n\n");
 	tree *node = t;
 	printdot(fd,node,0);
-	relieFils(fd,node,node->fil,0);
+	relieFils(fd,node,node->fil);
 	fprintf(fd,"}");
 	fclose(fd);
 

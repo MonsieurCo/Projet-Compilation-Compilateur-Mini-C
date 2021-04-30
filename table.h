@@ -15,6 +15,7 @@ typedef struct _symbole {
 typedef struct _tree {
     //struct _bloc *bloc; 
     char *nom; 
+    char *node_name;
     //type_t typeNode;
     struct _tree *fil;
     struct _tree *suivants;
@@ -37,7 +38,7 @@ void visualise(tree *t, int n, int m);
 tree *reverse(tree *t);
 void writeDot(tree *t);
 void printdot(FILE *fd , tree * node, int n );
-void relieFils(FILE *fichier, tree *pere,tree*fils,int n);
+void relieFils(FILE *fichier, tree *pere,tree*fils);
 void ecritNode(FILE *fichier,tree *t,int n);
 char* node_name(char * name);
 

@@ -28,30 +28,7 @@ node_10 [label="return"];
 node_11 [label="+"];
 node_12 [label="i"];
 node_13 [label="3"];
-node_coucou -> node_pomme
-node_pomme -> node_for
-node_eq -> node_for
-node_= -> node_i
-node_= -> node_0
-node_for -> node_<
-node_< -> node_i
-node_< -> node_10
-node_eq -> node_for
-node_= -> node_i
-node_= -> node_+
-node_+ -> node_i
-node_+ -> node_1
-node_for -> node_bloc
-node_bloc -> node_decla
-node_bloc -> node_if
-node_eq -> node_if
-node_= -> node_i
-node_= -> node_5
-node_if -> node_break
-node_pomme -> node_printd
-node_printd -> node_i
-node_pomme -> node_return
-node_return -> node_+
-node_+ -> node_i
-node_+ -> node_3
+node_0 -> node_2
+node_2 -> node_10
+node_10 -> 0
 }
