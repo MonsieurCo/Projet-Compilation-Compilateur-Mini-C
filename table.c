@@ -112,15 +112,28 @@ void printTabs(int count)
     }
 }
 
-void printTreeRecursive(tree *node, int level)
-{
+void printTreeRecursive(tree *node, int level){
+	
     while (node != NULL)
     {
         printTabs(level);
         printf("Node: %s\n", node->nom);
+		/*if(0 == strcmp("=",node->nom)){
+			fprintf(fichier,"node_eq [label=\"%s\"];\n",node->nom);
+			
+		}
+		else if(0 != strcmp("...",node->nom)){
+			fprintf(fichier,"node_%s [label=\"%s\"];\n",node->nom,node->nom);
+		}*/
 
         if (node->fil != NULL)
-        {
+        {	
+			/*if(0 == strcmp("=",node->fil->nom)){
+				fprintf(fichier,"node_eq -> node_%s\n",node->fil->nom);
+			}
+			else if(0 != strcmp("...",node->fil->nom)){
+				fprintf(fichier,"node_%s -> node_%s\n",node->nom,node->fil->nom);
+			}*/
             printTabs(level);
             printf("Children:\n");
             printTreeRecursive(node->fil, level + 1);
@@ -132,7 +145,12 @@ void printTreeRecursive(tree *node, int level)
 
 void visualise(tree *node,int x,int y)
 {
-	printTreeRecursive(node, 0);
+	/*	FILE *fichier =  fopen("testDOT.dot","w");
+	fprintf(fichier,"//fichier DOT représentant le graph du fichier c analysé\n");
+	fprintf(fichier,"digraph test {\n\n");*/
+	printTreeRecursive(node, 0);	
+	//fprintf(fichier,"}");
+
 	
 }
 
@@ -186,35 +204,41 @@ void visualiseTree2(tree *t){
 }
 
 //une fonction permetant de definir un node dans un fichier .dot
-void ecritNode(FILE *fichier,tree *t){
+void ecritNode(FILE *fichier,tree *t,int n){
 	char* name = t->nom;
 	if(0 == strcmp("=",name)){
-		fprintf(fichier,"node_eq [label=\"%s\"];\n",name);
+		fprintf(fichier,"node_%d [label=\"%s\"];\n",n,name);
 	}
 	else if(0 == strcmp("-",name)){
-		fprintf(fichier,"node_minus [label=\"%s\"];\n",name);
+		fprintf(fichier,"node_%d [label=\"%s\"];\n",n,name);
 	}
 	else if(0 != strcmp("...",name)){
-	fprintf(fichier,"node_%s [label=\"%s\"];\n",name,name);
+	fprintf(fichier,"node_%d [label=\"%s\"];\n",n,name);
 	}
 
 
 }
 
-void relieFils(FILE *fichier, tree *pere,tree* fils){
+void relieFils(FILE *fichier, tree *pere,tree* fils,int n){
 	while(fils != NULL){
 		if(0 == strcmp("=",fils->nom)){
-		fprintf(fichier,"node_eq -> node_%s\n",pere->nom,fils->nom);
-	}
-	else if(0 == strcmp("-",fils->nom)){
-		fprintf(fichier,"node_minus -> node_%s\n",pere->nom,fils->nom);
-	}
-	else if (0 != strcmp("...",fils->nom)){
-		fprintf(fichier,"node_%s -> node_%s\n",pere->nom,fils->nom);}
+			fprintf(fichier,"node_eq -> node_%s\n",pere->nom,fils->nom);
+		}
+		else if(0 == strcmp("-",fils->nom)){
+			fprintf(fichier,"node_minus -> node_%s\n",pere->nom,fils->nom);
+		}
+		else if (0 != strcmp("...",fils->nom)){
+			fprintf(fichier,"node_%s -> node_%s\n",pere->nom,fils->nom);
+		}
+		n++;
+		if(fils != NULL &&fils->fil != NULL ){
+			relieFils(fichier,fils,fils->fil,n);
+			n++;
+		}
 		fils = fils->suivants;
 	}
-	if(pere->fil != NULL &&pere->fil->fil != NULL ){
-	relieFils(fichier,pere->fil,pere->fil->fil);}
+	
+	
 
 
 }
@@ -228,8 +252,8 @@ FILE *fd =  fopen("testDOT.dot","w");
 	fprintf(fd,"//fichier DOT représentant le graph du fichier c analysé\n");
 	fprintf(fd,"digraph test {\n\n");
 	tree *node = t;
-	printdot(fd,node);
-	relieFils(fd,node,node->fil);
+	printdot(fd,node,0);
+	relieFils(fd,node,node->fil,0);
 	fprintf(fd,"}");
 	fclose(fd);
 
@@ -238,13 +262,14 @@ FILE *fd =  fopen("testDOT.dot","w");
 }
 
 
-void printdot(FILE *fd , tree * node ){
+void printdot(FILE *fd , tree * node, int n ){
 	 while (node != NULL){
-        ecritNode(fd,node);
-
+        ecritNode(fd,node,n);
+		n++;
         if (node->fil != NULL)
         {
-           printdot(fd,node->fil);
+           printdot(fd,node->fil,n);
+		   n++;
         }
         node = node->suivants;
     }
@@ -252,16 +277,40 @@ void printdot(FILE *fd , tree * node ){
 }
 
 
-
-char* node_name(tree * t){
-	char *name =  t->nom;
-	char* ret = "";
+char* node_name(char *name){
+	char ret[100];
 	if(0 == strcmp("=",name)){
 		sprintf(ret,"node_eq");
 	}
 	else if(0 == strcmp("-",name)){
 		sprintf(ret,"node_minus");
 	}
+	else if(0 == strcmp("+",name)){
+		sprintf(ret,"node_plus");
+	}
+	else if(0 == strcmp("*",name)){
+		sprintf(ret,"node_mul");
+	}
+	else if(0 == strcmp("/",name)){
+		sprintf(ret,"node_div");
+	}
+	else if( 0 == strcmp(">",name)){
+		sprintf(ret,"node_G");
+	}
+	else if (0 == strcmp("<",name)){
+		sprintf(ret,"node_L");
+	}
+	else if( 0 == strcmp(">=",name)){
+		sprintf(ret,"node_GE");
+	}
+	else if (0 == strcmp("<=",name)){
+		sprintf(ret,"node_LE");
+	}
+	else {
+		sprintf(ret,"node_%s",name);
+	}
+
+
 	return ret;
 
 }

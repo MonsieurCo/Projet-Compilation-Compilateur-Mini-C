@@ -36,8 +36,9 @@ void table_reset();
 void visualise(tree *t, int n, int m);
 tree *reverse(tree *t);
 void writeDot(tree *t);
-void printdot(FILE *fd , tree * node );
-void relieFils(FILE *fichier, tree *pere,tree*fils);
-void ecritNode(FILE *fichier,tree *t);
+void printdot(FILE *fd , tree * node, int n );
+void relieFils(FILE *fichier, tree *pere,tree*fils,int n);
+void ecritNode(FILE *fichier,tree *t,int n);
+char* node_name(char * name);
 
 #endif

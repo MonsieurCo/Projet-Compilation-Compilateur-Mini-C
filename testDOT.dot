@@ -1,36 +1,57 @@
 //fichier DOT représentant le graph du fichier c analysé
 digraph test {
 
-node_coucou [label="coucou"];
-node_pomme [label="pomme"];
-node_eq [label="="];
-node_x [label="x"];
-node_900 [label="900"];
-node_if [label="if"];
-node_< [label="<"];
-node_x [label="x"];
-node_10 [label="10"];
-node_bloc [label="bloc"];
-node_decla [label="decla"];
-node_if [label="if"];
-node_> [label=">"];
-node_z [label="z"];
-node_10 [label="10"];
-node_bloc [label="bloc"];
-node_decla [label="decla"];
-node_eq [label="="];
-node_y [label="y"];
-node_500 [label="500"];
-node_eq [label="="];
-node_a [label="a"];
-node_63 [label="63"];
-node_return [label="return"];
-node_a [label="a"];
-node_else [label="else"];
-node_bloc [label="bloc"];
-node_decla [label="decla"];
-node_return [label="return"];
-node_minus [label="-"];
-node_1 [label="1"];
+node_0 [label="coucou"];
+node_2 [label="pomme"];
+node_6 [label="for"];
+node_7 [label="="];
+node_8 [label="i"];
+node_9 [label="0"];
+node_9 [label="<"];
+node_10 [label="i"];
+node_11 [label="10"];
+node_11 [label="="];
+node_12 [label="i"];
+node_13 [label="+"];
+node_14 [label="i"];
+node_15 [label="1"];
+node_13 [label="bloc"];
+node_14 [label="decla"];
+node_16 [label="if"];
+node_17 [label="="];
+node_18 [label="i"];
+node_19 [label="5"];
+node_19 [label="break"];
+node_8 [label="printd"];
+node_9 [label="i"];
+node_10 [label="return"];
+node_11 [label="+"];
+node_12 [label="i"];
+node_13 [label="3"];
 node_coucou -> node_pomme
+node_pomme -> node_for
+node_eq -> node_for
+node_= -> node_i
+node_= -> node_0
+node_for -> node_<
+node_< -> node_i
+node_< -> node_10
+node_eq -> node_for
+node_= -> node_i
+node_= -> node_+
+node_+ -> node_i
+node_+ -> node_1
+node_for -> node_bloc
+node_bloc -> node_decla
+node_bloc -> node_if
+node_eq -> node_if
+node_= -> node_i
+node_= -> node_5
+node_if -> node_break
+node_pomme -> node_printd
+node_printd -> node_i
+node_pomme -> node_return
+node_return -> node_+
+node_+ -> node_i
+node_+ -> node_3
 }
