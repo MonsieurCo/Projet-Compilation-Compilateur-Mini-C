@@ -2,7 +2,7 @@
 #define _TABLE_H
 #define TAILLE 103 /* nombre premier de préférence */
 
-//typedef enum {INT, VOID} type_t;
+typedef enum {FONCTION, APPEL,NUL} type_t;
 //typedef enum {AFFECTATION,EXPRESSION,FOR, WHILE,PRINT} typeNode;
 
 typedef struct _symbole { 
@@ -16,7 +16,7 @@ typedef struct _tree {
     //struct _bloc *bloc; 
     char *nom; 
     char *node_name;
-    //type_t typeNode;
+    type_t typeNode;
     struct _tree *fil;
     struct _tree *suivants;
 } tree;
@@ -37,9 +37,8 @@ void table_reset();
 void visualise(tree *t, int n, int m);
 tree *reverse(tree *t);
 void writeDot(tree *t);
-void printdot(FILE *fd , tree * node, int n );
+int printdot(FILE *fd , tree * node, int n);
 void relieFils(FILE *fichier, tree *pere,tree*fils);
-void ecritNode(FILE *fichier,tree *t,int n);
-char* node_name(char * name);
-
+void ecritNode(FILE *fichier,tree *t, int n);
+int sizeFils(tree * t );
 #endif

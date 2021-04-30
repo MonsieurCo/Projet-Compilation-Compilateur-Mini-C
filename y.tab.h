@@ -125,7 +125,7 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 19 "miniC.y"
+#line 18 "miniC.y"
 
 	int val;
 	char* id;

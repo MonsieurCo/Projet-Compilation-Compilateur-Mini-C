@@ -3,26 +3,7 @@
 #include "y.tab.h"
 
 
-//typedef struct _symbole { 
- //   char *nom;
- //   double valeur;
- //   type_t type;
- //   struct _symbole *suivant;
-//} symbole;
 
-//typedef struct _tree {
- //   struct _bloc *bloc; 
- //   char *nom; 
- //   type_t typeNode;
- //   struct _tree *fil;
- //   struct _tree *suivants;
-//} tree;
-
-//typedef struct _bloc{
- ///   struct _tree *pere;
- ///   struct _symbol *table;
-
-//} bloc;
 
 
 symbole *table[TAILLE];
@@ -62,48 +43,20 @@ symbole * inserer( char *nom ) {
 	s->nom = strdup(nom); s->suivant = NULL; return s;
 }
 
-//tree * insererTree(struct tree *node ){
-//	int h = hash(node->nom);
-//	nodes[h] = node;
-//	tree *precedent;
-//	return node;
-//}
+
 
 tree *initialiseTree(char* name, tree *fil){
 	struct _tree *t = (tree*)malloc(sizeof(tree));
-	t->nom = name;//t->nom = name;
-	//t->bloc = NULL;
-	t->fil = fil;//(tree*)malloc(sizeof(tree));
-	t->suivants = NULL;//(tree*)malloc(sizeof(tree));
+	t->nom = name;
+	t->fil = fil;
+	t->suivants = NULL;
 	t->node_name = NULL;
-	//t->typeNode = NULL;
+	t->typeNode = NUL;
 
 	return t;
 
 }
 
-// void visualise(tree *t,int n, int m){
-// 	//for(int i =0 ; i < n ;i++){
-// 	//	printf(" ");
-// 	//}
-	
-// 	printf("\n");
-	
-// 	tree *suivants = t->suivants;
-// 	while(suivants != NULL){
-// 		printf("\t");
-// 		visualise(suivants,n,m+1);
-// 		suivants = suivants->suivants;
-// 	}
-// 	if(t->fil != NULL){
-// 		visualise(t->fil,n+1,m);
-// 	}
-
-	
-// 	printf("|%d %d: ",n,m);
-// 	printf(t->nom);
-
-// }
 
 void printTabs(int count)
 {
@@ -119,22 +72,9 @@ void printTreeRecursive(tree *node, int level){
     {
         printTabs(level);
         printf("Node: %s\n", node->nom);
-		/*if(0 == strcmp("=",node->nom)){
-			fprintf(fichier,"node_eq [label=\"%s\"];\n",node->nom);
-			
-		}
-		else if(0 != strcmp("...",node->nom)){
-			fprintf(fichier,"node_%s [label=\"%s\"];\n",node->nom,node->nom);
-		}*/
 
         if (node->fil != NULL)
         {	
-			/*if(0 == strcmp("=",node->fil->nom)){
-				fprintf(fichier,"node_eq -> node_%s\n",node->fil->nom);
-			}
-			else if(0 != strcmp("...",node->fil->nom)){
-				fprintf(fichier,"node_%s -> node_%s\n",node->nom,node->fil->nom);
-			}*/
             printTabs(level);
             printf("Children:\n");
             printTreeRecursive(node->fil, level + 1);
@@ -144,31 +84,11 @@ void printTreeRecursive(tree *node, int level){
     }
 }
 
-void visualise(tree *node,int x,int y)
-{
-	/*	FILE *fichier =  fopen("testDOT.dot","w");
-	fprintf(fichier,"//fichier DOT représentant le graph du fichier c analysé\n");
-	fprintf(fichier,"digraph test {\n\n");*/
-	printTreeRecursive(node, 0);	
-	//fprintf(fichier,"}");
-
-	
+void visualise(tree *node,int x,int y){
+	printTreeRecursive(node, 0);		
 }
 
 
-// tree *reverse2(tree *t){
-// 	visualise(t,0,0);
-// 	tree *current = t;
-// 	tree *prev , *next = NULL;
-// 	while(current != NULL){
-// 		next = current->suivants;
-// 		current->suivants = prev;
-// 		prev = current;
-// 		current = next;
-// 	}
-// 	t = prev;
-// 	return prev;
-// }
 
 
 tree *reverse(tree *t)
@@ -188,55 +108,55 @@ tree *reverse(tree *t)
 
 
 
-void visualiseTree2(tree *t){
-	printf(t->nom);
-	printf("\n");
-	tree *suivant = t->suivants;
-	while(suivant != NULL){
-		visualiseTree2(suivant);
-		suivant = suivant->suivants;
-	}
-	printf("\n");
-	if(t->fil != NULL){
-		visualiseTree2(t->fil);
-	}
-	return;
-	
-}
+
 
 //une fonction permetant de definir un node dans un fichier .dot
-void ecritNode(FILE *fichier,tree *t,int n){
-	char name[60];
+void ecritNode(FILE *fichier,tree *t, int n){
+	char * name;
+	name = (char * ) malloc(50 * sizeof(char));
 	sprintf(name,"node_%d",n);
-	printf(t->node_name);
 	t->node_name = name;
-	if(0 != strcmp("...",t->nom)){
-		
-	fprintf(fichier,"%s [label=\"%s\"];\n",t->node_name,t->nom);
+	if(0 == strcmp("RETURN",t->nom)){
+		fprintf(fichier,"%s [label=\"%s\"shape=trapezium color=blue];\n",t->node_name,t->nom);
+	}else if(0 == strcmp("IF",t->nom)){
+		fprintf(fichier,"%s [label=\"%s\"shape=diamond];\n",t->node_name,t->nom);
+	}else if(0 == strcmp("BREAK",t->nom)){
+		fprintf(fichier,"%s [label=\"%s\"shape=box];\n",t->node_name,t->nom);
+	}else if(APPEL==t->typeNode){
+		fprintf(fichier,"%s [label=\"%s\"shape=septagon];\n",t->node_name,t->nom);
+	}else if(FONCTION == t->typeNode){
+		fprintf(fichier,"%s [label=\"%s\"shape=invtrapezium color=blue];\n",t->node_name,t->nom);
 	}
+	else if(0 != strcmp("...",t->nom)){
+		
+		fprintf(fichier,"%s [label=\"%s\"];\n",t->node_name,t->nom);
+		}
 	
+	
+	printf("%s [label=\"%s\"];\n",t->node_name,t->nom);
+	nodes[n]=t;
+
 
 }
 
 void relieFils(FILE *fichier, tree *pere,tree* fils){
-	while(fils != NULL){
+
+	if(fils != NULL){
 		if (0 != strcmp("...",fils->nom)){
-			fprintf(fichier,"%s -> %s\n",pere->node_name,fils->node_name);
+		
+		printf("%s %s\n",fils->nom,fils->node_name);
+		fprintf(fichier,"%s -> %s;\n",pere->node_name,fils->node_name);
 		}
-	
-		if(fils != NULL &&fils->fil != NULL ){
-			relieFils(fichier,fils,fils->fil);
-		}
-		fils = fils->suivants;
 	}
 	
-	
-
+	if(fils != NULL && fils->suivants != NULL ){
+		relieFils(fichier,pere,fils->suivants);
+	}
 
 }
 
 
-
+//focntion ecrivant le dot 
 void writeDot(tree *t){
 
 FILE *fd =  fopen("testDOT.dot","w");
@@ -245,7 +165,12 @@ FILE *fd =  fopen("testDOT.dot","w");
 	fprintf(fd,"digraph test {\n\n");
 	tree *node = t;
 	printdot(fd,node,0);
-	relieFils(fd,node,node->fil);
+
+	for (int i=0;i<TAILLE;i++){
+		if(nodes[i]!=NULL){
+			relieFils(fd,nodes[i],nodes[i]->fil);
+		}
+	}
 	fprintf(fd,"}");
 	fclose(fd);
 
@@ -254,55 +179,34 @@ FILE *fd =  fopen("testDOT.dot","w");
 }
 
 
-void printdot(FILE *fd , tree * node, int n ){
-	 while (node != NULL){
-        ecritNode(fd,node,n);
-		n++;
+int printdot(FILE *fd , tree * node,int n){
+	
+	if (node == NULL){
+		return n;
+	}
+        ecritNode(fd,node,n); 
         if (node->fil != NULL)
         {
-           printdot(fd,node->fil,n);
-		   n++;
+			
+           n=printdot(fd,node->fil,n+1);
+		   
         }
-        node = node->suivants;
-    }
 
+        printdot(fd,node->suivants,n+1);
+		
+   
 }
 
 
-char* node_name(char *name){
-	char ret[100];
-	if(0 == strcmp("=",name)){
-		sprintf(ret,"node_eq");
-	}
-	else if(0 == strcmp("-",name)){
-		sprintf(ret,"node_minus");
-	}
-	else if(0 == strcmp("+",name)){
-		sprintf(ret,"node_plus");
-	}
-	else if(0 == strcmp("*",name)){
-		sprintf(ret,"node_mul");
-	}
-	else if(0 == strcmp("/",name)){
-		sprintf(ret,"node_div");
-	}
-	else if( 0 == strcmp(">",name)){
-		sprintf(ret,"node_G");
-	}
-	else if (0 == strcmp("<",name)){
-		sprintf(ret,"node_L");
-	}
-	else if( 0 == strcmp(">=",name)){
-		sprintf(ret,"node_GE");
-	}
-	else if (0 == strcmp("<=",name)){
-		sprintf(ret,"node_LE");
-	}
-	else {
-		sprintf(ret,"node_%s",name);
-	}
 
 
+
+
+int sizeFils(tree * t ){
+	int ret = 0;
+	while(t != NULL){
+		ret ++ ;
+		t = t->suivants;
+	}
 	return ret;
-
 }
