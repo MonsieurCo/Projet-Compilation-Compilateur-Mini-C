@@ -1514,7 +1514,7 @@ yyreduce:
     {
   case 2:
 #line 56 "miniC.y"
-                                                    {(yyval.tree)=initialiseTree("coucou",(yyvsp[-1].tree)); (yyval.tree)->fil->suivants=reverse((yyvsp[0].tree)); visualise((yyvsp[0].tree),0,0); writeDot((yyvsp[0].tree));}
+                                                    {(yyval.tree)=initialiseTree("coucou",(yyvsp[-1].tree)); (yyval.tree)->fil->suivants=(yyvsp[0].tree); visualise((yyvsp[0].tree),0,0); writeDot((yyvsp[0].tree));}
 #line 1519 "y.tab.c"
     break;
 
@@ -1532,7 +1532,7 @@ yyreduce:
 
   case 5:
 #line 63 "miniC.y"
-                                              {(yyval.tree) = (yyvsp[0].tree); (yyval.tree)->suivants = (yyvsp[-1].tree);}
+                                              {(yyval.tree) = (yyvsp[-1].tree); (yyval.tree)->suivants = (yyvsp[0].tree);}
 #line 1537 "y.tab.c"
     break;
 

@@ -53,14 +53,14 @@ void table_reset();
 
 %%
 programme	:	
-		liste_declarations liste_fonctions  {$$=initialiseTree("coucou",$1); $$->fil->suivants=reverse($2); visualise($2,0,0); writeDot($2);}
+		liste_declarations liste_fonctions  {$$=initialiseTree("coucou",$1); $$->fil->suivants=$2; visualise($2,0,0); writeDot($2);}
 ;
 liste_declarations	:	
 		liste_declarations declaration  {$$ = $2; $$->suivants = $1;}
 	|				{$$ = initialiseTree("...",NULL);}
 ;
 liste_fonctions	:	
-		liste_fonctions fonction      {$$ = $2; $$->suivants = $1;} 
+		liste_fonctions fonction      {$$ = $1; $$->suivants = $2;} 
 |               fonction			{$$=$1;}
 ;
 declaration	:	
