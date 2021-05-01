@@ -8,7 +8,8 @@ all:
 	$(YC) -d miniC.y
 	$(FL) ANSI-C.l
 	$(CC) -g lex.yy.c y.tab.c table.c -ll  -o $(TARGET) -w 
-	./testeur < Tests/functions.c
+	./testeur < Tests/switch.c
+	dot -Tpdf testDOT.dot -o test.pdf
 
 clean:
 	rm $(TARGET)

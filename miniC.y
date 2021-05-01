@@ -132,7 +132,7 @@ selection	:
 		IF '(' condition ')' instruction %prec THEN {$$ = initialiseTree("IF",$3);$$->fil->suivants = $5;}
 	|	IF '(' condition ')' instruction ELSE instruction {$$ = initialiseTree("IF",$3);$$->fil->suivants = $5;$$->fil->suivants->suivants = initialiseTree("ELSE",$7);} 
 	|	SWITCH '(' expression ')' instruction {$$ = initialiseTree("SWITCH",$3); $$->fil->suivants = $5;}
-	|	CASE CONSTANTE ':' instruction {$$ = initialiseTree("CASE",initialiseTree($2,NULL)); $$->fil->suivants = $4;}
+	|	CASE CONSTANTE ':' liste_instructions {$$ = initialiseTree("CASE",initialiseTree($2,NULL)); $$->fil->suivants = $4;} //j'ai chnagé instruction pour liste d'instruction je suis pas sur de ça 
 	|	DEFAULT ':' instruction {$$ = initialiseTree("DEFAULT",$3);}
 ;
 saut	:	
