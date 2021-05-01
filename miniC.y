@@ -39,8 +39,8 @@ void table_reset();
 %start programme
  
 %type <tree> saut selection instruction variable expression condition affectation bloc liste_instructions liste_declarations liste_expressions expr_liste_creator appel
-%type<tree> iteration
-%type <id> binary_rel binary_comp binary_op type parm 
+%type<tree> iteration parm 
+%type <id> binary_rel binary_comp binary_op type 
 %type <tree> liste_declarateurs 
 %type <tree> declarateur 
 %type <tree> declaration
@@ -53,14 +53,14 @@ void table_reset();
 
 %%
 programme	:	
-		liste_declarations liste_fonctions  {$$=initialiseTree("coucou",$1); $$->fil->suivants=$2; visualise($2,0,0); writeDot($2);}
+		liste_declarations liste_fonctions  {$$=initialiseTree("PROGRAM",reverse($2)); visualise($$,0,0); writeDot($$);}
 ;
 liste_declarations	:	
-		liste_declarations declaration  {$$ = $2; $$->suivants = $1;}
+		liste_declarations declaration  {$$ = $1; $$->suivants = reverse($2);}
 	|				{$$ = initialiseTree("...",NULL);}
 ;
 liste_fonctions	:	
-		liste_fonctions fonction      {$$ = $1; $$->suivants = $2;} 
+		liste_fonctions fonction      {$$ = $2; $$->suivants = $1;} 
 |               fonction			{$$=$1;}
 ;
 declaration	:	
@@ -87,7 +87,8 @@ fonction	:
 																		$$->typeNode=FONCTION;}
 	|	EXTERN type IDENTIFICATEUR '(' liste_parms ')' ';' {$$=initialiseTree("extern",initialiseTree($2,NULL));
 															$$->fil->suivants=initialiseTree($3,NULL);
-															$$->fil->suivants->suivants=$5;$$->typeNode=FONCTION;}
+															$$->fil->suivants->typeNode = APPEL;
+															$$->fil->suivants->fil=$5;$$->typeNode=FONCTION;}
 ;
 type	:	
 		VOID {$$="void";}
@@ -96,7 +97,7 @@ type	:
 
 params_liste_creator :    //modification de la grammaires en raison des problèmes mis en lumière par le forum
 	params_liste_creator ',' parm {$$ = $3; $$->suivants = $1;}
-	| parm	{$$ = initialiseTree($1,NULL);}
+	| parm	{$$ =$1;}
 ;
 
 liste_parms	:	
@@ -148,7 +149,7 @@ bloc	:
 		}else{		$$ = initialiseTree("BLOC",reverse($3));}}
 ;
 appel	:	//forme a faire
-	IDENTIFICATEUR '(' liste_expressions ')' ';' {$$=initialiseTree($1,NULL);$$->fil=reverse($3);$$->typeNode=APPEL;}
+	IDENTIFICATEUR '(' liste_expressions ')' ';' {$$=initialiseTree($1,reverse($3));$$->typeNode=APPEL;}
 ;
 variable	:	
 		IDENTIFICATEUR  {$$ = initialiseTree($1,NULL);}  
@@ -171,8 +172,8 @@ expression	:
 	|	expression BOR expression	{$$ = initialiseTree("|=",$1); $$->fil->suivants = $3;} 			
 	|	MOINS expression %prec MUL	{$$ = initialiseTree("-",$2);}                                   
 	|	CONSTANTE       {$$ = initialiseTree($1,NULL);}                                                 							
-	|	variable	 {$$ =  $1;}                                  
-	|	IDENTIFICATEUR '(' liste_expressions ')' {$$ = initialiseTree(NULL,NULL);}                                  
+	|	variable	 {$$ =  $1;}                                 
+	|	IDENTIFICATEUR '(' liste_expressions ')' {$$ = initialiseTree($1,reverse($3)); $$->typeNode=APPEL;}                                  
 ;
 //cf correction de Fissore Davide merci à lui 
 liste_expressions :      // pour accepter epsilon ou une liste d'expressions
