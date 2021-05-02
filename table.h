@@ -1,9 +1,9 @@
 #ifndef _TABLE_H
 #define _TABLE_H
 #define TAILLE 103 /* nombre premier de préférence */
-#define TAILLEDOT 1500 //taille du tableau des noeuds necessaire pour la contruction du .dot 
 typedef enum {FONCTION, APPEL,NUL} type_t;
 //typedef enum {AFFECTATION,EXPRESSION,FOR, WHILE,PRINT} typeNode;
+
 
 typedef struct _symbole { 
     char *nom;
@@ -41,4 +41,6 @@ int printdot(FILE *fd , tree * node, int n);
 void relieFils(FILE *fichier, tree *pere,tree*fils);
 void ecritNode(FILE *fichier,tree *t, int n);
 int sizeFils(tree * t );
+void insertSuivant(tree * t1, tree * t2);
+void relieRecusif(FILE * fd , tree * node );
 #endif

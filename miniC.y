@@ -39,7 +39,7 @@ void table_reset();
 %start programme
  
 %type <tree> saut selection instruction variable expression condition affectation bloc liste_instructions liste_declarations liste_expressions expr_liste_creator appel
-%type<tree> iteration parm ecritCase
+%type<tree> iteration parm 
 %type <id> binary_rel binary_comp binary_op type 
 %type <tree> liste_declarateurs 
 %type <tree> declarateur 
@@ -53,42 +53,42 @@ void table_reset();
 
 %%
 programme	:	
-		liste_declarations liste_fonctions  {$$=initialiseTree("PROGRAM",reverse($2)); visualise($$,0,0); writeDot($2);}
+		liste_declarations liste_fonctions  {$$=initialiseTree("PROGRAM",$2); visualise($2,0,0); writeDot($2);}
 ;
 liste_declarations	:	
-		liste_declarations declaration  {$$ = $1; $$->suivants = reverse($2);}
+		liste_declarations declaration  {$$ = $1; insertSuivant($1,$2);}
 	|				{$$ = initialiseTree("...",NULL);}
 ;
 liste_fonctions	:	
-		liste_fonctions fonction      {$$ = $2; $$->suivants = $1;} 
+		liste_fonctions fonction      {$$ = $1; insertSuivant($1,$2);} 
 |               fonction			{$$=$1;}
 ;
 declaration	:	
-		type liste_declarateurs ';' {$$=initialiseTree($1,NULL); $$->fil=reverse($2);}
+		type liste_declarateurs ';' {$$=initialiseTree($1,NULL); $$->fil=$2;}
 ;
 liste_declarateurs	:	
-		liste_declarateurs ',' declarateur {$$ = $3; $$->suivants = $1;}
+		liste_declarateurs ',' declarateur {$$ = $1; insertSuivant($1,$3);}
 	|	declarateur  {$$ = $1;}
 ;
 declarateur	:	
 		IDENTIFICATEUR   { $$ = initialiseTree($1,NULL);}
-	|	tableau_declarateur  { $$=initialiseTree("tab",reverse($1));} 
+	|	tableau_declarateur  { $$=initialiseTree("tab",$1);} 
 ;
 tableau_declarateur:
 	IDENTIFICATEUR  {$$ = initialiseTree($1,NULL);}  
-	|tableau_declarateur '[' CONSTANTE ']' {$$ = initialiseTree($3,NULL); $$->suivants = $1;}
+	|tableau_declarateur '[' CONSTANTE ']' {$$ = $1; insertSuivant($1,initialiseTree($3,NULL));}
 ;
 
 fonction	:	
 		type IDENTIFICATEUR '(' liste_parms ')' bloc {	char * name;
 																		name = (char * ) malloc(15 * sizeof(char));
 																		sprintf(name,"%s , %s",$2,$1);
-																		$$=initialiseTree(name,$4);$$->fil->suivants=reverse($6);
+																		$$=initialiseTree(name,$4);insertSuivant($$->fil,$6);
 																		$$->typeNode=FONCTION;}
 	|	EXTERN type IDENTIFICATEUR '(' liste_parms ')' ';' {$$=initialiseTree("extern",initialiseTree($2,NULL));
 															$$->fil->suivants=initialiseTree($3,NULL);
-															$$->fil->suivants->typeNode = APPEL;
-															$$->fil->suivants->fil=$5;$$->typeNode=FONCTION;}
+															$$->fil->suivants->fil=$5;
+															$$->typeNode=FONCTION;}
 ;
 type	:	
 		VOID {$$="void";}
@@ -96,12 +96,12 @@ type	:
 ;
 
 params_liste_creator :    //modification de la grammaires en raison des problèmes mis en lumière par le forum
-	params_liste_creator ',' parm {$$ = $3; $$->suivants = $1;}
+	params_liste_creator ',' parm {$$ = $1; insertSuivant($$,$3);}
 	| parm	{$$ =$1;}
 ;
 
 liste_parms	:	
-		params_liste_creator {$$=reverse($1);}
+		params_liste_creator {$$=$1;}
 	|				{$$ = initialiseTree("...",NULL);}
 ;
 
@@ -110,7 +110,7 @@ parm	:
 ;
 
 liste_instructions :	
-		liste_instructions instruction {$$ = $2; $$->suivants = $1;}
+		liste_instructions instruction {$$ = $1; insertSuivant($1,$2);}
 	|				{$$ = initialiseTree("...",NULL);}
 ;
 instruction	:	
@@ -131,18 +131,10 @@ iteration	:
 selection	:	
 		IF '(' condition ')' instruction %prec THEN {$$ = initialiseTree("IF",$3);$$->fil->suivants = $5;}
 	|	IF '(' condition ')' instruction ELSE instruction {$$ = initialiseTree("IF",$3);$$->fil->suivants = $5;$$->fil->suivants->suivants = initialiseTree("ELSE",$7);} 
-	|	SWITCH '(' expression ')' instruction {$$ = initialiseTree("SWITCH",$3); $$->fil->suivants = $5;}
-	|	CASE CONSTANTE ':' liste_instructions selection {printf($2);$$ = initialiseTree("CASE",initialiseTree($2,NULL)); $$->fil->suivants = reverse($4); $5->suivants=$$;}
+	|	SWITCH '(' expression ')' instruction {$$ = initialiseTree("SWITCH",$3); $$->fil->suivants = $5->fil;}
+	|	CASE CONSTANTE ':' liste_instructions selection {$$ = initialiseTree("CASE",initialiseTree($2,NULL)); $$->fil->suivants = $4; $$->suivants=$5;}
 	|	DEFAULT ':' instruction {$$ = initialiseTree("DEFAULT",$3);}
 ;
-ecritCase : 	
-		ecritCase instruction {$$ = $2; $$->suivants = $1;}
-	|	selection			{$$ = $1;}
-;
-
-
-
-
 saut	:	
 		BREAK ';' {$$=initialiseTree("BREAK",NULL);}
 	|	RETURN ';' {$$ = initialiseTree("return",NULL);}
@@ -152,19 +144,19 @@ affectation	:
 		variable '=' expression  {$$ = initialiseTree(":=",$1);$$->fil->suivants = $3;} 
 ;
 bloc	:	
-		'{' liste_declarations liste_instructions '}' {if (sizeFils($3) <= 2){ $$ = reverse($3);
-													}else{		$$ = initialiseTree("BLOC",reverse($3));}}
+		'{' liste_declarations liste_instructions '}' {if (sizeFils($3) <= 2){ $$ = $3;
+													}else{		$$ = initialiseTree("BLOC",$3);}}
 ;
 appel	:	//forme a faire
-	IDENTIFICATEUR '(' liste_expressions ')' ';' {$$=initialiseTree($1,reverse($3));$$->typeNode=APPEL;}
+	IDENTIFICATEUR '(' liste_expressions ')' ';' {$$=initialiseTree($1,$3);$$->typeNode=APPEL;}
 ;
 variable	:	
 		IDENTIFICATEUR  {$$ = initialiseTree($1,NULL);}  
-	|	tableau_variable { $$=initialiseTree("TAB",reverse($1));}
+	|	tableau_variable { $$=initialiseTree("TAB",$1);}
 ;
 tableau_variable	:
 	IDENTIFICATEUR  {$$ = initialiseTree($1,NULL);}  
-	|tableau_variable '[' expression ']' {$$ = $3; $$->suivants = $1;}
+	|tableau_variable '[' expression ']' {$$ = $1; insertSuivant($$,$3);}
 ;
 expression	:	
 		'(' expression ')'	{$$ = $2;}                       
@@ -180,7 +172,7 @@ expression	:
 	|	MOINS expression %prec MUL	{$$ = initialiseTree("-",$2);}                                   
 	|	CONSTANTE       {$$ = initialiseTree($1,NULL);}                                                 							
 	|	variable	 {$$ =  $1;}                                 
-	|	IDENTIFICATEUR '(' liste_expressions ')' {$$ = initialiseTree($1,reverse($3)); $$->typeNode=APPEL;}                                  
+	|	IDENTIFICATEUR '(' liste_expressions ')' {$$ = initialiseTree($1,$3); $$->typeNode=APPEL;}                                  
 ;
 //cf correction de Fissore Davide merci à lui 
 liste_expressions :      // pour accepter epsilon ou une liste d'expressions
@@ -188,7 +180,7 @@ liste_expressions :      // pour accepter epsilon ou une liste d'expressions
     | 			{$$ = initialiseTree("...",NULL);}
 ;
 expr_liste_creator :                         // création de la liste d'expressions valide
-    expr_liste_creator ',' expression {$$ = $3; $$->suivants = $1;} // liste à n éléments
+    expr_liste_creator ',' expression {$$ = $1 ;insertSuivant($$,$3);} // liste à n éléments
     | expression                   {$$=$1;}           // liste à un seul élément
 ;
 condition	:	

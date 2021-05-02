@@ -5,9 +5,7 @@
 
 
 
-
 symbole *table[TAILLE];
-tree *nodes[TAILLEDOT];
 
 int hash( char *nom ) { 
 	int i, r;
@@ -24,11 +22,13 @@ void table_reset() {
 	}
 }
 
-symbole * inserer( char *nom ) {
+symbole * inserer(char *nom ) {
   int h;
 	symbole *s;
-	symbole *precedent; h = hash(nom);
-	s = table[h]; precedent = NULL; 
+	symbole *precedent; 
+	h = hash(nom);
+	s = table[h]; 
+	precedent = NULL; 
 	while ( s != NULL ) {
 		if ( strcmp( s->nom, nom ) == 0 ) return s;
 			precedent = s;
@@ -132,8 +132,14 @@ void ecritNode(FILE *fichier,tree *t, int n){
 	
 	
 	printf("%s [label=\"%s\"];\n",t->node_name,t->nom);
-	nodes[n]=t;
 
+	/*if(n >= taille){
+	
+		taille = taille * 2;
+		printf("laaaaaaaaaaaaaaaaaaaaa %d\n",taille);
+		nodes = realloc(nodes, taille * sizeof(tree));//sizeof(tree)*tail);
+	}
+	nodes[n]=t;*/
 
 }
 
@@ -162,19 +168,31 @@ FILE *fd =  fopen("testDOT.dot","w");
 	fprintf(fd,"//fichier DOT représentant le graph du fichier c analysé\n");
 	fprintf(fd,"digraph test {\n\n");
 	tree *node = t;
-	printdot(fd,node,0);
+	
 
-	for (int i=0;i<TAILLEDOT;i++){
-		if(nodes[i]!=NULL){
-			relieFils(fd,nodes[i],nodes[i]->fil);
-		}
-	}
+	printdot(fd,node,0);
+	relieRecusif(fd,node);
 	fprintf(fd,"}");
 	fclose(fd);
+}
 
+void relieRecusif(FILE * fd , tree * node ){
+if (node == NULL){
+		return ;
+	}
+       relieFils(fd,node,node->fil); 
+        if (node->fil != NULL)
+        {
+			
+           relieRecusif(fd,node->fil);
+		   
+        }
 
+        relieRecusif(fd,node->suivants);
 
 }
+
+
 
 
 int printdot(FILE *fd , tree * node,int n){
@@ -207,4 +225,15 @@ int sizeFils(tree * t ){
 		t = t->suivants;
 	}
 	return ret;
+}
+
+void insertSuivant(tree * t1, tree * t2){
+	tree * f1 = t1->suivants;
+	if(f1 == NULL){
+		t1->suivants = t2;
+	}
+	else {
+		insertSuivant(t1->suivants, t2);
+	}
+	return;
 }

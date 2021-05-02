@@ -8,7 +8,7 @@ all:
 	$(YC) -d miniC.y
 	$(FL) ANSI-C.l
 	$(CC) -g lex.yy.c y.tab.c table.c -lfl  -o $(TARGET) -w 
-	./testeur < Tests/switch.c
+	./testeur < Tests/cond.c
 	dot -Tpdf testDOT.dot -o test.pdf
 
 
