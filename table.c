@@ -7,7 +7,7 @@
 
 
 symbole *table[TAILLE];
-tree *nodes[1500];
+tree *nodes[TAILLEDOT];
 
 int hash( char *nom ) { 
 	int i, r;
@@ -164,7 +164,7 @@ FILE *fd =  fopen("testDOT.dot","w");
 	tree *node = t;
 	printdot(fd,node,0);
 
-	for (int i=0;i<1500;i++){
+	for (int i=0;i<TAILLEDOT;i++){
 		if(nodes[i]!=NULL){
 			relieFils(fd,nodes[i],nodes[i]->fil);
 		}

@@ -1,7 +1,7 @@
 #ifndef _TABLE_H
 #define _TABLE_H
 #define TAILLE 103 /* nombre premier de préférence */
-
+#define TAILLEDOT 1500 //taille du tableau des noeuds necessaire pour la contruction du .dot 
 typedef enum {FONCTION, APPEL,NUL} type_t;
 //typedef enum {AFFECTATION,EXPRESSION,FOR, WHILE,PRINT} typeNode;
 

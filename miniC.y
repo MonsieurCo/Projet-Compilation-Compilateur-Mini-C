@@ -39,7 +39,7 @@ void table_reset();
 %start programme
  
 %type <tree> saut selection instruction variable expression condition affectation bloc liste_instructions liste_declarations liste_expressions expr_liste_creator appel
-%type<tree> iteration parm 
+%type<tree> iteration parm ecritCase
 %type <id> binary_rel binary_comp binary_op type 
 %type <tree> liste_declarateurs 
 %type <tree> declarateur 
@@ -53,7 +53,7 @@ void table_reset();
 
 %%
 programme	:	
-		liste_declarations liste_fonctions  {$$=initialiseTree("PROGRAM",reverse($2)); visualise($$,0,0); writeDot($$);}
+		liste_declarations liste_fonctions  {$$=initialiseTree("PROGRAM",reverse($2)); visualise($$,0,0); writeDot($2);}
 ;
 liste_declarations	:	
 		liste_declarations declaration  {$$ = $1; $$->suivants = reverse($2);}
@@ -132,9 +132,17 @@ selection	:
 		IF '(' condition ')' instruction %prec THEN {$$ = initialiseTree("IF",$3);$$->fil->suivants = $5;}
 	|	IF '(' condition ')' instruction ELSE instruction {$$ = initialiseTree("IF",$3);$$->fil->suivants = $5;$$->fil->suivants->suivants = initialiseTree("ELSE",$7);} 
 	|	SWITCH '(' expression ')' instruction {$$ = initialiseTree("SWITCH",$3); $$->fil->suivants = $5;}
-	|	CASE CONSTANTE ':' liste_instructions {$$ = initialiseTree("CASE",initialiseTree($2,NULL)); $$->fil->suivants = $4;} //j'ai chnagé instruction pour liste d'instruction je suis pas sur de ça 
+	|	CASE CONSTANTE ':' liste_instructions selection {printf($2);$$ = initialiseTree("CASE",initialiseTree($2,NULL)); $$->fil->suivants = reverse($4); $5->suivants=$$;}
 	|	DEFAULT ':' instruction {$$ = initialiseTree("DEFAULT",$3);}
 ;
+ecritCase : 	
+		ecritCase instruction {$$ = $2; $$->suivants = $1;}
+	|	selection			{$$ = $1;}
+;
+
+
+
+
 saut	:	
 		BREAK ';' {$$=initialiseTree("BREAK",NULL);}
 	|	RETURN ';' {$$ = initialiseTree("return",NULL);}
@@ -145,8 +153,7 @@ affectation	:
 ;
 bloc	:	
 		'{' liste_declarations liste_instructions '}' {if (sizeFils($3) <= 2){ $$ = reverse($3);
-
-		}else{		$$ = initialiseTree("BLOC",reverse($3));}}
+													}else{		$$ = initialiseTree("BLOC",reverse($3));}}
 ;
 appel	:	//forme a faire
 	IDENTIFICATEUR '(' liste_expressions ')' ';' {$$=initialiseTree($1,reverse($3));$$->typeNode=APPEL;}
