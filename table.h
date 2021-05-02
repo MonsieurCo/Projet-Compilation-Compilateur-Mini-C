@@ -7,7 +7,7 @@ typedef enum {FONCTION, APPEL,NUL} type_t;
 
 typedef struct _symbole { 
     char *nom;
-    double valeur;
+    char *valeur;
     //type_t type;
     struct _symbole *suivant;
 } symbole;
@@ -15,6 +15,7 @@ typedef struct _symbole {
 typedef struct _tree {
     //struct _bloc *bloc; 
     char *nom; 
+    struct _symbole *ts;
     char *node_name;
     type_t typeNode;
     struct _tree *fil;

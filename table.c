@@ -7,6 +7,34 @@
 
 symbole *table[TAILLE];
 
+
+
+tree *initialiseTree(char* name, tree *fil){
+	struct _tree *t = (tree*)malloc(sizeof(tree));
+	t->nom = name;
+	t->fil = fil;
+	t->suivants = NULL;
+	t->node_name = NULL;
+	t->typeNode = NUL;
+	t->ts = NULL;
+
+	return t;
+
+}
+
+
+symbole * initialiseTS(char * nom, char* val){
+	struct _symbole *ts = (symbole*)malloc(sizeof(symbole));
+	ts->nom = nom;
+	ts->valeur = val;
+	ts->suivant = NULL;
+
+}
+
+
+
+
+
 int hash( char *nom ) { 
 	int i, r;
 	int taille = strlen(nom);
@@ -44,18 +72,6 @@ symbole * inserer(char *nom ) {
 }
 
 
-
-tree *initialiseTree(char* name, tree *fil){
-	struct _tree *t = (tree*)malloc(sizeof(tree));
-	t->nom = name;
-	t->fil = fil;
-	t->suivants = NULL;
-	t->node_name = NULL;
-	t->typeNode = NUL;
-
-	return t;
-
-}
 
 
 void printTabs(int count)
@@ -132,14 +148,6 @@ void ecritNode(FILE *fichier,tree *t, int n){
 	
 	
 	printf("%s [label=\"%s\"];\n",t->node_name,t->nom);
-
-	/*if(n >= taille){
-	
-		taille = taille * 2;
-		printf("laaaaaaaaaaaaaaaaaaaaa %d\n",taille);
-		nodes = realloc(nodes, taille * sizeof(tree));//sizeof(tree)*tail);
-	}
-	nodes[n]=t;*/
 
 }
 
