@@ -36,6 +36,7 @@ void table_reset();
 %left OP
 %left REL 
 
+
 %start programme
  
 %type <tree> saut selection instruction variable expression condition affectation bloc liste_instructions liste_declarations liste_expressions expr_liste_creator appel
