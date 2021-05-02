@@ -7,7 +7,7 @@
 
 
 symbole *table[TAILLE];
-tree *nodes[TAILLE];
+tree *nodes[1500];
 
 int hash( char *nom ) { 
 	int i, r;
@@ -112,10 +112,8 @@ tree *reverse(tree *t)
 
 //une fonction permetant de definir un node dans un fichier .dot
 void ecritNode(FILE *fichier,tree *t, int n){
-	char * name;
-	name = (char * ) malloc(50 * sizeof(char));
-	sprintf(name,"node_%d",n);
-	t->node_name = name;
+	t->node_name = (char * ) malloc(50 * sizeof(char));
+	sprintf(t->node_name,"node_%d",n);
 	if(0 == strcmp("RETURN",t->nom)){
 		fprintf(fichier,"%s [label=\"%s\"shape=trapezium color=blue];\n",t->node_name,t->nom);
 	}else if(0 == strcmp("IF",t->nom)){
@@ -166,7 +164,7 @@ FILE *fd =  fopen("testDOT.dot","w");
 	tree *node = t;
 	printdot(fd,node,0);
 
-	for (int i=0;i<TAILLE;i++){
+	for (int i=0;i<1500;i++){
 		if(nodes[i]!=NULL){
 			relieFils(fd,nodes[i],nodes[i]->fil);
 		}
