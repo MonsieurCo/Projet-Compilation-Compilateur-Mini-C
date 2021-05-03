@@ -1,4 +1,4 @@
-CC=gcc
+tCC=gcc
 YC=yacc
 FL=flex
 

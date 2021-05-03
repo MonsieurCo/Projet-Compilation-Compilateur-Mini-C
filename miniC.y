@@ -53,11 +53,14 @@ void table_reset();
 
 %%
 programme	:	
-		liste_declarations liste_fonctions  {$$=initialiseTree("PROGRAM",$2); $$->ts = $1; insertSuivantSymb($$->ts,$2->ts); writeDot($$);visualiseSymb($$->ts,0,0); visualise($2,0,0);}
+		liste_declarations liste_fonctions  {$$=initialiseTree("PROGRAM",$2); $$->ts = initialiseTS("programme","");$$->ts->fil=$1; insertSuivantSymb($$->ts->fil,$2->ts); 
+											visualiseSymb($$->ts);
+											pereRecusif($$->ts); checkDef($$,0);
+										}// writeDot($$);	visualiseSymb($$->ts); visualise($2);
 ;
 liste_declarations	:	
 		liste_declarations declaration  {$$=$1; insertSuivantSymb($1,$2);}
-	|				{$$=initialiseTS(" "," ");}
+	|				{$$=initialiseTS("TEEEEST"," ");}
 ;
 liste_fonctions	:	
 		liste_fonctions fonction      {$$ = $1; insertSuivant($1,$2);} 
@@ -134,25 +137,46 @@ instruction	:
 ;
 iteration	:	
 		FOR '(' affectation ';' condition ';' affectation ')' instruction 	{$$=initialiseTree("FOR",$3); $$->fil->suivants=$5;
-																			$$->fil->suivants->suivants=$7;$$->fil->suivants->suivants->suivants=$9; $$->ts=$9->ts;}
-	|	WHILE '(' condition ')' instruction {$$=initialiseTree("WHILE",$3); $$->fil->suivants=$5; $$->ts = $5->ts;}
+																			$$->fil->suivants->suivants=$7;$$->fil->suivants->suivants->suivants=$9; 
+																			$$->ts = $9->ts; 
+																			insertSuivantSymb($$->ts,$3->ts);
+																			insertSuivantSymb($$->ts,$5->ts);
+																			insertSuivantSymb($$->ts,$7->ts);}
+	|	WHILE '(' condition ')' instruction {$$=initialiseTree("WHILE",$3); $$->fil->suivants=$5; 
+											$$->ts->pere = $5->ts;
+											insertSuivantSymb($$->ts,$3->ts);}
 	|   error '\n' {yyerror("reenter last");
                         yyerrok; };
 ;
 selection	:	
-		IF '(' condition ')' instruction %prec THEN {$$ = initialiseTree("IF",$3);$$->fil->suivants = $5;$$->ts=$5->ts;}
-	|	IF '(' condition ')' instruction ELSE instruction {$$ = initialiseTree("IF",$3);$$->fil->suivants = $5;$$->fil->suivants->suivants = initialiseTree("ELSE",$7);$$->ts=$7->ts;} 
-	|	SWITCH '(' expression ')' instruction {$$ = initialiseTree("SWITCH",$3); $$->fil->suivants = $5->fil;$$->ts=$5->ts;}
-	|	CASE CONSTANTE ':' liste_instructions selection {$$ = initialiseTree("CASE",initialiseTree($2,NULL)); $$->fil->suivants = $4; $$->suivants=$5; $$->ts=$4->ts;}
+		IF '(' condition ')' instruction %prec THEN {$$ = initialiseTree("IF",$3);$$->fil->suivants = $5;
+													$$->ts=$5->ts;
+													insertSuivantSymb($$->ts,$3->ts);}
+	|	IF '(' condition ')' instruction ELSE instruction {$$ = initialiseTree("IF",$3);$$->fil->suivants = $5;$$->fil->suivants->suivants = initialiseTree("ELSE",$7);
+															$$->ts=$3->ts;
+															insertSuivantSymb($$->ts,$5->ts);
+															insertSuivantSymb($$->ts,$7->ts);} 
+	|	SWITCH '(' expression ')' instruction {$$ = initialiseTree("SWITCH",$3); $$->fil->suivants = $5->fil;
+												$$->ts=$3->ts;
+												insertSuivantSymb($$->ts,$5->ts);}
+	|	CASE CONSTANTE ':' liste_instructions selection {$$ = initialiseTree("CASE",initialiseTree($2,NULL)); $$->fil->suivants = $4; $$->suivants=$5; 
+														$$->ts=$4->ts;
+														insertSuivantSymb($$->ts,$5->ts);}
 	|	DEFAULT ':' instruction {$$ = initialiseTree("DEFAULT",$3);$$->ts = $3->ts;}
 ;
 saut	:	
 		BREAK ';' {$$=initialiseTree("BREAK",NULL); $$->ts=initialiseTS("...","");}
 	|	RETURN ';' {$$ = initialiseTree("return",NULL); $$->ts=initialiseTS("...","");}
-	|	RETURN expression ';' {$$ = initialiseTree("RETURN",$2); $$->ts=initialiseTS("...","");}
+	|	RETURN expression ';' {$$ = initialiseTree("RETURN",$2); 
+								$$->ts=initialiseTS("...","");
+								$2->ts->pere=$$->ts;}
 ;
 affectation	:	 
-		variable '=' expression  {$$ = initialiseTree(":=",$1);$$->fil->suivants = $3; $$->ts=initialiseTS("...","");} 
+		variable '=' expression  {$$ = initialiseTree(":=",$1);$$->fil->suivants = $3; 
+								$$->ts=initialiseTS("affectation",""); 
+								$$->ts->fil = $1->ts;
+								$$->ts->fil->suivants = $3->ts;
+								$$->typeNode=AFFECTATION;} 
 ;
 bloc	:	
 		'{' liste_declarations liste_instructions '}' {if (sizeFils($3) <= 2){ $$ = $3;
@@ -162,11 +186,14 @@ bloc	:
 													$$->ts->fil = $2;}
 ;
 appel	:	//forme a faire
-	IDENTIFICATEUR '(' liste_expressions ')' ';' {$$=initialiseTree($1,$3);$$->typeNode=APPEL; $$->ts=initialiseTS("...","");}
+	IDENTIFICATEUR '(' liste_expressions ')' ';' {$$=initialiseTree($1,$3);$$->typeNode=APPEL; 
+												$$->ts=initialiseTS("...","");
+												$3->ts->pere=$$->ts;}
 ;
 variable	:	
-		IDENTIFICATEUR  {$$ = initialiseTree($1,NULL);}  
-	|	tableau_variable { $$=initialiseTree("TAB",$1);addType($1,"int");}
+		IDENTIFICATEUR  {$$ = initialiseTree($1,NULL);$$->typeNode=VAR;}  
+	|	tableau_variable { $$=initialiseTree("TAB",$1);addType($1,"int");$$->typeNode=VAR;
+							$$->ts=$1->ts;}
 ;
 tableau_variable	:
 	IDENTIFICATEUR  {$$ = initialiseTree($1,NULL);}  
@@ -175,18 +202,36 @@ tableau_variable	:
 expression	:	
 		'(' expression ')'	{$$ = $2;}                       
 	
-	|	expression PLUS expression	{$$ = initialiseTree("+",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;}
-	|	expression MOINS expression	{$$ = initialiseTree("-",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;}		
-	|	expression DIV expression{$$ = initialiseTree("/",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;}				
-	|	expression MUL expression	{$$ = initialiseTree("*",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;}			
-	|	expression RSHIFT expression	{$$ = initialiseTree(">>",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;}  			
-	|	expression LSHIFT expression	{$$ = initialiseTree("<<",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;}			
-	|	expression BAND expression	{$$ = initialiseTree("&=",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;}			
-	|	expression BOR expression	{$$ = initialiseTree("|=",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;} 			
-	|	MOINS expression %prec MUL	{$$ = initialiseTree("-",$2);$$->typeVar = TYPE_INT;}                                   
+	|	expression PLUS expression	{$$ = initialiseTree("+",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
+									$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;}
+	|	expression MOINS expression	{$$ = initialiseTree("-",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
+									$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;}		
+	|	expression DIV expression{$$ = initialiseTree("/",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
+									$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;}				
+	|	expression MUL expression	{$$ = initialiseTree("*",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
+									$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;}			
+	|	expression RSHIFT expression	{$$ = initialiseTree(">>",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
+										$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;}  			
+	|	expression LSHIFT expression	{$$ = initialiseTree("<<",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
+										$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;}			
+	|	expression BAND expression	{$$ = initialiseTree("&=",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
+									$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;}			
+	|	expression BOR expression	{$$ = initialiseTree("|=",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
+									$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;} 			
+	|	MOINS expression %prec MUL	{$$ = initialiseTree("-",$2);$$->typeVar = TYPE_INT;
+									$$->ts->fil=$2;}                                   
 	|	CONSTANTE       {$$ = initialiseTree($1,NULL);$$->typeVar = TYPE_INT;}                                                 							
 	|	variable	 {$$ =  $1;}                           
-	|	IDENTIFICATEUR '(' liste_expressions ')' {$$ = initialiseTree($1,$3); $$->typeNode=APPEL;}                                  
+	|	IDENTIFICATEUR '(' liste_expressions ')' {$$ = initialiseTree($1,$3); $$->typeNode=APPEL;
+												$$->ts->fil=$3->ts;}                                  
 ;
 //cf correction de Fissore Davide merci à lui 
 liste_expressions :      // pour accepter epsilon ou une liste d'expressions
@@ -199,14 +244,28 @@ expr_liste_creator :                         // création de la liste d'expressi
 ;
 condition	:	
 		NOT '(' condition ')' {$$ = initialiseTree("not",$3);}
-	|	condition binary_rel condition %prec REL {$$ = initialiseTree($2,$1); $$->fil->suivants = $3;}
+	|	condition binary_rel condition %prec REL {$$ = initialiseTree($2,$1); $$->fil->suivants = $3;
+													$$->ts->fil=$1->ts;
+													$$->ts->fil->suivants=$3->ts;}
 	|	'(' condition ')' { $$ = $2;}
-	|	expression LT expression {$$ = initialiseTree("<",$1); $$->fil->suivants = $3;}
-	|	expression GT expression {$$ = initialiseTree(">",$1); $$->fil->suivants = $3;}
-	|	expression GEQ expression {$$ = initialiseTree(">=",$1); $$->fil->suivants = $3;}
-	|	expression LEQ expression {$$ = initialiseTree("<=",$1); $$->fil->suivants = $3;}
-	|	expression EQ expression {$$ = initialiseTree("==",$1); $$->fil->suivants = $3;}
-	|	expression NEQ expression {$$ = initialiseTree("!=",$1); $$->fil->suivants = $3;}
+	|	expression LT expression {$$ = initialiseTree("<",$1); $$->fil->suivants = $3;
+									$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;}
+	|	expression GT expression {$$ = initialiseTree(">",$1); $$->fil->suivants = $3;
+									$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;}
+	|	expression GEQ expression {$$ = initialiseTree(">=",$1); $$->fil->suivants = $3;
+									$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;}
+	|	expression LEQ expression {$$ = initialiseTree("<=",$1); $$->fil->suivants = $3;
+									$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;}
+	|	expression EQ expression {$$ = initialiseTree("==",$1); $$->fil->suivants = $3;
+									$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;}
+	|	expression NEQ expression {$$ = initialiseTree("!=",$1); $$->fil->suivants = $3;
+									$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;}
 ;
 binary_op	:	
 		PLUS  {$$="+";}

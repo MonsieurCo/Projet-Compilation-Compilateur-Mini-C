@@ -1,7 +1,7 @@
 #ifndef _TABLE_H
 #define _TABLE_H
 #define TAILLE 103 /* nombre premier de préférence */
-typedef enum {FONCTION, APPEL,NUL} type_t;
+typedef enum {FONCTION,AFFECTATION,APPEL,NUL,VAR} type_t;
 typedef enum {TYPE_INT, TYPE_VOID, NULE} type_var;
 //typedef enum {AFFECTATION,EXPRESSION,FOR, WHILE,PRINT} typeNode;
 
@@ -12,6 +12,7 @@ typedef struct _symbole {
     type_var type;
     struct _symbole *suivants;
     struct _symbole *fil;
+    struct _symbole *pere;
 } symbole;
 
 typedef struct _tree {
@@ -38,7 +39,7 @@ symbole * inserer( char *nom );
 int hash( char *nom );
 
 void table_reset();
-void visualise(tree *t, int n, int m);
+void visualise(tree *t);
 tree *reverse(tree *t);
 void writeDot(tree *t);
 int printdot(FILE *fd , tree * node, int n);
@@ -51,5 +52,10 @@ void addType(tree * tree, char* type);
 void addTypeSymb(symbole * symb, char* type);
 void insertSuivantSymb(symbole* s1, symbole* s2);
 void printTreeRecursiveSymb(symbole *node, int level);
-void visualiseSymb(symbole *node,int x,int y);
+void visualiseSymb(symbole *node);
+void reliePere( symbole *pere,symbole* fils);
+void pereRecusif(symbole * node);
+void checkDef(tree * t, int n);
+int checkPresence(char * id, symbole *s);
+
 #endif

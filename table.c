@@ -16,7 +16,7 @@ tree *initialiseTree(char* name, tree *fil){
 	t->suivants = NULL;
 	t->node_name = NULL;
 	t->typeNode = NUL;
-	t->ts = NULL;
+	t->ts = initialiseTS("...","...");
 	t->typeVar=NULE;
 
 	return t;
@@ -36,6 +36,7 @@ symbole * initialiseTS(char * nom, char* type){
 	}
 	ts->suivants = NULL;
 	ts->fil = NULL;
+	ts->pere = NULL;
 	return ts;
 }
 
@@ -108,7 +109,7 @@ void printTreeRecursive(tree *node, int level){
     }
 }
 
-void visualise(tree *node,int x,int y){
+void visualise(tree *node){
 	printTreeRecursive(node, 0);		
 }
 
@@ -313,6 +314,102 @@ void printTreeRecursiveSymb(symbole *node, int level){
     }
 }
 
-void visualiseSymb(symbole *node,int x,int y){
+void visualiseSymb(symbole *node){
 	printTreeRecursiveSymb(node, 0);		
+}
+
+
+int checkPresence(char * id, symbole *s){
+	visualiseSymb(s);
+	printf("\n\n\n\n\n\n");
+	if(s == NULL){
+		return 8;
+	}
+	if(strcmp(s->nom,id) == 0){
+		return 1;
+	}
+	if(s->suivants == NULL){
+		if(s->pere == NULL){
+			return 0;
+		}
+		else{
+			checkPresence(id,s->pere);}
+	}
+	checkPresence(id , s->suivants);
+}
+
+int checkPresence2(char * id, symbole *s){
+	if(s->pere==NULL){
+		return 0;
+	}
+	s=s->pere->fil;
+	while(s->suivants!=NULL){
+		if(strcmp(s->suivants->nom,id) == 0){
+			return 1;
+		}
+		s=s->suivants;
+	}
+	checkPresence2(id,s->pere);
+	
+}
+
+
+void checkDef(tree * t, int n){
+
+    while (t != NULL)
+    {		
+        /*if(t->typeNode == AFFECTATION){
+			//visualiseSymb(t->ts);
+			//checkPresence(t->fil->nom,t->ts);
+			//printf(t->ts->nom);
+			printf("table '%s' \t père '%s'\n",t->ts->nom,t->ts->pere->nom);
+			//visualiseSymb(t->ts->pere);
+			int check= checkPresence2(t->fil->nom,t->ts);
+			printf("affectation %s = %s %d\n",t->fil->nom,t->fil->suivants->nom,chech);
+			if (check==0){
+				return check;
+			}
+		}*/
+		if(t->typeNode == VAR){
+			//visualiseSymb(t->ts->pere);
+			printf("presence de la variables %s %d\n",t->nom,checkPresence2(t->nom,t->ts));
+		}
+        //printf("Node: %s\n", t->nom);
+
+        if (t->fil != NULL){
+			checkDef(t->fil, n + 1);
+        }
+		
+        t = t->suivants;
+    }
+}
+
+void reliePere( symbole *pere,symbole* fils){
+
+	if(fils != NULL){
+			printf("on relie le fils: %s au père : %s \n",fils->nom,pere->nom);
+			fils->pere = pere;
+	}
+	
+	if(fils != NULL && fils->suivants != NULL ){
+		reliePere(pere, fils->suivants);
+	}
+
+}
+
+void pereRecusif(symbole * node ){
+if (node == NULL){
+		return ;
+	}
+	
+       reliePere(node,node->fil); 
+        if (node->fil != NULL)
+        {
+			
+           pereRecusif(node->fil);
+		   
+        }
+
+        pereRecusif(node->suivants);
+
 }
