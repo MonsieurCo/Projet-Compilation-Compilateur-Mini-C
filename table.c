@@ -17,18 +17,26 @@ tree *initialiseTree(char* name, tree *fil){
 	t->node_name = NULL;
 	t->typeNode = NUL;
 	t->ts = NULL;
+	t->typeVar=NULE;
 
 	return t;
 
 }
 
 
-symbole * initialiseTS(char * nom, char* val){
+symbole * initialiseTS(char * nom, char* type){
 	struct _symbole *ts = (symbole*)malloc(sizeof(symbole));
 	ts->nom = nom;
-	ts->valeur = val;
-	ts->suivant = NULL;
-
+	if(0==strcmp(type,"int")){
+		ts->type=TYPE_INT;
+	} else if(0==strcmp(type,"void")){
+		ts->type=TYPE_VOID;
+	}else{
+		ts->type=NULE;
+	}
+	ts->suivants = NULL;
+	ts->fil = NULL;
+	return ts;
 }
 
 
@@ -60,15 +68,15 @@ symbole * inserer(char *nom ) {
 	while ( s != NULL ) {
 		if ( strcmp( s->nom, nom ) == 0 ) return s;
 			precedent = s;
-			s = s->suivant; 
+			s = s->suivants; 
 		}
 	if ( precedent == NULL ) {
 		table[h] = (symbole *) malloc(sizeof(symbole)); s = table[h];
 	} else {
-		precedent->suivant = (symbole *) malloc(sizeof(symbole));
-		s = precedent->suivant; 
+		precedent->suivants = (symbole *) malloc(sizeof(symbole));
+		s = precedent->suivants; 
 	}
-	s->nom = strdup(nom); s->suivant = NULL; return s;
+	s->nom = strdup(nom); s->suivants = NULL; return s;
 }
 
 
@@ -236,12 +244,75 @@ int sizeFils(tree * t ){
 }
 
 void insertSuivant(tree * t1, tree * t2){
-	tree * f1 = t1->suivants;
-	if(f1 == NULL){
+	if(t1->suivants == NULL){
 		t1->suivants = t2;
 	}
 	else {
 		insertSuivant(t1->suivants, t2);
 	}
 	return;
+}
+
+void addType(tree * tree, char* type){
+	if(tree != NULL){
+		if(0==strcmp("int",type)){
+			tree->typeVar = TYPE_INT;
+		}
+		else{
+			tree->typeVar = TYPE_VOID;
+		}
+		addType(tree->suivants, type);
+	}
+	return;
+}
+
+void addTypeSymb(symbole * symb, char* type){
+	if(symb != NULL){
+		if(0==strcmp("int",type)){
+			symb->type = TYPE_INT;
+		}else if(0==strcmp("void",type)){
+			symb->type = TYPE_VOID;
+		}else{
+			symb->type = NULE;
+		}
+		addTypeSymb(symb->suivants, type);
+	}
+	return;
+}
+
+void insertSuivantSymb(symbole * s1, symbole * s2){
+	if(s1->suivants == NULL){
+		s1->suivants = s2;
+	}
+	else {
+		insertSuivantSymb(s1->suivants, s2);
+	}
+	return;
+}
+
+
+/// visualise TABLE SYMBOLE
+
+
+
+void printTreeRecursiveSymb(symbole *node, int level){
+	
+    while (node != NULL)
+    {
+        printTabs(level);
+        printf("Node: %s\n", node->nom);
+
+        if (node->fil != NULL)
+        {	
+            printTabs(level);
+            printf("Children:\n");
+            printTreeRecursiveSymb(node->fil, level + 1);
+        }
+
+        node = node->suivants;
+    }
+}
+
+void visualiseSymb(symbole *node,int x,int y){
+	printTreeRecursiveSymb(node, 0);		
 }

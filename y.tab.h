@@ -130,8 +130,9 @@ union YYSTYPE
 	int val;
 	char* id;
 	struct _tree *tree;
+	struct _symbole *symb;
 
-#line 135 "y.tab.h"
+#line 136 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
