@@ -340,8 +340,10 @@ int checkPresence(char * id, symbole *s){
 
 int checkPresence2(char * id, symbole *s){
 	if(s->pere==NULL){
+		
 		return 0;
 	}
+	
 	s=s->pere->fil;
 	while(s->suivants!=NULL){
 		if(strcmp(s->suivants->nom,id) == 0){
@@ -374,6 +376,11 @@ void checkDef(tree * t, int n){
 			//visualiseSymb(t->ts->pere);
 			printf("presence de la variables %s %d\n",t->nom,checkPresence2(t->nom,t->ts));
 		}
+		if(t->typeNode == APPEL){
+			
+			printf("\n\npresence de l'appel %s %d\n\n",t->nom,checkPresence2(t->nom,t->ts));
+		}
+
         //printf("Node: %s\n", t->nom);
 
         if (t->fil != NULL){
@@ -382,6 +389,24 @@ void checkDef(tree * t, int n){
 		
         t = t->suivants;
     }
+}
+
+int checkDef2(tree * t, int n){
+	if (t == NULL){
+			return n;
+		}
+			if(t->typeNode == VAR){
+			//visualiseSymb(t->ts->pere);
+				printf("presence de la variables %s %d\n",t->nom,checkPresence2(t->nom,t->ts));
+			} 
+			if (t->fil != NULL)
+			{
+				
+			n=checkDef2(t->fil,n+1);
+			
+			}
+
+			checkDef2(t->suivants,n+1);
 }
 
 void reliePere( symbole *pere,symbole* fils){

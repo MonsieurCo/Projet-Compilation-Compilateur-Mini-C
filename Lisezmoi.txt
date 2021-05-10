@@ -1,0 +1,29 @@
+Projet de Compilation: 
+
+
+Ce projet consiste en la creation d'un mini compilateur C vers un langage de graphes
+verifiant l'analyse lexicale, syntaxique et sémentique d'un code miniC. 
+si le fichier convient aux conventions et au langage le compilateur génèrera un dotfile
+qui pourra ensuite etre interprété par la commande dot pour fournir une version pdf. 
+Un code mal formé provoquera une erreur (différente selon l'origine de l'erreur),
+indiquant la ligne où se situe cette dernière.
+Pour l'executer deux methodes s'offrent à vous, 
+Utiliser le makefile avec la commande "make" qui automatisera l'execution,
+sinon vous pouvez taper dans votre terminal les commandes ci-dessous. 
+
+1 ) yacc -d miniC.y 
+2 ) flex ANSI-C.l
+3 ) gcc -o compiled lex.yy.c y.tab.c -lfl
+4 ) ./compiled < ./Tests/exempleminiC.c 
+5 ) dot -Tpdf DOT.dot -o graph.pdf
+
+
+erreurs connue :
+(à completer) 
+
+
+
+Etudiants sur le projet :
+
+- Margaux Schmied
+- Antoine Cousson

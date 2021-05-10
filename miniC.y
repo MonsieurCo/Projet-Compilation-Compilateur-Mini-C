@@ -53,21 +53,26 @@ void table_reset();
 
 %%
 programme	:	
-		liste_declarations liste_fonctions  {$$=initialiseTree("PROGRAM",$2); $$->ts = initialiseTS("programme","");$$->ts->fil=$1; insertSuivantSymb($$->ts->fil,$2->ts); 
+		liste_declarations liste_fonctions  {visualiseSymb($1);$$=initialiseTree("PROGRAM",$2); $$->ts = initialiseTS("programme","");$$->ts->fil=$1; insertSuivantSymb($$->ts->fil,$2->ts); 
 											visualiseSymb($$->ts);
 											pereRecusif($$->ts); checkDef($$,0);
 										}// writeDot($$);	visualiseSymb($$->ts); visualise($2);
 ;
 liste_declarations	:	
-		liste_declarations declaration  {$$=$1; insertSuivantSymb($1,$2);}
+		liste_declarations declaration  {$$=$1; insertSuivantSymb($$,$2);}
 	|				{$$=initialiseTS("TEEEEST"," ");}
 ;
 liste_fonctions	:	
-		liste_fonctions fonction      {$$ = $1; insertSuivant($1,$2);} 
+		liste_fonctions fonction      {$$ = $1; insertSuivant($1,$2); insertSuivantSymb($1->ts,$2->ts);} 
 |               fonction			{$$=$1;}
 ;
 declaration	:	
-		type liste_declarateurs ';' { $$ = $2 ; addTypeSymb($$,$1);}//$$=initialiseTree($1,NULL); $$->fil=$2;addType($2,$1);
+		type liste_declarateurs ';' {if(0==strcmp($1,"int")){
+										$$ = $2 ; addTypeSymb($$,$1);
+										
+									} else{
+										yyerror("Typecheck");
+									}}//$$=initialiseTree($1,NULL); $$->fil=$2;addType($2,$1);
 ;
 liste_declarateurs	:	
 		liste_declarateurs ',' declarateur {$$ = $1; insertSuivantSymb($1,$3);}
@@ -93,8 +98,12 @@ fonction	:
 																		}
 																		else{$$->typeVar = TYPE_VOID;}
 																		$$->ts = initialiseTS($2,$1);
-																		$$->ts->fil = $6->ts;}						
+																		$$->ts->fil = $4->ts;
+																		insertSuivantSymb($4->ts,$6->ts);}						
 	|	EXTERN type IDENTIFICATEUR '(' liste_parms ')' ';' {$$=initialiseTree("extern",initialiseTree($2,NULL));
+															$$->ts = initialiseTS($3,$2);
+															$$->ts->fil = $5->ts;
+
 														 	$$->fil->suivants=initialiseTree($3,NULL);
 															$$->fil->suivants->fil=$5;
 															$$->typeNode=FONCTION;
@@ -110,7 +119,7 @@ type	:
 
 
 params_liste_creator :    //modification de la grammaires en raison des problèmes mis en lumière par le forum
-	params_liste_creator ',' parm {$$ = $1; insertSuivant($$,$3);}
+	params_liste_creator ',' parm {$$ = $1; insertSuivant($$,$3); insertSuivantSymb($$->ts,$3->ts);}
 	| parm	{$$ =$1;}
 ;
 
@@ -120,7 +129,7 @@ liste_parms	:
 ;
 
 parm	:	 
-		INT IDENTIFICATEUR  {$$=initialiseTree("int",initialiseTree($2,NULL)); $$->typeVar = TYPE_INT;}//
+		INT IDENTIFICATEUR  {$$=initialiseTree("int",initialiseTree($2,NULL)); $$->typeVar = TYPE_INT; $$->ts=initialiseTS($$->fil->nom,"int"); }//
 ;
 
 liste_instructions :	
@@ -143,7 +152,7 @@ iteration	:
 																			insertSuivantSymb($$->ts,$5->ts);
 																			insertSuivantSymb($$->ts,$7->ts);}
 	|	WHILE '(' condition ')' instruction {$$=initialiseTree("WHILE",$3); $$->fil->suivants=$5; 
-											$$->ts->pere = $5->ts;
+											$$->ts->fil = $5->ts;
 											insertSuivantSymb($$->ts,$3->ts);}
 	|   error '\n' {yyerror("reenter last");
                         yyerrok; };
@@ -165,11 +174,10 @@ selection	:
 	|	DEFAULT ':' instruction {$$ = initialiseTree("DEFAULT",$3);$$->ts = $3->ts;}
 ;
 saut	:	
-		BREAK ';' {$$=initialiseTree("BREAK",NULL); $$->ts=initialiseTS("...","");}
-	|	RETURN ';' {$$ = initialiseTree("return",NULL); $$->ts=initialiseTS("...","");}
+		BREAK ';' {$$=initialiseTree("BREAK",NULL);}
+	|	RETURN ';' {$$ = initialiseTree("return",NULL);}
 	|	RETURN expression ';' {$$ = initialiseTree("RETURN",$2); 
-								$$->ts=initialiseTS("...","");
-								$2->ts->pere=$$->ts;}
+								$$->ts=$2->ts;}
 ;
 affectation	:	 
 		variable '=' expression  {$$ = initialiseTree(":=",$1);$$->fil->suivants = $3; 
@@ -186,9 +194,8 @@ bloc	:
 													$$->ts->fil = $2;}
 ;
 appel	:	//forme a faire
-	IDENTIFICATEUR '(' liste_expressions ')' ';' {$$=initialiseTree($1,$3);$$->typeNode=APPEL; 
-												$$->ts=initialiseTS("...","");
-												$3->ts->pere=$$->ts;}
+	IDENTIFICATEUR '(' liste_expressions ')' ';' {$$=initialiseTree($1,$3);$$->typeNode=APPEL;$$->ts = $3->ts; 
+												}
 ;
 variable	:	
 		IDENTIFICATEUR  {$$ = initialiseTree($1,NULL);$$->typeNode=VAR;}  
@@ -204,16 +211,20 @@ expression	:
 	
 	|	expression PLUS expression	{$$ = initialiseTree("+",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
 									$$->ts->fil=$1->ts;
-									$$->ts->fil->suivants=$3->ts;}
+									$$->ts->fil->suivants=$3->ts;
+									}
 	|	expression MOINS expression	{$$ = initialiseTree("-",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
-									$$->ts->fil=$1->ts;
-									$$->ts->fil->suivants=$3->ts;}		
+	$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;
+									}		
 	|	expression DIV expression{$$ = initialiseTree("/",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
-									$$->ts->fil=$1->ts;
-									$$->ts->fil->suivants=$3->ts;}				
+	$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;
+									}				
 	|	expression MUL expression	{$$ = initialiseTree("*",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
-									$$->ts->fil=$1->ts;
-									$$->ts->fil->suivants=$3->ts;}			
+	$$->ts->fil=$1->ts;
+									$$->ts->fil->suivants=$3->ts;
+									}			
 	|	expression RSHIFT expression	{$$ = initialiseTree(">>",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
 										$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;}  			
@@ -226,12 +237,13 @@ expression	:
 	|	expression BOR expression	{$$ = initialiseTree("|=",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;} 			
-	|	MOINS expression %prec MUL	{$$ = initialiseTree("-",$2);$$->typeVar = TYPE_INT;
-									$$->ts->fil=$2;}                                   
+	|	MOINS expression %prec MUL	{$$ = initialiseTree("-",$2);$$->typeVar = TYPE_INT; $$->ts = $2->ts;
+									}                                   
 	|	CONSTANTE       {$$ = initialiseTree($1,NULL);$$->typeVar = TYPE_INT;}                                                 							
 	|	variable	 {$$ =  $1;}                           
 	|	IDENTIFICATEUR '(' liste_expressions ')' {$$ = initialiseTree($1,$3); $$->typeNode=APPEL;
-												$$->ts->fil=$3->ts;}                                  
+												$$->ts->fil=$3->ts;
+									}                                  
 ;
 //cf correction de Fissore Davide merci à lui 
 liste_expressions :      // pour accepter epsilon ou une liste d'expressions
@@ -239,7 +251,7 @@ liste_expressions :      // pour accepter epsilon ou une liste d'expressions
     | 			{$$ = initialiseTree("...",NULL);}
 ;
 expr_liste_creator :                         // création de la liste d'expressions valide
-    expr_liste_creator ',' expression {$$ = $1 ;insertSuivant($$,$3);} // liste à n éléments
+    expr_liste_creator ',' expression {$$ = $1 ;insertSuivant($$,$3); insertSuivantSymb($$->ts,$3->ts);} // liste à n éléments
     | expression                   {$$=$1;}           // liste à un seul élément
 ;
 condition	:	

@@ -1,4 +1,4 @@
-tCC=gcc
+CC=gcc
 YC=yacc
 FL=flex
 
@@ -8,7 +8,7 @@ all:
 	$(YC) -d miniC.y
 	$(FL) ANSI-C.l
 	$(CC) -g lex.yy.c y.tab.c table.c -lfl  -o $(TARGET) -w 
-	./testeur < Tests/variables.c
+	./testeur < Tests/add.c
 	dot -Tpdf testDOT.dot -o test.pdf
 
 

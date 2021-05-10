@@ -2,11 +2,6 @@
 digraph exempleminiC {
 
     // arbre abstrait de la fonction main
-    node_1 [label="main, int" shape=invtrapezium color=blue];     
-    node_2 [label="BLOC"];
-    node_3 [label="FOR"];
-    node_4 [label="printd" shape=septagon];
-    node_5 [label="RETURN" shape=trapezium color=blue]
 
     node_1 ->   node_2
     node_2 ->   node_3
