@@ -85,12 +85,15 @@ L?\"(\\.|[^\\"])*\"     { /* A completer */ }
 "(" { return yytext[0];}
 ")" { return yytext[0];}
 
-(\/\/.*)|(\/\*+(.|[\r\n])*[\*\/]) {int count = 0;
+
+
+(\/\/.*)|(\/\*)(.|\r|\n)*?(\*\/)  {int count = 0;
                                     for (int i=0; yytext[i]; i++){
                                         count += (yytext[i] == '\n');
                                         }
                                     yylineno+=count;
                                     }
+
 
 
 

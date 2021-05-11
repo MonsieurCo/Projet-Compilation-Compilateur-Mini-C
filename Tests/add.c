@@ -1,26 +1,28 @@
 int p;
 extern int printd( int i );
 
-void coucou(int i){
-  printd(i);
-}
 int plume(){
    return 4;
+
+return printd(pomme);
+return a;
  }
 
+int coucou(int i, int j){
+  printd(i);
+  return;
+}
+
+
 int main() {
-//hello world 
 
-/*fsdfsdf
-
-de
-
-de*/
   int i,j;
   p = 9;
   i = 45000;
   j = -123;
-
+/*sdkfpsodkfpoksdfpoksdpfokspdokf
+sdfsdfsdfsd
+fsdfsdf*/
 
   j = opm;
   printd(i);
@@ -28,11 +30,12 @@ de*/
   printdpomme(j);
   printd(45000+j);
   printd(main());
-  printd(coucou(i));
+  
+  printd(coucou(i,j));
   printd(i+123);
   printd(45000+123);
-  j = plume();
-  i=coucou(i);
+  j = plume()*2;
+  i=coucou(i,j);
   i=main();
   return 0;
 

@@ -38,6 +38,7 @@ symbole * initialiseTS(char * nom, char* type){
 	ts->fil = NULL;
 	ts->pere = NULL;
 	ts->node_name=NULL;
+	ts->nbParam=0;
 	return ts;
 }
 
@@ -157,7 +158,7 @@ void ecritNode(FILE *fichier,tree *t, int n){
 		}
 	
 	
-	printf("%s [label=\"%s\"];\n",t->node_name,t->nom);
+	//printf("%s [label=\"%s\"];\n",t->node_name,t->nom);
 
 }
 
@@ -166,7 +167,7 @@ void relieFils(FILE *fichier, tree *pere,tree* fils){
 	if(fils != NULL){
 		if (0 != strcmp("...",fils->nom)){
 		
-		printf("%s %s\n",fils->nom,fils->node_name);
+		//printf("%s %s\n",fils->nom,fils->node_name);
 		fprintf(fichier,"%s -> %s;\n",pere->node_name,fils->node_name);
 		}
 	}
@@ -201,6 +202,7 @@ if (node == NULL){
 		return ;
 	}
        relieFils(fd,node,node->fil); 
+	   
         if (node->fil != NULL)
         {
 			
@@ -236,12 +238,11 @@ int printdot(FILE *fd , tree * node,int n){
 
 
 
-
-
 int sizeFils(tree * t ){
 	int ret = 0;
 	while(t != NULL){
-		ret ++ ;
+		if(strcmp(t->nom,"...") != 0){
+			ret ++ ;}
 		t = t->suivants;
 	}
 	return ret;
@@ -254,7 +255,7 @@ void insertSuivant(tree * t1, tree * t2){
 	else {
 		insertSuivant(t1->suivants, t2);
 	}
-	return;
+
 }
 
 void addType(tree * tree, char* type){
@@ -267,7 +268,7 @@ void addType(tree * tree, char* type){
 		}
 		addType(tree->suivants, type);
 	}
-	return;
+	
 }
 
 void addTypeSymb(symbole * symb, char* type){
@@ -281,7 +282,7 @@ void addTypeSymb(symbole * symb, char* type){
 		}
 		addTypeSymb(symb->suivants, type);
 	}
-	return;
+	
 }
 
 void insertSuivantSymb(symbole * s1, symbole * s2){
@@ -291,7 +292,7 @@ void insertSuivantSymb(symbole * s1, symbole * s2){
 	else {
 		insertSuivantSymb(s1->suivants, s2);
 	}
-	return;
+	
 }
 
 
@@ -322,58 +323,81 @@ void visualiseSymb(symbole *node){
 }
 
 
-int checkPresence(char * id, symbole *s){
-	visualiseSymb(s);
-	printf("\n\n\n\n\n\n");
-	if(s == NULL){
-		return 8;
-	}
-	if(strcmp(s->nom,id) == 0){
-		return 1;
-	}
-	if(s->suivants == NULL){
-		if(s->pere == NULL){
-			return 0;
-		}
-		else{
-			checkPresence(id,s->pere);}
-	}
-	checkPresence(id , s->suivants);
-}
 
-int checkPresence2(char * id, symbole *s){
+
+int checkPresence(char * id, symbole *s,int nbPar){
 	if(s->pere==NULL){
-		
 		return 0;
 	}
-	
 	s=s->pere->fil;
+	
+	printf(s->nom);
+	if(strcmp(s->nom,id) == 0 && s->nbParam == nbPar ){
+			//printf("%s doit avoir: %d\n",id,s->suivants->nbParam);
+			symbole *fils= s->suivants->fil;
+			int res=0;
+			for(int i = 0; i<=nbPar; i = i+1){
+				//if(fils!= NULL){
+				res=res+checkType(fils->nom,fils,TYPE_INT);
+				printf("%s %d\n",fils->nom,res);
+				fils = fils->suivants;
+				//}
+			}
+			printf("res = %d\n",res);
+			printf("resultat de res==nbPar  %d\n",res==nbPar);
+			return res==nbPar;
+		}
 	while(s->suivants!=NULL){
-		if(strcmp(s->suivants->nom,id) == 0){
-			return 1;
+		printf(s->nom);
+		if(strcmp(s->suivants->nom,id) == 0 && s->suivants->nbParam == nbPar ){
+			//printf("%s doit avoir: %d\n",id,s->suivants->nbParam);
+			symbole *fils= s->suivants->fil;
+			int res=0;
+			for(int i = 0; i<=nbPar; i = i+1){
+				if(fils!= NULL){
+				res=res+checkType(fils->nom,fils,TYPE_INT);
+				printf("%s %d\n",fils->nom,res);
+				fils = fils->suivants;
+				}
+			}
+			printf("res = %d\n",res);
+			printf("resultat de res==nbPar  %d\n",res==nbPar);
+			return res==nbPar;
 		}
 		s=s->suivants;
 	}
-	checkPresence2(id,s->pere);
+	checkPresence(id,s->pere,nbPar);
 	
 }
 
 int checkType(char * id, symbole * s,type_var t){
+	
 	if(s->pere==NULL){
 		
 		return 0;
 	}
-	
 	s=s->pere->fil;
+	printf("on check %s --> %s\n",id,s->nom);
+	
+	if(strcmp(s->nom,id) == 0){
+			if(s->type == t ){
+				//printf("ici on a %s == %s\n",s->suivants->nom,id);
+				return 1;
+			}
+		}
+
 	while(s->suivants!=NULL){
+		//printf("2 on check %s --> %s\n",id,s->nom);
 		if(strcmp(s->suivants->nom,id) == 0){
-			if(s->type == t){
-				printf("iiiiint");
+			if(s->suivants->type == t ){
+				//printf("ici on a %s == %s\n",s->suivants->nom,id);
 				return 1;
 			}
 		}
 		s=s->suivants;
 	}
+	
+	
 	checkType(id,s->pere,t);
 	
 }
@@ -381,8 +405,10 @@ int checkType(char * id, symbole * s,type_var t){
 int checkAffectation(tree * t){
 
     while (t != NULL){
+		printf("check affectation de %s\n",t->nom);
 		if(t->typeNode == APPEL){
 			//visualiseSymb(t->ts->pere);
+			printf("APPEL\n");
 			return checkType(t->nom,t->ts,TYPE_INT);
 		}
 
@@ -399,18 +425,19 @@ int checkAffectation(tree * t){
 void checkDef(tree * t, int n){
 
     while (t != NULL)
-    {		
+    {		 
     
 		if(t->typeNode == VAR){
 			//visualiseSymb(t->ts->pere);
-			printf("presence de la variables %s %d\n",t->nom,checkPresence2(t->nom,t->ts));
+			//printf("presence de la variables %s %d\n",t->nom,checkPresence(t->nom,t->ts,0));
 		}
 		if(t->typeNode == APPEL){
+			printf("nb param de %s: %d\n",t->nom,sizeFils(t->fil));
+			printf("\n\npresence de l'appel %s %d\n",t->nom,checkPresence(t->nom,t->ts,sizeFils(t->fil)));
 			
-			printf("\n\npresence de l'appel %s %d\n\n",t->nom,checkPresence2(t->nom,t->ts));
 		}
 		if(t->typeNode == AFFECTATION){
-			printf("\n\ntype de l'affectation %s %s %s == %d\n\n",t->fil->nom,t->nom,t->fil->suivants->nom,checkAffectation(t->fil->suivants));
+			//printf("type de l'affectation %s %s %s == %d\n\n",t->fil->nom,t->nom,t->fil->suivants->nom,checkAffectation(t->fil->suivants));
 		}
 
         //printf("Node: %s\n", t->nom);
@@ -423,28 +450,9 @@ void checkDef(tree * t, int n){
     }
 }
 
-int checkDef2(tree * t, int n){
-	if (t == NULL){
-			return n;
-		}
-			if(t->typeNode == VAR){
-			//visualiseSymb(t->ts->pere);
-				printf("presence de la variables %s %d\n",t->nom,checkPresence2(t->nom,t->ts));
-			} 
-			if (t->fil != NULL)
-			{
-				
-			n=checkDef2(t->fil,n+1);
-			
-			}
-
-			checkDef2(t->suivants,n+1);
-}
-
 void reliePere( symbole *pere,symbole* fils){
 
 	if(fils != NULL){
-			printf("on relie le fils: %s au père : %s \n",fils->nom,pere->nom);
 			fils->pere = pere;
 	}
 	
@@ -455,11 +463,11 @@ void reliePere( symbole *pere,symbole* fils){
 }
 
 void pereRecusif(symbole * node ){
-if (node == NULL){
+	if (node == NULL){
 		return ;
 	}
 	
-       reliePere(node,node->fil); 
+        reliePere(node,node->fil); 
         if (node->fil != NULL)
         {
 			
@@ -512,7 +520,7 @@ void relieFilsSYMB(FILE *fichier, symbole *pere,symbole* fils){
 	if(fils != NULL){
 		if (0 != strcmp("#empty",fils->nom) && 0 != strcmp("...",fils->nom)){
 		
-		printf("%s %s\n",fils->nom,fils->node_name);
+		
 		fprintf(fichier,"%s -> %s;\n",pere->node_name,fils->node_name);
 		}
 	}
@@ -561,6 +569,6 @@ void ecritNodeSYMB(FILE *fichier,symbole *t, int n){
 		}
 	
 	
-	printf("%s [label=\"%s\"];\n",t->node_name,t->nom);
+	
 
 }

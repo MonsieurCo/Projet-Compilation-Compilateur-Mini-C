@@ -26,8 +26,9 @@ void table_reset();
 %token <id> VOID INT FOR WHILE IF ELSE SWITCH CASE DEFAULT
 %token <id> BREAK RETURN PLUS MOINS MUL DIV LSHIFT RSHIFT BAND BOR LAND LOR LT GT 
 %token <id> GEQ LEQ EQ NEQ NOT EXTERN
-%left PLUS MOINS 
 %left MUL DIV 
+%left PLUS MOINS 
+
 
 %left LSHIFT RSHIFT
 %left BOR BAND
@@ -54,9 +55,9 @@ void table_reset();
 %%
 programme	:	
 		liste_declarations liste_fonctions  {$$=initialiseTree("PROGRAM",$2); $$->ts = initialiseTS("programme","");$$->ts->fil=$1; insertSuivantSymb($$->ts->fil,$2->ts); 
-											writeDotSymb($$->ts);visualiseSymb($$->ts);
+											visualiseSymb($$->ts);
 											pereRecusif($$->ts); checkDef($$,0);
-											
+											writeDotSymb($$->ts);
 											
 										}// writeDot($$);	visualiseSymb($$->ts); visualise($2);
 ;
@@ -106,11 +107,16 @@ fonction	:
 																			$$->ts->type = TYPE_VOID;
 																		}else{$$->typeVar = NULE;
 																		$$->ts->type = NULE;}
-																		
+																		if(sizeFils($4) > 0 ){
+																			$$->ts->nbParam=sizeFils($4)-1;
+																		}
 																		$$->ts->fil = $4->ts;
 																		insertSuivantSymb($4->ts,$6->ts);}						
 	|	EXTERN type IDENTIFICATEUR '(' liste_parms ')' ';' {$$=initialiseTree("extern",initialiseTree($2,NULL));
 															$$->ts = initialiseTS($3,$2);
+															printf("sqdqsdqsd %d",sizeFils($5));
+															$$->ts->nbParam=sizeFils($5);
+															
 															$$->ts->fil = $5->ts;
 
 														 	$$->fil->suivants=initialiseTree($3,NULL);
@@ -198,7 +204,8 @@ affectation	:
 								$$->typeNode=AFFECTATION;} 
 ;
 bloc	:	
-		'{' liste_declarations liste_instructions '}' {if (sizeFils($3) <= 2){ $$ = $3;
+		'{' liste_declarations liste_instructions '}' {printf("taille du bloc %d",sizeFils($3));
+													if (sizeFils($3) <= 1){ $$ = $3;
 													}else{		$$ = initialiseTree("BLOC",$3);}
 													insertSuivantSymb ($2,$3->ts);
 													$$->ts= initialiseTS("BLOC","");
@@ -228,11 +235,11 @@ expression	:
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;
 									}		
-	|	expression DIV expression{$$ = initialiseTree("/",$1); $$->fil->suivants = $3;
+	|	expression DIV expression	{$$ = initialiseTree("/",$1); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;
 									}				
-	|	expression MUL expression	{$$ = initialiseTree("*",$1); $$->fil->suivants = $3;
+	|	expression MUL expression 	{$$ = initialiseTree("*",$1); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;
 									}			
@@ -248,8 +255,8 @@ expression	:
 	|	expression BOR expression	{$$ = initialiseTree("|=",$1); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;} 			
-	|	MOINS expression %prec MUL	{$$ = initialiseTree("-",$2);$$->typeVar = TYPE_INT; $$->ts = $2->ts;
-									}                                   
+	|	MOINS expression %prec MUL	{$$ = initialiseTree("-",$2);
+									$$->ts = $2->ts;}                                   
 	|	CONSTANTE       {$$ = initialiseTree($1,NULL);$$->typeVar = TYPE_INT;}                                                 							
 	|	variable	 {$$ =  $1;}                           
 	|	IDENTIFICATEUR '(' liste_expressions ')' {$$ = initialiseTree($1,$3); $$->typeNode=APPEL;

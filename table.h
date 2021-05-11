@@ -9,6 +9,7 @@ typedef enum {TYPE_INT, TYPE_VOID, NULE} type_var;
 typedef struct _symbole { 
     char *nom;
     //char *valeur;
+    int nbParam;
     type_var type;
     char *node_name;
     struct _symbole *suivants;
@@ -57,7 +58,7 @@ void visualiseSymb(symbole *node);
 void reliePere( symbole *pere,symbole* fils);
 void pereRecusif(symbole * node);
 void checkDef(tree * t, int n);
-int checkPresence(char * id, symbole *s);
+int checkPresence(char * id, symbole *s,int nbPar);
 void writeDotSymb(symbole *t);
 void relieFilsSYMB(FILE *fichier, symbole *pere,symbole* fils);
 int printdotSYMB(FILE *fd , symbole * node,int n);

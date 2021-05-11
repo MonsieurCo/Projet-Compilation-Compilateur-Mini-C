@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "table.h": "c",
-        "typeinfo": "c"
+        "typeinfo": "c",
+        "type_traits": "c"
     }
 }
