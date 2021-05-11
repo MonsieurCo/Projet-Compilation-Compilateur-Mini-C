@@ -10,6 +10,7 @@ typedef struct _symbole {
     char *nom;
     //char *valeur;
     type_var type;
+    char *node_name;
     struct _symbole *suivants;
     struct _symbole *fil;
     struct _symbole *pere;
@@ -57,5 +58,9 @@ void reliePere( symbole *pere,symbole* fils);
 void pereRecusif(symbole * node);
 void checkDef(tree * t, int n);
 int checkPresence(char * id, symbole *s);
+void writeDotSymb(symbole *t);
+void relieFilsSYMB(FILE *fichier, symbole *pere,symbole* fils);
+int printdotSYMB(FILE *fd , symbole * node,int n);
+int checkType(char * id, symbole * s,type_var t);
 
 #endif

@@ -1,4 +1,4 @@
-
+extern int printd( int i );
 
 /*----------------------------*/
 /* un petit programme exemple extern int printd( int i );

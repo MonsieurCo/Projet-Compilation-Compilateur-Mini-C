@@ -53,14 +53,16 @@ void table_reset();
 
 %%
 programme	:	
-		liste_declarations liste_fonctions  {visualiseSymb($1);$$=initialiseTree("PROGRAM",$2); $$->ts = initialiseTS("programme","");$$->ts->fil=$1; insertSuivantSymb($$->ts->fil,$2->ts); 
-											visualiseSymb($$->ts);
+		liste_declarations liste_fonctions  {$$=initialiseTree("PROGRAM",$2); $$->ts = initialiseTS("programme","");$$->ts->fil=$1; insertSuivantSymb($$->ts->fil,$2->ts); 
+											writeDotSymb($$->ts);visualiseSymb($$->ts);
 											pereRecusif($$->ts); checkDef($$,0);
+											
+											
 										}// writeDot($$);	visualiseSymb($$->ts); visualise($2);
 ;
 liste_declarations	:	
 		liste_declarations declaration  {$$=$1; insertSuivantSymb($$,$2);}
-	|				{$$=initialiseTS("TEEEEST"," ");}
+	|				{$$=initialiseTS("#empty","");}
 ;
 liste_fonctions	:	
 		liste_fonctions fonction      {$$ = $1; insertSuivant($1,$2); insertSuivantSymb($1->ts,$2->ts);} 
@@ -93,11 +95,18 @@ fonction	:
 																		sprintf(name,"%s , %s",$2,$1);
 																		$$=initialiseTree(name,$4);insertSuivant($$->fil,$6);
 																		$$->typeNode=FONCTION;
-																		if(strcmp($2,"int") == 0 ){
-																			$$->typeVar = TYPE_INT;
-																		}
-																		else{$$->typeVar = TYPE_VOID;}
+
 																		$$->ts = initialiseTS($2,$1);
+
+																		if(strcmp($1,"int") == 0 ){
+																			$$->typeVar = TYPE_INT;
+																			$$->ts->type = TYPE_INT;
+																		} else if (strcmp($1,"void") == 0){
+																			$$->typeVar = TYPE_VOID;
+																			$$->ts->type = TYPE_VOID;
+																		}else{$$->typeVar = NULE;
+																		$$->ts->type = NULE;}
+																		
 																		$$->ts->fil = $4->ts;
 																		insertSuivantSymb($4->ts,$6->ts);}						
 	|	EXTERN type IDENTIFICATEUR '(' liste_parms ')' ';' {$$=initialiseTree("extern",initialiseTree($2,NULL));
@@ -109,8 +118,10 @@ fonction	:
 															$$->typeNode=FONCTION;
 																if(strcmp($2,"int") == 0 ){
 																			$$->typeVar = TYPE_INT;
+																		}else if (strcmp($2,"void") == 0)
+																		{$$->typeVar = TYPE_VOID;}
+																		else{$$->typeVar = NULE;}
 																		}
-																		else{$$->typeVar = TYPE_VOID;}}
 ;
 type	:	
 		VOID {$$="void";}
@@ -125,7 +136,7 @@ params_liste_creator :    //modification de la grammaires en raison des problèm
 
 liste_parms	:	
 		params_liste_creator {$$=$1;}
-	|				{$$ = initialiseTree("...",NULL);}
+	|				{$$ = initialiseTree("...",NULL); $$->ts=initialiseTS("#empty","");}
 ;
 
 parm	:	 
@@ -134,7 +145,7 @@ parm	:
 
 liste_instructions :	
 		liste_instructions instruction {$$ = $1; insertSuivant($1,$2);insertSuivantSymb($1->ts,$2->ts);}
-	|				{$$ = initialiseTree("...",NULL);$$->ts = initialiseTS("...","undef");}
+	|				{$$ = initialiseTree("...",NULL);$$->ts = initialiseTS("#empty","undef");}
 ;
 instruction	:	
 		iteration {$$=$1;}
@@ -181,7 +192,7 @@ saut	:
 ;
 affectation	:	 
 		variable '=' expression  {$$ = initialiseTree(":=",$1);$$->fil->suivants = $3; 
-								$$->ts=initialiseTS("affectation",""); 
+								 
 								$$->ts->fil = $1->ts;
 								$$->ts->fil->suivants = $3->ts;
 								$$->typeNode=AFFECTATION;} 
@@ -209,32 +220,32 @@ tableau_variable	:
 expression	:	
 		'(' expression ')'	{$$ = $2;}                       
 	
-	|	expression PLUS expression	{$$ = initialiseTree("+",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
+	|	expression PLUS expression	{$$ = initialiseTree("+",$1); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;
 									}
-	|	expression MOINS expression	{$$ = initialiseTree("-",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
-	$$->ts->fil=$1->ts;
+	|	expression MOINS expression	{$$ = initialiseTree("-",$1); $$->fil->suivants = $3;
+									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;
 									}		
-	|	expression DIV expression{$$ = initialiseTree("/",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
-	$$->ts->fil=$1->ts;
+	|	expression DIV expression{$$ = initialiseTree("/",$1); $$->fil->suivants = $3;
+									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;
 									}				
-	|	expression MUL expression	{$$ = initialiseTree("*",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
-	$$->ts->fil=$1->ts;
+	|	expression MUL expression	{$$ = initialiseTree("*",$1); $$->fil->suivants = $3;
+									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;
 									}			
-	|	expression RSHIFT expression	{$$ = initialiseTree(">>",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
+	|	expression RSHIFT expression	{$$ = initialiseTree(">>",$1); $$->fil->suivants = $3;
 										$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;}  			
-	|	expression LSHIFT expression	{$$ = initialiseTree("<<",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
+	|	expression LSHIFT expression	{$$ = initialiseTree("<<",$1); $$->fil->suivants = $3;
 										$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;}			
-	|	expression BAND expression	{$$ = initialiseTree("&=",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
+	|	expression BAND expression	{$$ = initialiseTree("&=",$1); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;}			
-	|	expression BOR expression	{$$ = initialiseTree("|=",$1); $$->fil->suivants = $3;$$->typeVar = TYPE_INT;
+	|	expression BOR expression	{$$ = initialiseTree("|=",$1); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;} 			
 	|	MOINS expression %prec MUL	{$$ = initialiseTree("-",$2);$$->typeVar = TYPE_INT; $$->ts = $2->ts;
@@ -248,7 +259,7 @@ expression	:
 //cf correction de Fissore Davide merci à lui 
 liste_expressions :      // pour accepter epsilon ou une liste d'expressions
     expr_liste_creator {$$ = $1;}
-    | 			{$$ = initialiseTree("...",NULL);}
+    | 			{$$ = initialiseTree("...",NULL);$$->ts=initialiseTS("#empty","");}
 ;
 expr_liste_creator :                         // création de la liste d'expressions valide
     expr_liste_creator ',' expression {$$ = $1 ;insertSuivant($$,$3); insertSuivantSymb($$->ts,$3->ts);} // liste à n éléments

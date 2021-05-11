@@ -37,6 +37,7 @@ symbole * initialiseTS(char * nom, char* type){
 	ts->suivants = NULL;
 	ts->fil = NULL;
 	ts->pere = NULL;
+	ts->node_name=NULL;
 	return ts;
 }
 
@@ -192,6 +193,8 @@ FILE *fd =  fopen("testDOT.dot","w");
 	fprintf(fd,"}");
 	fclose(fd);
 }
+
+
 
 void relieRecusif(FILE * fd , tree * node ){
 if (node == NULL){
@@ -355,23 +358,49 @@ int checkPresence2(char * id, symbole *s){
 	
 }
 
+int checkType(char * id, symbole * s,type_var t){
+	if(s->pere==NULL){
+		
+		return 0;
+	}
+	
+	s=s->pere->fil;
+	while(s->suivants!=NULL){
+		if(strcmp(s->suivants->nom,id) == 0){
+			if(s->type == t){
+				printf("iiiiint");
+				return 1;
+			}
+		}
+		s=s->suivants;
+	}
+	checkType(id,s->pere,t);
+	
+}
+
+int checkAffectation(tree * t){
+
+    while (t != NULL){
+		if(t->typeNode == APPEL){
+			//visualiseSymb(t->ts->pere);
+			return checkType(t->nom,t->ts,TYPE_INT);
+		}
+
+
+		if (t->fil != NULL){
+			checkAffectation(t->fil);
+        }
+		
+        t = t->suivants;
+    }
+	return 1;
+}
 
 void checkDef(tree * t, int n){
 
     while (t != NULL)
     {		
-        /*if(t->typeNode == AFFECTATION){
-			//visualiseSymb(t->ts);
-			//checkPresence(t->fil->nom,t->ts);
-			//printf(t->ts->nom);
-			printf("table '%s' \t père '%s'\n",t->ts->nom,t->ts->pere->nom);
-			//visualiseSymb(t->ts->pere);
-			int check= checkPresence2(t->fil->nom,t->ts);
-			printf("affectation %s = %s %d\n",t->fil->nom,t->fil->suivants->nom,chech);
-			if (check==0){
-				return check;
-			}
-		}*/
+    
 		if(t->typeNode == VAR){
 			//visualiseSymb(t->ts->pere);
 			printf("presence de la variables %s %d\n",t->nom,checkPresence2(t->nom,t->ts));
@@ -379,6 +408,9 @@ void checkDef(tree * t, int n){
 		if(t->typeNode == APPEL){
 			
 			printf("\n\npresence de l'appel %s %d\n\n",t->nom,checkPresence2(t->nom,t->ts));
+		}
+		if(t->typeNode == AFFECTATION){
+			printf("\n\ntype de l'affectation %s %s %s == %d\n\n",t->fil->nom,t->nom,t->fil->suivants->nom,checkAffectation(t->fil->suivants));
 		}
 
         //printf("Node: %s\n", t->nom);
@@ -436,5 +468,99 @@ if (node == NULL){
         }
 
         pereRecusif(node->suivants);
+
+}
+
+
+void writeDotSymb(symbole *t){
+
+FILE *fd =  fopen("testDOT.dot","w");
+
+	fprintf(fd,"//fichier DOT représentant le graph du fichier c analysé\n");
+	fprintf(fd,"digraph test {\n\n");
+	symbole *node = t;
+	
+
+	printdotSYMB(fd,node,0);
+	relieRecusifSYMB(fd,node);
+	fprintf(fd,"}");
+	fclose(fd);
+}
+
+
+
+void relieRecusifSYMB(FILE * fd , symbole * node ){
+if (node == NULL){
+		return ;
+	}
+       relieFilsSYMB(fd,node,node->fil); 
+        if (node->fil != NULL)
+        {
+			
+           relieRecusifSYMB(fd,node->fil);
+		   
+        }
+
+        relieRecusifSYMB(fd,node->suivants);
+
+}
+
+
+
+void relieFilsSYMB(FILE *fichier, symbole *pere,symbole* fils){
+
+	if(fils != NULL){
+		if (0 != strcmp("#empty",fils->nom) && 0 != strcmp("...",fils->nom)){
+		
+		printf("%s %s\n",fils->nom,fils->node_name);
+		fprintf(fichier,"%s -> %s;\n",pere->node_name,fils->node_name);
+		}
+	}
+	
+	if(fils != NULL && fils->suivants != NULL ){
+		 relieFilsSYMB(fichier,pere,fils->suivants);
+	}
+
+}
+
+
+
+int printdotSYMB(FILE *fd , symbole * node,int n){
+	
+	if (node == NULL){
+		return n;
+	}
+        ecritNodeSYMB(fd,node,n); 
+        if (node->fil != NULL)
+        {
+			
+           n=printdotSYMB(fd,node->fil,n+1);
+		   
+        }
+
+        printdotSYMB(fd,node->suivants,n+1);
+		
+   
+}
+
+void ecritNodeSYMB(FILE *fichier,symbole *t, int n){
+	t->node_name = (char * ) malloc(50 * sizeof(char));
+	sprintf(t->node_name,"node_%d",n);
+	if(0 != strcmp("#empty",t->nom) && 0 != strcmp("...",t->nom)){
+		char* type = (char * )malloc(50*sizeof(char));
+		if(t->type == TYPE_INT){
+			 type = "int";
+		}
+		else if (t->type == TYPE_VOID){
+			type = "void";
+		}
+		else{
+			type = "nul";
+		}
+		fprintf(fichier,"%s [label=\"%s, int\"];\n",t->node_name,t->nom,type);
+		}
+	
+	
+	printf("%s [label=\"%s\"];\n",t->node_name,t->nom);
 
 }

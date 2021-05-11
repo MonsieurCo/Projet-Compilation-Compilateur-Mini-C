@@ -9,7 +9,7 @@ all:
 	$(FL) ANSI-C.l
 	$(CC) -g lex.yy.c y.tab.c table.c -lfl  -o $(TARGET) -w 
 	./testeur < Tests/add.c
-	dot -Tpdf testDOT.dot -o test.pdf
+	dot -Tpdf testDOT.dot -o testsymbol.pdf
 
 
 clean:
