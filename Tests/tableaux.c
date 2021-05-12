@@ -1,8 +1,19 @@
+int poir[300][345][23];
+extern int printd( int i );
+
 /* TEST TABLEAUX MINIC */
 
-int poir[300];
+
+
+int coucou(int i){
+  printd(i);
+  return;
+}
 
 int main() {
-  poir[3][789] = poir[200];
-  poir[400] = poir[0][9][4][0];
+  int j;
+  //poir[3][789] = poir[20];
+  poir[0][9][4]=1;
+  j = coucou(poir[0][9][20])*2;
+return 0;
 } 

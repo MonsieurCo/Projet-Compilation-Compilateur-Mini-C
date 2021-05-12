@@ -3,13 +3,14 @@ YC=yacc
 FL=flex
 
 TARGET=testeur
+TEST=tableaux-multi
 
 all:
 	$(YC) -d miniC.y
 	$(FL) ANSI-C.l
 	$(CC) -g lex.yy.c y.tab.c table.c -lfl  -o $(TARGET) -w 
-	./testeur < Tests/functions.c
-	dot -Tpdf testDOT.dot -o testsymbol.pdf
+	./testeur < Tests/$(TEST).c
+	dot -Tpdf DOT.dot -o $(TEST).pdf
 
 
 clean:

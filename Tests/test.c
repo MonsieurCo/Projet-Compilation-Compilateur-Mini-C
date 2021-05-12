@@ -1,3 +1,6 @@
+
+
+
 int main() {
     int x, y, z, t, toto, a;
     x = -900;

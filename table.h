@@ -2,7 +2,7 @@
 #define _TABLE_H
 #define TAILLE 103 /* nombre premier de préférence */
 typedef enum {FONCTION,AFFECTATION,APPEL,NUL,VAR,RET,EXTER} type_t;
-typedef enum {TYPE_INT, TYPE_VOID, NULE} type_var;
+typedef enum {TYPE_INT, TYPE_VOID, TYPE_TAB,NULE} type_var;
 //typedef enum {AFFECTATION,EXPRESSION,FOR, WHILE,PRINT} typeNode;
 
 
@@ -12,6 +12,8 @@ typedef struct _symbole {
     int nbParam;
     type_var type;
     char *node_name;
+    int dimension;
+    int *tailles;
     struct _symbole *suivants;
     struct _symbole *fil;
     struct _symbole *pere;
@@ -26,6 +28,7 @@ typedef struct _tree {
     type_var typeVar;
     struct _tree *fil;
     struct _tree *suivants;
+    int nbLine;
 } tree;
 
 typedef struct _bloc{
@@ -34,7 +37,7 @@ typedef struct _bloc{
 
 } bloc;
 
-tree *initialiseTree(char* name, tree *fil);
+tree *initialiseTree(char* name, tree *fil,int line);
 symbole * initialiseTS(char * nom, char* type);
 symbole * inserer( char *nom );
 
@@ -63,5 +66,6 @@ void writeDotSymb(symbole *t);
 void relieFilsSYMB(FILE *fichier, symbole *pere,symbole* fils);
 int printdotSYMB(FILE *fd , symbole * node,int n);
 int checkType(char * id, symbole * s,type_var t);
-
+int sizeFilsSymb(symbole * t );
+void initTAB(int* p,symbole * f,int index);
 #endif

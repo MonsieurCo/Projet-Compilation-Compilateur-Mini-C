@@ -22,22 +22,22 @@ int main() {
 sdfsdfsdfsd
 fsdfsdf*/
 
-  j = opm;
+  //j = opm;
   printd(i);
   printd(i+j);
-  printdpomme(j);
+  //printdpomme(j);
   printd(45000+j);
   printd(main());
  
-  printd(coucou(i,j));
+  //printd(coucou(i,j));
   printd(i+123);
   printd(45000+123);
   j = plume()*2;
-  i= 2 * coucou(i,j);
+ // i= 2 * coucou(i,j);
   i=main();
 
 
-  p = printdpomme(j);
+ // p = printdpomme(j);
   return 4 + plume();
 
 

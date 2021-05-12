@@ -7,7 +7,7 @@
 #define TAILLE 103 /* nombre premier de préférence */
 
 extern int chars;
-
+extern int yylineno;
 
 
 
@@ -54,10 +54,10 @@ void table_reset();
 
 %%
 programme	:	
-		liste_declarations liste_fonctions  {$$=initialiseTree("PROGRAM",$2); $$->ts = initialiseTS("programme","");$$->ts->fil=$1; insertSuivantSymb($$->ts->fil,$2->ts); 
-											visualiseSymb($$->ts);
-											pereRecusif($$->ts); checkDef($$,0);
-											writeDotSymb($$->ts);
+		liste_declarations liste_fonctions  {$$=initialiseTree("PROGRAM",$2,0); $$->ts = initialiseTS("programme","");$$->ts->fil=$1; insertSuivantSymb($$->ts->fil,$2->ts); 
+											pereRecusif($$->ts);
+											checkDef($$,0);
+											writeDot($2);
 											
 										}// writeDot($$);	visualiseSymb($$->ts); visualise($2);
 ;
@@ -83,18 +83,23 @@ liste_declarateurs	:
 ;
 declarateur	:	
 		IDENTIFICATEUR   {$$ = initialiseTS($1,"undef");}
-	|	tableau_declarateur  {}// $$=initialiseTree("tab",$1); addType($1,"int");} //
+	|	tableau_declarateur  { $$=initialiseTS("TAB","int"); $$->fil=$1;
+								$$->dimension = sizeFilsSymb($$->fil)-1; 
+								$$->tailles = (int *) malloc(($$->dimension) * sizeof(int));
+								initTAB($$->tailles,$$->fil->suivants,0);
+								$$->type=TYPE_TAB;
+								} 
 ;
 tableau_declarateur:
-	IDENTIFICATEUR  {}  
-	|tableau_declarateur '[' CONSTANTE ']' {}
+	IDENTIFICATEUR  {$$=initialiseTS($1,"...");}  
+	|tableau_declarateur '[' CONSTANTE ']' {$$=$1; insertSuivantSymb($$,initialiseTS($3,"int"));}
 ;
 
 fonction	:	
 		type IDENTIFICATEUR '(' liste_parms ')' bloc {	char * name;
 																		name = (char * ) malloc(15 * sizeof(char));
 																		sprintf(name,"%s , %s",$2,$1);
-																		$$=initialiseTree(name,$4);insertSuivant($$->fil,$6);
+																		$$=initialiseTree(name,$4,yylineno);insertSuivant($$->fil,$6);
 																		$$->typeNode=FONCTION;
 
 																		$$->ts = initialiseTS($2,$1);
@@ -112,13 +117,13 @@ fonction	:
 																		}
 																		$$->ts->fil = $4->ts;
 																		insertSuivantSymb($4->ts,$6->ts);}						
-	|	EXTERN type IDENTIFICATEUR '(' liste_parms ')' ';' {$$=initialiseTree("extern",initialiseTree($2,NULL));
+	|	EXTERN type IDENTIFICATEUR '(' liste_parms ')' ';' {$$=initialiseTree("extern",initialiseTree($2,NULL,yylineno),yylineno);
 															$$->ts = initialiseTS($3,$2);
 															$$->ts->nbParam=sizeFils($5);
 															
 															$$->ts->fil = $5->ts;
 
-														 	$$->fil->suivants=initialiseTree($3,NULL);
+														 	$$->fil->suivants=initialiseTree($3,NULL,yylineno);
 															$$->fil->suivants->fil=$5;
 															$$->typeNode=EXTER;
 																if(strcmp($2,"int") == 0 ){
@@ -141,16 +146,16 @@ params_liste_creator :    //modification de la grammaires en raison des problèm
 
 liste_parms	:	
 		params_liste_creator {$$=$1;}
-	|				{$$ = initialiseTree("...",NULL); $$->ts=initialiseTS("#empty","");}
+	|				{$$ = initialiseTree("...",NULL,yylineno); $$->ts=initialiseTS("#empty","");}
 ;
 
 parm	:	 
-		INT IDENTIFICATEUR  {$$=initialiseTree("int",initialiseTree($2,NULL)); $$->typeVar = TYPE_INT; $$->ts=initialiseTS($$->fil->nom,"int"); }//
+		INT IDENTIFICATEUR  {$$=initialiseTree("int",initialiseTree($2,NULL,yylineno),yylineno); $$->typeVar = TYPE_INT; $$->ts=initialiseTS($$->fil->nom,"int"); }//
 ;
 
 liste_instructions :	
 		liste_instructions instruction {$$ = $1; insertSuivant($1,$2);insertSuivantSymb($1->ts,$2->ts);}
-	|				{$$ = initialiseTree("...",NULL);$$->ts = initialiseTS("#empty","undef");}
+	|				{$$ = initialiseTree("...",NULL,yylineno);$$->ts = initialiseTS("#empty","undef");}
 ;
 instruction	:	
 		iteration {$$=$1;}
@@ -161,45 +166,53 @@ instruction	:
 	|	appel {$$=$1;}
 ;
 iteration	:	
-		FOR '(' affectation ';' condition ';' affectation ')' instruction 	{$$=initialiseTree("FOR",$3); $$->fil->suivants=$5;
+		FOR '(' affectation ';' condition ';' affectation ')' instruction 	{$$=initialiseTree("FOR",$3,yylineno); $$->fil->suivants=$5;
 																			$$->fil->suivants->suivants=$7;$$->fil->suivants->suivants->suivants=$9; 
 																			$$->ts = $9->ts; 
 																			insertSuivantSymb($$->ts,$3->ts);
 																			insertSuivantSymb($$->ts,$5->ts);
 																			insertSuivantSymb($$->ts,$7->ts);}
-	|	WHILE '(' condition ')' instruction {$$=initialiseTree("WHILE",$3); $$->fil->suivants=$5; 
+	|	WHILE '(' condition ')' instruction {$$=initialiseTree("WHILE",$3,yylineno); $$->fil->suivants=$5; 
 											$$->ts->fil = $5->ts;
 											insertSuivantSymb($$->ts,$3->ts);}
 	|   error '\n' {yyerror("reenter last");
                         yyerrok; };
 ;
 selection	:	
-		IF '(' condition ')' instruction %prec THEN {$$ = initialiseTree("IF",$3);$$->fil->suivants = $5;
+		IF '(' condition ')' instruction %prec THEN {$$ = initialiseTree("IF",$3,yylineno);
+													if(strcmp($5->nom,"BLOC")==0){
+														$5->nom = "THEN";	
+													}
+													$$->fil->suivants = $5;
 													$$->ts=$5->ts;
 													insertSuivantSymb($$->ts,$3->ts);}
-	|	IF '(' condition ')' instruction ELSE instruction {$$ = initialiseTree("IF",$3);$$->fil->suivants = $5;$$->fil->suivants->suivants = initialiseTree("ELSE",$7);
+	|	IF '(' condition ')' instruction ELSE instruction {$$ = initialiseTree("IF",$3,yylineno);
+														if(strcmp($5->nom,"BLOC")==0){
+															$5->nom = "THEN";	
+														}
+														$$->fil->suivants = $5;$$->fil->suivants->suivants = initialiseTree("ELSE",$7,yylineno);
 															$$->ts=$3->ts;
 															insertSuivantSymb($$->ts,$5->ts);
 															insertSuivantSymb($$->ts,$7->ts);} 
-	|	SWITCH '(' expression ')' instruction {$$ = initialiseTree("SWITCH",$3); $$->fil->suivants = $5->fil;
+	|	SWITCH '(' expression ')' instruction {$$ = initialiseTree("SWITCH",$3,yylineno); $$->fil->suivants = $5->fil;
 												$$->ts=$3->ts;
 												insertSuivantSymb($$->ts,$5->ts);}
-	|	CASE CONSTANTE ':' liste_instructions selection {$$ = initialiseTree("CASE",initialiseTree($2,NULL)); $$->fil->suivants = $4; $$->suivants=$5; 
+	|	CASE CONSTANTE ':' liste_instructions selection {$$ = initialiseTree("CASE",initialiseTree($2,NULL,yylineno),yylineno); $$->fil->suivants = $4; $$->suivants=$5; 
 														$$->ts=$4->ts;
 														insertSuivantSymb($$->ts,$5->ts);}
-	|	DEFAULT ':' instruction {$$ = initialiseTree("DEFAULT",$3);$$->ts = $3->ts;}
+	|	DEFAULT ':' instruction {$$ = initialiseTree("DEFAULT",$3,yylineno);$$->ts = $3->ts;}
 ;
 saut	:	
-		BREAK ';' {$$=initialiseTree("BREAK",NULL);}
-	|	RETURN ';' {$$ = initialiseTree("return",NULL);
+		BREAK ';' {$$=initialiseTree("BREAK",NULL,yylineno);}
+	|	RETURN ';' {$$ = initialiseTree("return",NULL,yylineno);
 					$$->typeNode=RET;}
-	|	RETURN expression ';' {$$ = initialiseTree("RETURN",$2); 
+	|	RETURN expression ';' {$$ = initialiseTree("RETURN",$2,yylineno); 
 								$$->ts=$2->ts;
 								$$->typeNode=RET;
 								}
 ;
 affectation	:	 
-		variable '=' expression  {$$ = initialiseTree(":=",$1);$$->fil->suivants = $3; 
+		variable '=' expression  {$$ = initialiseTree(":=",$1,yylineno);$$->fil->suivants = $3; 
 								 
 								$$->ts->fil = $1->ts;
 								$$->ts->fil->suivants = $3->ts;
@@ -207,94 +220,100 @@ affectation	:
 ;
 bloc	:	
 		'{' liste_declarations liste_instructions '}' {if (sizeFils($3) <= 1){ $$ = $3;
-													}else{		$$ = initialiseTree("BLOC",$3);}
+													}else{		$$ = initialiseTree("BLOC",$3,yylineno);}
 													insertSuivantSymb ($2,$3->ts);
 													$$->ts= initialiseTS("BLOC","");
 													$$->ts->fil = $2;}
 ;
 appel	:	//forme a faire
-	IDENTIFICATEUR '(' liste_expressions ')' ';' {$$=initialiseTree($1,$3);$$->typeNode=APPEL;$$->ts = $3->ts; 
+	IDENTIFICATEUR '(' liste_expressions ')' ';' {$$=initialiseTree($1,$3,yylineno);$$->typeNode=APPEL;$$->ts = $3->ts; 
 												}
 ;
 variable	:	
-		IDENTIFICATEUR  {$$ = initialiseTree($1,NULL);$$->typeNode=VAR;}  
-	|	tableau_variable { $$=initialiseTree("TAB",$1);addType($1,"int");$$->typeNode=VAR;
-							$$->ts=$1->ts;}
+		IDENTIFICATEUR  {$$ = initialiseTree($1,NULL,yylineno);$$->typeNode=VAR;}  
+	|	tableau_variable { $$=initialiseTree("TAB",$1,yylineno);addType($$,"tab");$$->typeNode=VAR;
+							$$->ts=$1->ts;
+							$$->ts->dimension = sizeFilsSymb($$->fil)-1; 
+								$$->ts->tailles = (int *) malloc(($$->ts->dimension) * sizeof(int));
+								initTAB($$->ts->tailles,$$->fil->suivants,0);
+								$$->typeVar=TYPE_TAB;
+			
+							}
 ;
 tableau_variable	:
-	IDENTIFICATEUR  {$$ = initialiseTree($1,NULL);}  
+	IDENTIFICATEUR  {$$ = initialiseTree($1,NULL,yylineno);}  
 	|tableau_variable '[' expression ']' {$$ = $1; insertSuivant($$,$3);}
 ;
 expression	:	
 		'(' expression ')'	{$$ = $2;}                       
 	
-	|	expression PLUS expression	{$$ = initialiseTree("+",$1); $$->fil->suivants = $3;
+	|	expression PLUS expression	{$$ = initialiseTree("+",$1,yylineno); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;
 									}
-	|	expression MOINS expression	{$$ = initialiseTree("-",$1); $$->fil->suivants = $3;
+	|	expression MOINS expression	{$$ = initialiseTree("-",$1,yylineno); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;
 									}		
-	|	expression DIV expression	{$$ = initialiseTree("/",$1); $$->fil->suivants = $3;
+	|	expression DIV expression	{$$ = initialiseTree("/",$1,yylineno); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;
 									}				
-	|	expression MUL expression 	{$$ = initialiseTree("*",$1); $$->fil->suivants = $3;
+	|	expression MUL expression 	{$$ = initialiseTree("*",$1,yylineno); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;
 									}			
-	|	expression RSHIFT expression	{$$ = initialiseTree(">>",$1); $$->fil->suivants = $3;
+	|	expression RSHIFT expression	{$$ = initialiseTree(">>",$1,yylineno); $$->fil->suivants = $3;
 										$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;}  			
-	|	expression LSHIFT expression	{$$ = initialiseTree("<<",$1); $$->fil->suivants = $3;
+	|	expression LSHIFT expression	{$$ = initialiseTree("<<",$1,yylineno); $$->fil->suivants = $3;
 										$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;}			
-	|	expression BAND expression	{$$ = initialiseTree("&=",$1); $$->fil->suivants = $3;
+	|	expression BAND expression	{$$ = initialiseTree("&=",$1,yylineno); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;}			
-	|	expression BOR expression	{$$ = initialiseTree("|=",$1); $$->fil->suivants = $3;
+	|	expression BOR expression	{$$ = initialiseTree("|=",$1,yylineno); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;} 			
-	|	MOINS expression %prec MUL	{$$ = initialiseTree("-",$2);
+	|	MOINS expression %prec MUL	{$$ = initialiseTree("-",$2,yylineno);
 									$$->ts = $2->ts;}                                   
-	|	CONSTANTE       {$$ = initialiseTree($1,NULL);$$->typeVar = TYPE_INT;}                                                 							
+	|	CONSTANTE       {$$ = initialiseTree($1,NULL,yylineno);$$->typeVar = TYPE_INT;}                                                 							
 	|	variable	 {$$ =  $1;}                           
-	|	IDENTIFICATEUR '(' liste_expressions ')' {$$ = initialiseTree($1,$3); $$->typeNode=APPEL;
+	|	IDENTIFICATEUR '(' liste_expressions ')' {$$ = initialiseTree($1,$3,yylineno); $$->typeNode=APPEL;
 												$$->ts->fil=$3->ts;
 									}                                  
 ;
 //cf correction de Fissore Davide merci à lui 
 liste_expressions :      // pour accepter epsilon ou une liste d'expressions
     expr_liste_creator {$$ = $1;}
-    | 			{$$ = initialiseTree("...",NULL);$$->ts=initialiseTS("#empty","");}
+    | 			{$$ = initialiseTree("...",NULL,yylineno);$$->ts=initialiseTS("#empty","");}
 ;
 expr_liste_creator :                         // création de la liste d'expressions valide
     expr_liste_creator ',' expression {$$ = $1 ;insertSuivant($$,$3); insertSuivantSymb($$->ts,$3->ts);} // liste à n éléments
     | expression                   {$$=$1;}           // liste à un seul élément
 ;
 condition	:	
-		NOT '(' condition ')' {$$ = initialiseTree("not",$3);}
-	|	condition binary_rel condition %prec REL {$$ = initialiseTree($2,$1); $$->fil->suivants = $3;
+		NOT '(' condition ')' {$$ = initialiseTree("not",$3,yylineno);}
+	|	condition binary_rel condition %prec REL {$$ = initialiseTree($2,$1,yylineno); $$->fil->suivants = $3;
 													$$->ts->fil=$1->ts;
 													$$->ts->fil->suivants=$3->ts;}
 	|	'(' condition ')' { $$ = $2;}
-	|	expression LT expression {$$ = initialiseTree("<",$1); $$->fil->suivants = $3;
+	|	expression LT expression {$$ = initialiseTree("<",$1,yylineno); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;}
-	|	expression GT expression {$$ = initialiseTree(">",$1); $$->fil->suivants = $3;
+	|	expression GT expression {$$ = initialiseTree(">",$1,yylineno); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;}
-	|	expression GEQ expression {$$ = initialiseTree(">=",$1); $$->fil->suivants = $3;
+	|	expression GEQ expression {$$ = initialiseTree(">=",$1,yylineno); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;}
-	|	expression LEQ expression {$$ = initialiseTree("<=",$1); $$->fil->suivants = $3;
+	|	expression LEQ expression {$$ = initialiseTree("<=",$1,yylineno); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;}
-	|	expression EQ expression {$$ = initialiseTree("==",$1); $$->fil->suivants = $3;
+	|	expression EQ expression {$$ = initialiseTree("==",$1,yylineno); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;}
-	|	expression NEQ expression {$$ = initialiseTree("!=",$1); $$->fil->suivants = $3;
+	|	expression NEQ expression {$$ = initialiseTree("!=",$1,yylineno); $$->fil->suivants = $3;
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;}
 ;
@@ -325,7 +344,7 @@ binary_comp	:
 
 
 
-extern int yylineno;
+
 void yyerror(char *s){
 	 fprintf(stderr, " line %d: %s\n", yylineno, s);
 	 exit(1);

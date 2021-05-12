@@ -9,7 +9,7 @@ symbole *table[TAILLE];
 
 
 
-tree *initialiseTree(char* name, tree *fil){
+tree *initialiseTree(char* name, tree *fil, int line){
 	struct _tree *t = (tree*)malloc(sizeof(tree));
 	t->nom = name;
 	t->fil = fil;
@@ -18,7 +18,7 @@ tree *initialiseTree(char* name, tree *fil){
 	t->typeNode = NUL;
 	t->ts = initialiseTS("...","...");
 	t->typeVar=NULE;
-
+	t->nbLine=line;
 	return t;
 
 }
@@ -34,6 +34,8 @@ symbole * initialiseTS(char * nom, char* type){
 	}else{
 		ts->type=NULE;
 	}
+	ts->dimension=0;
+	ts->tailles = NULL;
 	ts->suivants = NULL;
 	ts->fil = NULL;
 	ts->pere = NULL;
@@ -41,7 +43,6 @@ symbole * initialiseTS(char * nom, char* type){
 	ts->nbParam=0;
 	return ts;
 }
-
 
 
 
@@ -182,7 +183,7 @@ void relieFils(FILE *fichier, tree *pere,tree* fils){
 //focntion ecrivant le dot 
 void writeDot(tree *t){
 
-FILE *fd =  fopen("testDOT.dot","w");
+FILE *fd =  fopen("DOT.dot","w");
 
 	fprintf(fd,"//fichier DOT représentant le graph du fichier c analysé\n");
 	fprintf(fd,"digraph test {\n\n");
@@ -235,7 +236,15 @@ int printdot(FILE *fd , tree * node,int n){
    
 }
 
-
+int sizeFilsSymb(symbole * t ){
+	int ret = 0;
+	while(t != NULL){
+		if(strcmp(t->nom,"...") != 0){
+			ret ++ ;}
+		t = t->suivants;
+	}
+	return ret;
+}
 
 
 int sizeFils(tree * t ){
@@ -262,6 +271,8 @@ void addType(tree * tree, char* type){
 	if(tree != NULL){
 		if(0==strcmp("int",type)){
 			tree->typeVar = TYPE_INT;
+		}else if(0==strcmp("tab",type)){
+			tree->typeVar = TYPE_TAB;
 		}
 		else{
 			tree->typeVar = TYPE_VOID;
@@ -339,12 +350,12 @@ int checkPresence(char * id, symbole *s,int nbPar){
 			for(int i = 0; i<=nbPar; i = i+1){
 				if(fils!= NULL){
 				res=res+checkType(fils->nom,fils,TYPE_INT);
-				printf("%s %d\n",fils->nom,res);
+				//printf("%s %d\n",fils->nom,res);
 				fils = fils->suivants;
 				}
 			}
-			printf("res = %d\n",res);
-			printf("resultat de res==nbPar  %d\n",res==nbPar);
+			//printf("res = %d\n",res);
+			//printf("resultat de res==nbPar  %d\n",res==nbPar);
 			return res==nbPar;
 		}
 	while(s->suivants!=NULL){
@@ -354,13 +365,18 @@ int checkPresence(char * id, symbole *s,int nbPar){
 			int res=0;
 			for(int i = 0; i<=nbPar; i = i+1){
 				if(fils!= NULL){
-				res=res+checkType(fils->nom,fils,TYPE_INT);
-				printf("%s %d\n",fils->nom,res);
+					if(strcmp(fils->nom,"TAB") == 0 ){
+						//printf("teeeeeeeeeeeeeeeee %s",fils->fil->nom);
+						res=res+checkPresenceTAB(fils->fil->nom,fils,fils->dimension,fils->tailles);
+					}else{
+						res=res+checkType(fils->nom,fils,TYPE_INT);
+						//printf("%s %d\n",fils->nom,res);
+					}
 				fils = fils->suivants;
 				}
 			}
-			printf("res = %d\n",res);
-			printf("resultat de res==nbPar  %d\n",res==nbPar);
+			//printf("res = %d\n",res);
+			//printf("resultat de res==nbPar  %d\n",res==nbPar);
 			return res==nbPar;
 		}
 		s=s->suivants;
@@ -369,6 +385,45 @@ int checkPresence(char * id, symbole *s,int nbPar){
 	
 }
 
+int checkPresenceTAB(char * id, symbole *s,int nbPar, int *tailles){
+	
+	if(s->pere==NULL){
+		return 0;
+	}
+	s=s->pere->fil;
+	
+	if(strcmp(s->nom,"TAB") == 0  && strcmp(s->fil->nom,id) == 0 && s->dimension == nbPar ){ //&& s->dimension == nbPar 
+			//printf("%s doit avoir: %d\n",id,s->dimension);
+			return checkTaille(s->tailles,tailles,nbPar);
+	
+		}
+
+	
+	while(s->suivants!=NULL){
+		//printf("%s doit avoir: %d\n",s->suivants->nom,nbPar);
+		if(strcmp(s->suivants->nom,"TAB") == 0   && strcmp(s->suivants->fil->nom,id) == 0 && s->suivants->dimension == nbPar ){
+			//printf("%s doit avoir: %d\n",id,s->suivants->dimension);
+			return checkTaille(s->suivants->tailles,tailles,nbPar);
+	
+		}
+		s=s->suivants;
+	}
+	checkPresenceTAB(id,s->pere,nbPar,tailles);
+	
+}
+
+int checkTaille(int * tab1,int *tab2,int size){
+	for(int i = 0; i < size ; i++ ){
+		if( tab2[i] >= tab1[i]){
+			return 0;
+		}
+	}
+	return 1;
+
+}
+
+
+
 int checkType(char * id, symbole * s,type_var t){
 	
 	if(s->pere==NULL){
@@ -376,7 +431,7 @@ int checkType(char * id, symbole * s,type_var t){
 		return 0;
 	}
 	s=s->pere->fil;
-	printf("on check %s --> %s\n",id,s->nom);
+	//printf("on check %s --> %s\n",id,s->nom);
 	
 	if(strcmp(s->nom,id) == 0){
 			if(s->type == t ){
@@ -421,12 +476,18 @@ int max(int a , int b ){
 int checkAffectation(tree * t, int b){
 
     while (t != NULL){
-		printf("check affectation de %s\n",t->nom);
+		//printf("check affectation de %s\n",t->nom);
 		if(t->typeNode == APPEL){
 			//visualiseSymb(t->ts->pere);
-			printf("APPEL\n");
+			//printf("APPEL\n");
 			b= min(b, checkType(t->nom,t->ts,TYPE_INT));
 		}
+		if(t->typeVar == TYPE_TAB){
+			//visualiseSymb(t->ts->pere);
+			//printf("TAB\n"); 
+			b= min(b, checkPresenceTAB(t->fil->nom,t->ts,t->ts->dimension,t->ts->tailles));
+		}
+
 
 
 		if (t->fil != NULL){
@@ -442,8 +503,8 @@ int checkRetour(tree * t,type_var type, int b ){
     while (t != NULL){
 		if(t->typeNode == RET){
 			if(t->fil!=NULL){
-			printf("retour de la fonction %s\n",t->fil->nom);
-			printf("%d\n",checkAffectation(t->fil,1));
+			//printf("retour de la fonction %s\n",t->fil->nom);
+			//printf("%d\n",checkAffectation(t->fil,1));
 			b= min(b, checkAffectation(t->fil,1));;
 			}else{
 				b=min(b,1);
@@ -460,8 +521,6 @@ int checkRetour(tree * t,type_var type, int b ){
 	return b;
 }
 
-
-
 void checkDef(tree * t, int n){
 	
     while (t != NULL)
@@ -473,23 +532,55 @@ void checkDef(tree * t, int n){
 				if (res > 1 ){
 					res = 0;
 				}
-				printf("vérification du type de retour pour la fonction %s %d\n",t->nom,res);
+				if(res == 0){
+					raiseError(t->nom,t->nbLine);
+					return;
+				}
+				//printf("vérification du type de retour pour la fonction %s %d\n",t->nom,res);
 			}
 
 		}
     
-	/*	if(t->typeNode == VAR){
+		if(t->typeNode == VAR){
+			if(t->typeVar == TYPE_TAB){
+				//printf("%s %d\n",t->fil->nom,t->ts->dimension);
+				int res = checkPresenceTAB(t->fil->nom,t->ts,t->ts->dimension,t->ts->tailles);
+				if(res == 0){
+					raiseError(t->fil->nom,t->fil->nbLine);
+					return;
+				}
+				//printf("presence du tab %s %d\n",t->fil->nom,res);
+
+			}
+			else{
+				int res = checkPresence(t->nom,t->ts,0);
 			//visualiseSymb(t->ts->pere);
-			printf("presence de la variables %s %d\n",t->nom,checkPresence(t->nom,t->ts,0));
-		}
+			if(res == 0){
+					raiseError(t->nom,t->nbLine);
+					return;
+				}
+			//printf("presence de la variables %s %d\n",t->nom,res);
+		}}
 		if(t->typeNode == APPEL){
-			printf("nb param de %s: %d\n",t->nom,sizeFils(t->fil));
-			printf("\n\npresence de l'appel %s %d\n",t->nom,checkPresence(t->nom,t->ts,sizeFils(t->fil)));
+			if(checkPresence(t->nom,t->ts,sizeFils(t->fil)) == 0){
+					raiseError(t->nom,t->nbLine);
+					return;
+				}
+			//printf("nb param de %s: %d\n",t->nom,sizeFils(t->fil));
+			//printf("\n\npresence de l'appel %s %d\n",t->nom,checkPresence(t->nom,t->ts,sizeFils(t->fil)));
 			
 		}
 		if(t->typeNode == AFFECTATION){
-			printf("type de l'affectation %s %s %s == %d\n\n",t->fil->nom,t->nom,t->fil->suivants->nom,checkAffectation(t->fil->suivants,1));
-		}*/
+			if(checkAffectation(t->fil->suivants,1) == 0){
+					if(strcmp(t->fil->nom, "TAB")==0){
+						raiseError(t->fil->fil->nom,t->nbLine);
+					}else{
+					raiseError(t->fil->nom,t->fil->nbLine);
+					}
+					return;
+				}
+			//printf("type de l'affectation %s %s %s == %d\n\n",t->fil->nom,t->nom,t->fil->suivants->nom,checkAffectation(t->fil->suivants,1));
+		}
 
         //printf("Node: %s\n", t->nom);
 
@@ -624,5 +715,21 @@ void ecritNodeSYMB(FILE *fichier,symbole *t, int n){
 	
 	
 	
+
+}
+
+
+void raiseError(char * s,int line){
+	fprintf(stderr,"erreur de sémantique %s à la ligne %d\n",s,line);
+	exit(1);
+}
+
+
+
+void initTAB(int* p,symbole * f,int index){
+	if(f !=NULL){
+		p[index] = atoi(f->nom);
+		initTAB(p,f->suivants,index+1);
+	}
 
 }
