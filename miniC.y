@@ -114,14 +114,13 @@ fonction	:
 																		insertSuivantSymb($4->ts,$6->ts);}						
 	|	EXTERN type IDENTIFICATEUR '(' liste_parms ')' ';' {$$=initialiseTree("extern",initialiseTree($2,NULL));
 															$$->ts = initialiseTS($3,$2);
-															printf("sqdqsdqsd %d",sizeFils($5));
 															$$->ts->nbParam=sizeFils($5);
 															
 															$$->ts->fil = $5->ts;
 
 														 	$$->fil->suivants=initialiseTree($3,NULL);
 															$$->fil->suivants->fil=$5;
-															$$->typeNode=FONCTION;
+															$$->typeNode=EXTER;
 																if(strcmp($2,"int") == 0 ){
 																			$$->typeVar = TYPE_INT;
 																		}else if (strcmp($2,"void") == 0)
@@ -192,9 +191,12 @@ selection	:
 ;
 saut	:	
 		BREAK ';' {$$=initialiseTree("BREAK",NULL);}
-	|	RETURN ';' {$$ = initialiseTree("return",NULL);}
+	|	RETURN ';' {$$ = initialiseTree("return",NULL);
+					$$->typeNode=RET;}
 	|	RETURN expression ';' {$$ = initialiseTree("RETURN",$2); 
-								$$->ts=$2->ts;}
+								$$->ts=$2->ts;
+								$$->typeNode=RET;
+								}
 ;
 affectation	:	 
 		variable '=' expression  {$$ = initialiseTree(":=",$1);$$->fil->suivants = $3; 
@@ -204,8 +206,7 @@ affectation	:
 								$$->typeNode=AFFECTATION;} 
 ;
 bloc	:	
-		'{' liste_declarations liste_instructions '}' {printf("taille du bloc %d",sizeFils($3));
-													if (sizeFils($3) <= 1){ $$ = $3;
+		'{' liste_declarations liste_instructions '}' {if (sizeFils($3) <= 1){ $$ = $3;
 													}else{		$$ = initialiseTree("BLOC",$3);}
 													insertSuivantSymb ($2,$3->ts);
 													$$->ts= initialiseTS("BLOC","");

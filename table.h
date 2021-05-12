@@ -1,7 +1,7 @@
 #ifndef _TABLE_H
 #define _TABLE_H
 #define TAILLE 103 /* nombre premier de préférence */
-typedef enum {FONCTION,AFFECTATION,APPEL,NUL,VAR} type_t;
+typedef enum {FONCTION,AFFECTATION,APPEL,NUL,VAR,RET,EXTER} type_t;
 typedef enum {TYPE_INT, TYPE_VOID, NULE} type_var;
 //typedef enum {AFFECTATION,EXPRESSION,FOR, WHILE,PRINT} typeNode;
 

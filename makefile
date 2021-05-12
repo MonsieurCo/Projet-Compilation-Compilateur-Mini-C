@@ -8,7 +8,7 @@ all:
 	$(YC) -d miniC.y
 	$(FL) ANSI-C.l
 	$(CC) -g lex.yy.c y.tab.c table.c -lfl  -o $(TARGET) -w 
-	./testeur < Tests/add.c
+	./testeur < Tests/functions.c
 	dot -Tpdf testDOT.dot -o testsymbol.pdf
 
 

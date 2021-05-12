@@ -594,13 +594,13 @@ static const yytype_int8 yytranslate[] =
 static const yytype_int16 yyrline[] =
 {
        0,    57,    57,    65,    66,    69,    70,    73,    81,    82,
-      85,    86,    89,    90,    94,   115,   133,   134,   139,   140,
-     144,   145,   149,   153,   154,   157,   158,   159,   160,   161,
-     162,   165,   171,   174,   178,   181,   185,   188,   191,   194,
-     195,   196,   200,   207,   215,   219,   220,   224,   225,   228,
-     230,   234,   238,   242,   246,   249,   252,   255,   258,   260,
-     261,   262,   268,   269,   272,   273,   276,   277,   280,   281,
-     284,   287,   290,   293,   296,   311,   312
+      85,    86,    89,    90,    94,   115,   132,   133,   138,   139,
+     143,   144,   148,   152,   153,   156,   157,   158,   159,   160,
+     161,   164,   170,   173,   177,   180,   184,   187,   190,   193,
+     194,   196,   202,   209,   216,   220,   221,   225,   226,   229,
+     231,   235,   239,   243,   247,   250,   253,   256,   259,   261,
+     262,   263,   269,   270,   273,   274,   277,   278,   281,   282,
+     285,   288,   291,   294,   297,   312,   313
 };
 #endif
 
@@ -1627,457 +1627,458 @@ yyreduce:
 #line 115 "miniC.y"
                                                                    {(yyval.tree)=initialiseTree("extern",initialiseTree((yyvsp[-5].id),NULL));
 															(yyval.tree)->ts = initialiseTS((yyvsp[-4].id),(yyvsp[-5].id));
-															printf("sqdqsdqsd %d",sizeFils((yyvsp[-2].tree)));
 															(yyval.tree)->ts->nbParam=sizeFils((yyvsp[-2].tree));
 															
 															(yyval.tree)->ts->fil = (yyvsp[-2].tree)->ts;
 
 														 	(yyval.tree)->fil->suivants=initialiseTree((yyvsp[-4].id),NULL);
 															(yyval.tree)->fil->suivants->fil=(yyvsp[-2].tree);
-															(yyval.tree)->typeNode=FONCTION;
+															(yyval.tree)->typeNode=EXTER;
 																if(strcmp((yyvsp[-5].id),"int") == 0 ){
 																			(yyval.tree)->typeVar = TYPE_INT;
 																		}else if (strcmp((yyvsp[-5].id),"void") == 0)
 																		{(yyval.tree)->typeVar = TYPE_VOID;}
 																		else{(yyval.tree)->typeVar = NULE;}
 																		}
-#line 1645 "y.tab.c"
+#line 1644 "y.tab.c"
     break;
 
   case 16:
-#line 133 "miniC.y"
+#line 132 "miniC.y"
                      {(yyval.id)="void";}
-#line 1651 "y.tab.c"
+#line 1650 "y.tab.c"
     break;
 
   case 17:
-#line 134 "miniC.y"
+#line 133 "miniC.y"
                     {(yyval.id) = "int";}
-#line 1657 "y.tab.c"
+#line 1656 "y.tab.c"
     break;
 
   case 18:
-#line 139 "miniC.y"
+#line 138 "miniC.y"
                                       {(yyval.tree) = (yyvsp[-2].tree); insertSuivant((yyval.tree),(yyvsp[0].tree)); insertSuivantSymb((yyval.tree)->ts,(yyvsp[0].tree)->ts);}
-#line 1663 "y.tab.c"
+#line 1662 "y.tab.c"
     break;
 
   case 19:
-#line 140 "miniC.y"
+#line 139 "miniC.y"
                 {(yyval.tree) =(yyvsp[0].tree);}
-#line 1669 "y.tab.c"
+#line 1668 "y.tab.c"
     break;
 
   case 20:
-#line 144 "miniC.y"
+#line 143 "miniC.y"
                                      {(yyval.tree)=(yyvsp[0].tree);}
-#line 1675 "y.tab.c"
+#line 1674 "y.tab.c"
     break;
 
   case 21:
-#line 145 "miniC.y"
+#line 144 "miniC.y"
                                         {(yyval.tree) = initialiseTree("...",NULL); (yyval.tree)->ts=initialiseTS("#empty","");}
-#line 1681 "y.tab.c"
+#line 1680 "y.tab.c"
     break;
 
   case 22:
-#line 149 "miniC.y"
+#line 148 "miniC.y"
                                     {(yyval.tree)=initialiseTree("int",initialiseTree((yyvsp[0].id),NULL)); (yyval.tree)->typeVar = TYPE_INT; (yyval.tree)->ts=initialiseTS((yyval.tree)->fil->nom,"int"); }
-#line 1687 "y.tab.c"
+#line 1686 "y.tab.c"
     break;
 
   case 23:
-#line 153 "miniC.y"
+#line 152 "miniC.y"
                                                {(yyval.tree) = (yyvsp[-1].tree); insertSuivant((yyvsp[-1].tree),(yyvsp[0].tree));insertSuivantSymb((yyvsp[-1].tree)->ts,(yyvsp[0].tree)->ts);}
-#line 1693 "y.tab.c"
+#line 1692 "y.tab.c"
     break;
 
   case 24:
-#line 154 "miniC.y"
+#line 153 "miniC.y"
                                         {(yyval.tree) = initialiseTree("...",NULL);(yyval.tree)->ts = initialiseTS("#empty","undef");}
-#line 1699 "y.tab.c"
+#line 1698 "y.tab.c"
     break;
 
   case 25:
-#line 157 "miniC.y"
+#line 156 "miniC.y"
                           {(yyval.tree)=(yyvsp[0].tree);}
-#line 1705 "y.tab.c"
+#line 1704 "y.tab.c"
     break;
 
   case 26:
-#line 158 "miniC.y"
+#line 157 "miniC.y"
                           {(yyval.tree) = (yyvsp[0].tree);}
-#line 1711 "y.tab.c"
+#line 1710 "y.tab.c"
     break;
 
   case 27:
-#line 159 "miniC.y"
+#line 158 "miniC.y"
                      { (yyval.tree) = (yyvsp[0].tree);}
-#line 1717 "y.tab.c"
+#line 1716 "y.tab.c"
     break;
 
   case 28:
-#line 160 "miniC.y"
+#line 159 "miniC.y"
                                 { (yyval.tree) = (yyvsp[-1].tree);}
-#line 1723 "y.tab.c"
+#line 1722 "y.tab.c"
     break;
 
   case 29:
-#line 161 "miniC.y"
+#line 160 "miniC.y"
                      {(yyval.tree)=(yyvsp[0].tree);}
-#line 1729 "y.tab.c"
+#line 1728 "y.tab.c"
     break;
 
   case 30:
-#line 162 "miniC.y"
+#line 161 "miniC.y"
                       {(yyval.tree)=(yyvsp[0].tree);}
-#line 1735 "y.tab.c"
+#line 1734 "y.tab.c"
     break;
 
   case 31:
-#line 165 "miniC.y"
+#line 164 "miniC.y"
                                                                                         {(yyval.tree)=initialiseTree("FOR",(yyvsp[-6].tree)); (yyval.tree)->fil->suivants=(yyvsp[-4].tree);
 																			(yyval.tree)->fil->suivants->suivants=(yyvsp[-2].tree);(yyval.tree)->fil->suivants->suivants->suivants=(yyvsp[0].tree); 
 																			(yyval.tree)->ts = (yyvsp[0].tree)->ts; 
 																			insertSuivantSymb((yyval.tree)->ts,(yyvsp[-6].tree)->ts);
 																			insertSuivantSymb((yyval.tree)->ts,(yyvsp[-4].tree)->ts);
 																			insertSuivantSymb((yyval.tree)->ts,(yyvsp[-2].tree)->ts);}
-#line 1746 "y.tab.c"
+#line 1745 "y.tab.c"
     break;
 
   case 32:
-#line 171 "miniC.y"
+#line 170 "miniC.y"
                                                     {(yyval.tree)=initialiseTree("WHILE",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants=(yyvsp[0].tree); 
 											(yyval.tree)->ts->fil = (yyvsp[0].tree)->ts;
 											insertSuivantSymb((yyval.tree)->ts,(yyvsp[-2].tree)->ts);}
-#line 1754 "y.tab.c"
+#line 1753 "y.tab.c"
     break;
 
   case 33:
-#line 174 "miniC.y"
+#line 173 "miniC.y"
                        {yyerror("reenter last");
                         yyerrok; }
-#line 1761 "y.tab.c"
+#line 1760 "y.tab.c"
     break;
 
   case 34:
-#line 178 "miniC.y"
+#line 177 "miniC.y"
                                                             {(yyval.tree) = initialiseTree("IF",(yyvsp[-2].tree));(yyval.tree)->fil->suivants = (yyvsp[0].tree);
 													(yyval.tree)->ts=(yyvsp[0].tree)->ts;
 													insertSuivantSymb((yyval.tree)->ts,(yyvsp[-2].tree)->ts);}
-#line 1769 "y.tab.c"
+#line 1768 "y.tab.c"
     break;
 
   case 35:
-#line 181 "miniC.y"
+#line 180 "miniC.y"
                                                                   {(yyval.tree) = initialiseTree("IF",(yyvsp[-4].tree));(yyval.tree)->fil->suivants = (yyvsp[-2].tree);(yyval.tree)->fil->suivants->suivants = initialiseTree("ELSE",(yyvsp[0].tree));
 															(yyval.tree)->ts=(yyvsp[-4].tree)->ts;
 															insertSuivantSymb((yyval.tree)->ts,(yyvsp[-2].tree)->ts);
 															insertSuivantSymb((yyval.tree)->ts,(yyvsp[0].tree)->ts);}
-#line 1778 "y.tab.c"
+#line 1777 "y.tab.c"
     break;
 
   case 36:
-#line 185 "miniC.y"
+#line 184 "miniC.y"
                                                       {(yyval.tree) = initialiseTree("SWITCH",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree)->fil;
 												(yyval.tree)->ts=(yyvsp[-2].tree)->ts;
 												insertSuivantSymb((yyval.tree)->ts,(yyvsp[0].tree)->ts);}
-#line 1786 "y.tab.c"
+#line 1785 "y.tab.c"
     break;
 
   case 37:
-#line 188 "miniC.y"
+#line 187 "miniC.y"
                                                                 {(yyval.tree) = initialiseTree("CASE",initialiseTree((yyvsp[-3].id),NULL)); (yyval.tree)->fil->suivants = (yyvsp[-1].tree); (yyval.tree)->suivants=(yyvsp[0].tree); 
 														(yyval.tree)->ts=(yyvsp[-1].tree)->ts;
 														insertSuivantSymb((yyval.tree)->ts,(yyvsp[0].tree)->ts);}
-#line 1794 "y.tab.c"
+#line 1793 "y.tab.c"
     break;
 
   case 38:
-#line 191 "miniC.y"
+#line 190 "miniC.y"
                                         {(yyval.tree) = initialiseTree("DEFAULT",(yyvsp[0].tree));(yyval.tree)->ts = (yyvsp[0].tree)->ts;}
-#line 1800 "y.tab.c"
+#line 1799 "y.tab.c"
     break;
 
   case 39:
-#line 194 "miniC.y"
+#line 193 "miniC.y"
                           {(yyval.tree)=initialiseTree("BREAK",NULL);}
-#line 1806 "y.tab.c"
+#line 1805 "y.tab.c"
     break;
 
   case 40:
-#line 195 "miniC.y"
-                           {(yyval.tree) = initialiseTree("return",NULL);}
+#line 194 "miniC.y"
+                           {(yyval.tree) = initialiseTree("return",NULL);
+					(yyval.tree)->typeNode=RET;}
 #line 1812 "y.tab.c"
     break;
 
   case 41:
 #line 196 "miniC.y"
                                       {(yyval.tree) = initialiseTree("RETURN",(yyvsp[-1].tree)); 
-								(yyval.tree)->ts=(yyvsp[-1].tree)->ts;}
-#line 1819 "y.tab.c"
+								(yyval.tree)->ts=(yyvsp[-1].tree)->ts;
+								(yyval.tree)->typeNode=RET;
+								}
+#line 1821 "y.tab.c"
     break;
 
   case 42:
-#line 200 "miniC.y"
+#line 202 "miniC.y"
                                          {(yyval.tree) = initialiseTree(":=",(yyvsp[-2].tree));(yyval.tree)->fil->suivants = (yyvsp[0].tree); 
 								 
 								(yyval.tree)->ts->fil = (yyvsp[-2].tree)->ts;
 								(yyval.tree)->ts->fil->suivants = (yyvsp[0].tree)->ts;
 								(yyval.tree)->typeNode=AFFECTATION;}
-#line 1829 "y.tab.c"
+#line 1831 "y.tab.c"
     break;
 
   case 43:
-#line 207 "miniC.y"
-                                                              {printf("taille du bloc %d",sizeFils((yyvsp[-1].tree)));
-													if (sizeFils((yyvsp[-1].tree)) <= 1){ (yyval.tree) = (yyvsp[-1].tree);
+#line 209 "miniC.y"
+                                                              {if (sizeFils((yyvsp[-1].tree)) <= 1){ (yyval.tree) = (yyvsp[-1].tree);
 													}else{		(yyval.tree) = initialiseTree("BLOC",(yyvsp[-1].tree));}
 													insertSuivantSymb ((yyvsp[-2].symb),(yyvsp[-1].tree)->ts);
 													(yyval.tree)->ts= initialiseTS("BLOC","");
 													(yyval.tree)->ts->fil = (yyvsp[-2].symb);}
-#line 1840 "y.tab.c"
+#line 1841 "y.tab.c"
     break;
 
   case 44:
-#line 215 "miniC.y"
+#line 216 "miniC.y"
                                                      {(yyval.tree)=initialiseTree((yyvsp[-4].id),(yyvsp[-2].tree));(yyval.tree)->typeNode=APPEL;(yyval.tree)->ts = (yyvsp[-2].tree)->ts; 
 												}
-#line 1847 "y.tab.c"
+#line 1848 "y.tab.c"
     break;
 
   case 45:
-#line 219 "miniC.y"
+#line 220 "miniC.y"
                                 {(yyval.tree) = initialiseTree((yyvsp[0].id),NULL);(yyval.tree)->typeNode=VAR;}
-#line 1853 "y.tab.c"
+#line 1854 "y.tab.c"
     break;
 
   case 46:
-#line 220 "miniC.y"
+#line 221 "miniC.y"
                                  { (yyval.tree)=initialiseTree("TAB",(yyvsp[0].tree));addType((yyvsp[0].tree),"int");(yyval.tree)->typeNode=VAR;
 							(yyval.tree)->ts=(yyvsp[0].tree)->ts;}
-#line 1860 "y.tab.c"
+#line 1861 "y.tab.c"
     break;
 
   case 47:
-#line 224 "miniC.y"
+#line 225 "miniC.y"
                         {(yyval.tree) = initialiseTree((yyvsp[0].id),NULL);}
-#line 1866 "y.tab.c"
+#line 1867 "y.tab.c"
     break;
 
   case 48:
-#line 225 "miniC.y"
+#line 226 "miniC.y"
                                              {(yyval.tree) = (yyvsp[-3].tree); insertSuivant((yyval.tree),(yyvsp[-1].tree));}
-#line 1872 "y.tab.c"
+#line 1873 "y.tab.c"
     break;
 
   case 49:
-#line 228 "miniC.y"
+#line 229 "miniC.y"
                                         {(yyval.tree) = (yyvsp[-1].tree);}
-#line 1878 "y.tab.c"
+#line 1879 "y.tab.c"
     break;
 
   case 50:
-#line 230 "miniC.y"
+#line 231 "miniC.y"
                                                 {(yyval.tree) = initialiseTree("+",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree);
 									(yyval.tree)->ts->fil=(yyvsp[-2].tree)->ts;
 									(yyval.tree)->ts->fil->suivants=(yyvsp[0].tree)->ts;
 									}
-#line 1887 "y.tab.c"
+#line 1888 "y.tab.c"
     break;
 
   case 51:
-#line 234 "miniC.y"
+#line 235 "miniC.y"
                                                 {(yyval.tree) = initialiseTree("-",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree);
 									(yyval.tree)->ts->fil=(yyvsp[-2].tree)->ts;
 									(yyval.tree)->ts->fil->suivants=(yyvsp[0].tree)->ts;
 									}
-#line 1896 "y.tab.c"
+#line 1897 "y.tab.c"
     break;
 
   case 52:
-#line 238 "miniC.y"
+#line 239 "miniC.y"
                                                 {(yyval.tree) = initialiseTree("/",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree);
 									(yyval.tree)->ts->fil=(yyvsp[-2].tree)->ts;
 									(yyval.tree)->ts->fil->suivants=(yyvsp[0].tree)->ts;
 									}
-#line 1905 "y.tab.c"
+#line 1906 "y.tab.c"
     break;
 
   case 53:
-#line 242 "miniC.y"
+#line 243 "miniC.y"
                                                 {(yyval.tree) = initialiseTree("*",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree);
 									(yyval.tree)->ts->fil=(yyvsp[-2].tree)->ts;
 									(yyval.tree)->ts->fil->suivants=(yyvsp[0].tree)->ts;
 									}
-#line 1914 "y.tab.c"
+#line 1915 "y.tab.c"
     break;
 
   case 54:
-#line 246 "miniC.y"
+#line 247 "miniC.y"
                                                 {(yyval.tree) = initialiseTree(">>",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree);
 										(yyval.tree)->ts->fil=(yyvsp[-2].tree)->ts;
 									(yyval.tree)->ts->fil->suivants=(yyvsp[0].tree)->ts;}
-#line 1922 "y.tab.c"
+#line 1923 "y.tab.c"
     break;
 
   case 55:
-#line 249 "miniC.y"
+#line 250 "miniC.y"
                                                 {(yyval.tree) = initialiseTree("<<",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree);
 										(yyval.tree)->ts->fil=(yyvsp[-2].tree)->ts;
 									(yyval.tree)->ts->fil->suivants=(yyvsp[0].tree)->ts;}
-#line 1930 "y.tab.c"
+#line 1931 "y.tab.c"
     break;
 
   case 56:
-#line 252 "miniC.y"
+#line 253 "miniC.y"
                                                 {(yyval.tree) = initialiseTree("&=",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree);
 									(yyval.tree)->ts->fil=(yyvsp[-2].tree)->ts;
 									(yyval.tree)->ts->fil->suivants=(yyvsp[0].tree)->ts;}
-#line 1938 "y.tab.c"
+#line 1939 "y.tab.c"
     break;
 
   case 57:
-#line 255 "miniC.y"
+#line 256 "miniC.y"
                                                 {(yyval.tree) = initialiseTree("|=",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree);
 									(yyval.tree)->ts->fil=(yyvsp[-2].tree)->ts;
 									(yyval.tree)->ts->fil->suivants=(yyvsp[0].tree)->ts;}
-#line 1946 "y.tab.c"
+#line 1947 "y.tab.c"
     break;
 
   case 58:
-#line 258 "miniC.y"
+#line 259 "miniC.y"
                                                 {(yyval.tree) = initialiseTree("-",(yyvsp[0].tree));
 									(yyval.tree)->ts = (yyvsp[0].tree)->ts;}
-#line 1953 "y.tab.c"
+#line 1954 "y.tab.c"
     break;
 
   case 59:
-#line 260 "miniC.y"
+#line 261 "miniC.y"
                                 {(yyval.tree) = initialiseTree((yyvsp[0].id),NULL);(yyval.tree)->typeVar = TYPE_INT;}
-#line 1959 "y.tab.c"
+#line 1960 "y.tab.c"
     break;
 
   case 60:
-#line 261 "miniC.y"
+#line 262 "miniC.y"
                                  {(yyval.tree) =  (yyvsp[0].tree);}
-#line 1965 "y.tab.c"
+#line 1966 "y.tab.c"
     break;
 
   case 61:
-#line 262 "miniC.y"
+#line 263 "miniC.y"
                                                          {(yyval.tree) = initialiseTree((yyvsp[-3].id),(yyvsp[-1].tree)); (yyval.tree)->typeNode=APPEL;
 												(yyval.tree)->ts->fil=(yyvsp[-1].tree)->ts;
 									}
-#line 1973 "y.tab.c"
+#line 1974 "y.tab.c"
     break;
 
   case 62:
-#line 268 "miniC.y"
+#line 269 "miniC.y"
                        {(yyval.tree) = (yyvsp[0].tree);}
-#line 1979 "y.tab.c"
+#line 1980 "y.tab.c"
     break;
 
   case 63:
-#line 269 "miniC.y"
+#line 270 "miniC.y"
                         {(yyval.tree) = initialiseTree("...",NULL);(yyval.tree)->ts=initialiseTS("#empty","");}
-#line 1985 "y.tab.c"
+#line 1986 "y.tab.c"
     break;
 
   case 64:
-#line 272 "miniC.y"
+#line 273 "miniC.y"
                                       {(yyval.tree) = (yyvsp[-2].tree) ;insertSuivant((yyval.tree),(yyvsp[0].tree)); insertSuivantSymb((yyval.tree)->ts,(yyvsp[0].tree)->ts);}
-#line 1991 "y.tab.c"
+#line 1992 "y.tab.c"
     break;
 
   case 65:
-#line 273 "miniC.y"
+#line 274 "miniC.y"
                                    {(yyval.tree)=(yyvsp[0].tree);}
-#line 1997 "y.tab.c"
+#line 1998 "y.tab.c"
     break;
 
   case 66:
-#line 276 "miniC.y"
+#line 277 "miniC.y"
                                       {(yyval.tree) = initialiseTree("not",(yyvsp[-1].tree));}
-#line 2003 "y.tab.c"
+#line 2004 "y.tab.c"
     break;
 
   case 67:
-#line 277 "miniC.y"
+#line 278 "miniC.y"
                                                          {(yyval.tree) = initialiseTree((yyvsp[-1].id),(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree);
 													(yyval.tree)->ts->fil=(yyvsp[-2].tree)->ts;
 													(yyval.tree)->ts->fil->suivants=(yyvsp[0].tree)->ts;}
-#line 2011 "y.tab.c"
+#line 2012 "y.tab.c"
     break;
 
   case 68:
-#line 280 "miniC.y"
+#line 281 "miniC.y"
                                   { (yyval.tree) = (yyvsp[-1].tree);}
-#line 2017 "y.tab.c"
+#line 2018 "y.tab.c"
     break;
 
   case 69:
-#line 281 "miniC.y"
+#line 282 "miniC.y"
                                          {(yyval.tree) = initialiseTree("<",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree);
 									(yyval.tree)->ts->fil=(yyvsp[-2].tree)->ts;
 									(yyval.tree)->ts->fil->suivants=(yyvsp[0].tree)->ts;}
-#line 2025 "y.tab.c"
+#line 2026 "y.tab.c"
     break;
 
   case 70:
-#line 284 "miniC.y"
+#line 285 "miniC.y"
                                          {(yyval.tree) = initialiseTree(">",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree);
 									(yyval.tree)->ts->fil=(yyvsp[-2].tree)->ts;
 									(yyval.tree)->ts->fil->suivants=(yyvsp[0].tree)->ts;}
-#line 2033 "y.tab.c"
+#line 2034 "y.tab.c"
     break;
 
   case 71:
-#line 287 "miniC.y"
+#line 288 "miniC.y"
                                           {(yyval.tree) = initialiseTree(">=",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree);
 									(yyval.tree)->ts->fil=(yyvsp[-2].tree)->ts;
 									(yyval.tree)->ts->fil->suivants=(yyvsp[0].tree)->ts;}
-#line 2041 "y.tab.c"
+#line 2042 "y.tab.c"
     break;
 
   case 72:
-#line 290 "miniC.y"
+#line 291 "miniC.y"
                                           {(yyval.tree) = initialiseTree("<=",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree);
 									(yyval.tree)->ts->fil=(yyvsp[-2].tree)->ts;
 									(yyval.tree)->ts->fil->suivants=(yyvsp[0].tree)->ts;}
-#line 2049 "y.tab.c"
+#line 2050 "y.tab.c"
     break;
 
   case 73:
-#line 293 "miniC.y"
+#line 294 "miniC.y"
                                          {(yyval.tree) = initialiseTree("==",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree);
 									(yyval.tree)->ts->fil=(yyvsp[-2].tree)->ts;
 									(yyval.tree)->ts->fil->suivants=(yyvsp[0].tree)->ts;}
-#line 2057 "y.tab.c"
+#line 2058 "y.tab.c"
     break;
 
   case 74:
-#line 296 "miniC.y"
+#line 297 "miniC.y"
                                           {(yyval.tree) = initialiseTree("!=",(yyvsp[-2].tree)); (yyval.tree)->fil->suivants = (yyvsp[0].tree);
 									(yyval.tree)->ts->fil=(yyvsp[-2].tree)->ts;
 									(yyval.tree)->ts->fil->suivants=(yyvsp[0].tree)->ts;}
-#line 2065 "y.tab.c"
+#line 2066 "y.tab.c"
     break;
 
   case 75:
-#line 311 "miniC.y"
+#line 312 "miniC.y"
                      {(yyval.id) = "&&"; }
-#line 2071 "y.tab.c"
+#line 2072 "y.tab.c"
     break;
 
   case 76:
-#line 312 "miniC.y"
+#line 313 "miniC.y"
                         {(yyval.id) = "||"; }
-#line 2077 "y.tab.c"
+#line 2078 "y.tab.c"
     break;
 
 
-#line 2081 "y.tab.c"
+#line 2082 "y.tab.c"
 
       default: break;
     }
@@ -2309,7 +2310,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 323 "miniC.y"
+#line 324 "miniC.y"
 
 
 

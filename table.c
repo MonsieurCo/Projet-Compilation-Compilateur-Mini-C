@@ -149,7 +149,7 @@ void ecritNode(FILE *fichier,tree *t, int n){
 		fprintf(fichier,"%s [label=\"%s\"shape=box];\n",t->node_name,t->nom);
 	}else if(APPEL==t->typeNode){
 		fprintf(fichier,"%s [label=\"%s\"shape=septagon];\n",t->node_name,t->nom);
-	}else if(FONCTION == t->typeNode){
+	}else if(FONCTION == t->typeNode || EXTER == t->typeNode){
 		fprintf(fichier,"%s [label=\"%s\"shape=invtrapezium color=blue];\n",t->node_name,t->nom);
 	}
 	else if(0 != strcmp("...",t->nom)){
@@ -331,24 +331,23 @@ int checkPresence(char * id, symbole *s,int nbPar){
 	}
 	s=s->pere->fil;
 	
-	printf(s->nom);
+
 	if(strcmp(s->nom,id) == 0 && s->nbParam == nbPar ){
 			//printf("%s doit avoir: %d\n",id,s->suivants->nbParam);
 			symbole *fils= s->suivants->fil;
 			int res=0;
 			for(int i = 0; i<=nbPar; i = i+1){
-				//if(fils!= NULL){
+				if(fils!= NULL){
 				res=res+checkType(fils->nom,fils,TYPE_INT);
 				printf("%s %d\n",fils->nom,res);
 				fils = fils->suivants;
-				//}
+				}
 			}
 			printf("res = %d\n",res);
 			printf("resultat de res==nbPar  %d\n",res==nbPar);
 			return res==nbPar;
 		}
 	while(s->suivants!=NULL){
-		printf(s->nom);
 		if(strcmp(s->suivants->nom,id) == 0 && s->suivants->nbParam == nbPar ){
 			//printf("%s doit avoir: %d\n",id,s->suivants->nbParam);
 			symbole *fils= s->suivants->fil;
@@ -402,34 +401,86 @@ int checkType(char * id, symbole * s,type_var t){
 	
 }
 
-int checkAffectation(tree * t){
+int min(int a , int b ){
+	if(a > b ){
+		return b;
+	}
+	else{
+		return a;
+	}
+}
+int max(int a , int b ){
+	if(a > b ){
+		return a;
+	}
+	else{
+		return b;
+	}
+}
+
+int checkAffectation(tree * t, int b){
 
     while (t != NULL){
 		printf("check affectation de %s\n",t->nom);
 		if(t->typeNode == APPEL){
 			//visualiseSymb(t->ts->pere);
 			printf("APPEL\n");
-			return checkType(t->nom,t->ts,TYPE_INT);
+			b= min(b, checkType(t->nom,t->ts,TYPE_INT));
 		}
 
 
 		if (t->fil != NULL){
-			checkAffectation(t->fil);
+			b= min(b,checkAffectation(t->fil,b));
         }
 		
         t = t->suivants;
     }
-	return 1;
+	return b;
+}
+int checkRetour(tree * t,type_var type, int b ){
+
+    while (t != NULL){
+		if(t->typeNode == RET){
+			if(t->fil!=NULL){
+			printf("retour de la fonction %s\n",t->fil->nom);
+			printf("%d\n",checkAffectation(t->fil,1));
+			b= min(b, checkAffectation(t->fil,1));;
+			}else{
+				b=min(b,1);
+			}
+		}
+
+
+		if (t->fil != NULL){
+			b=min(b,checkRetour(t->fil,type,b));
+        }
+		
+        t = t->suivants;
+    }
+	return b;
 }
 
-void checkDef(tree * t, int n){
 
+
+void checkDef(tree * t, int n){
+	
     while (t != NULL)
     {		 
+
+		if(t->typeNode == FONCTION){
+			if(t->typeVar==TYPE_INT){
+				int res = checkRetour(t,t->typeVar,2);
+				if (res > 1 ){
+					res = 0;
+				}
+				printf("vérification du type de retour pour la fonction %s %d\n",t->nom,res);
+			}
+
+		}
     
-		if(t->typeNode == VAR){
+	/*	if(t->typeNode == VAR){
 			//visualiseSymb(t->ts->pere);
-			//printf("presence de la variables %s %d\n",t->nom,checkPresence(t->nom,t->ts,0));
+			printf("presence de la variables %s %d\n",t->nom,checkPresence(t->nom,t->ts,0));
 		}
 		if(t->typeNode == APPEL){
 			printf("nb param de %s: %d\n",t->nom,sizeFils(t->fil));
@@ -437,8 +488,8 @@ void checkDef(tree * t, int n){
 			
 		}
 		if(t->typeNode == AFFECTATION){
-			//printf("type de l'affectation %s %s %s == %d\n\n",t->fil->nom,t->nom,t->fil->suivants->nom,checkAffectation(t->fil->suivants));
-		}
+			printf("type de l'affectation %s %s %s == %d\n\n",t->fil->nom,t->nom,t->fil->suivants->nom,checkAffectation(t->fil->suivants,1));
+		}*/
 
         //printf("Node: %s\n", t->nom);
 
@@ -448,7 +499,10 @@ void checkDef(tree * t, int n){
 		
         t = t->suivants;
     }
+	return min(1,4);
+
 }
+
 
 void reliePere( symbole *pere,symbole* fils){
 

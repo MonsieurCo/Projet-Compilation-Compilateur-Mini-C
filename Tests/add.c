@@ -4,11 +4,9 @@ extern int printd( int i );
 int plume(){
    return 4;
 
-return printd(pomme);
-return a;
  }
 
-int coucou(int i, int j){
+void coucou(int i, int j){
   printd(i);
   return;
 }
@@ -30,14 +28,17 @@ fsdfsdf*/
   printdpomme(j);
   printd(45000+j);
   printd(main());
-  
+ 
   printd(coucou(i,j));
   printd(i+123);
   printd(45000+123);
   j = plume()*2;
-  i=coucou(i,j);
+  i= 2 * coucou(i,j);
   i=main();
-  return 0;
+
+
+  p = printdpomme(j);
+  return 4 + plume();
 
 
 }
