@@ -127,12 +127,11 @@ union YYSTYPE
 {
 #line 18 "miniC.y"
 
-	int val;
 	char* id;
 	struct _tree *tree;
 	struct _symbole *symb;
 
-#line 136 "y.tab.h"
+#line 135 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

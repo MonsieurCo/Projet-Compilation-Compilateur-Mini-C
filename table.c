@@ -349,8 +349,11 @@ int checkPresence(char * id, symbole *s,int nbPar){
 			int res=0;
 			for(int i = 0; i<=nbPar; i = i+1){
 				if(fils!= NULL){
-				res=res+checkType(fils->nom,fils,TYPE_INT);
-				//printf("%s %d\n",fils->nom,res);
+					if(strcmp(fils->nom,"TAB") == 0 ){
+						res=res+checkPresenceTAB(fils->fil->nom,fils,fils->dimension,fils->tailles);
+					}else{
+						res=res+checkType(fils->nom,fils,TYPE_INT);
+					}
 				fils = fils->suivants;
 				}
 			}
@@ -366,11 +369,9 @@ int checkPresence(char * id, symbole *s,int nbPar){
 			for(int i = 0; i<=nbPar; i = i+1){
 				if(fils!= NULL){
 					if(strcmp(fils->nom,"TAB") == 0 ){
-						//printf("teeeeeeeeeeeeeeeee %s",fils->fil->nom);
 						res=res+checkPresenceTAB(fils->fil->nom,fils,fils->dimension,fils->tailles);
 					}else{
 						res=res+checkType(fils->nom,fils,TYPE_INT);
-						//printf("%s %d\n",fils->nom,res);
 					}
 				fils = fils->suivants;
 				}
@@ -409,6 +410,32 @@ int checkPresenceTAB(char * id, symbole *s,int nbPar, int *tailles){
 		s=s->suivants;
 	}
 	checkPresenceTAB(id,s->pere,nbPar,tailles);
+	
+}
+
+int checkPresenceFonc(char * id, symbole *s , int add){
+	
+	if(s->pere==NULL){
+		return add;
+	}
+	s=s->pere->fil;
+	if(strcmp(s->nom,id) == 0){ //&& s->dimension == nbPar 
+			//printf("%s doit avoir: %d\n",id,s->dimension);
+			add+=1;
+	
+		}
+
+	
+	while(s->suivants!=NULL){
+		//printf("%s doit avoir: %d\n",s->suivants->nom,nbPar);
+		if(strcmp(s->suivants->nom,id) == 0){
+			//printf("%s doit avoir: %d\n",id,s->suivants->dimension);
+			add+=1;
+	
+		}
+		s=s->suivants;
+	}
+	add+=checkPresenceFonc(id,s->pere, add);
 	
 }
 
@@ -498,16 +525,20 @@ int checkAffectation(tree * t, int b){
     }
 	return b;
 }
+
 int checkRetour(tree * t,type_var type, int b ){
 
     while (t != NULL){
 		if(t->typeNode == RET){
 			if(t->fil!=NULL){
-			//printf("retour de la fonction %s\n",t->fil->nom);
-			//printf("%d\n",checkAffectation(t->fil,1));
-			b= min(b, checkAffectation(t->fil,1));;
-			}else{
+				
+					b= min(b, checkAffectation(t->fil,1));
+				
+			}
+			else{
+			
 				b=min(b,1);
+
 			}
 		}
 
@@ -524,20 +555,34 @@ int checkRetour(tree * t,type_var type, int b ){
 void checkDef(tree * t, int n){
 	
     while (t != NULL)
-    {		 
+    {		 	
 
 		if(t->typeNode == FONCTION){
+			if (checkPresenceFonc(t->ts->nom,t->fil->ts,0) >= 2){
+				char* s = (char*)malloc(300 * sizeof(char));
+				sprintf(s,"redéfinition de la fonction %s",t->ts->nom);
+				raiseError(s,t->fil->nbLine);
+				free(s);
+
+			}
+			
+
 			if(t->typeVar==TYPE_INT){
-				int res = checkRetour(t,t->typeVar,2);
+				int res = checkRetour(t->fil,t->ts->type,2);
 				if (res > 1 ){
 					res = 0;
 				}
 				if(res == 0){
-					raiseError(t->nom,t->nbLine);
-					return;
+					raiseError(t->nom,t->fil->nbLine);
+				
+				}
+			}else{ 
+				if(checkRetour(t->fil,t->ts->type,2) == 1 ){
+					fprintf(stderr,"Warning : return dans une fonction void line: %d\n",t->fil->nbLine);
+				}
 				}
 				//printf("vérification du type de retour pour la fonction %s %d\n",t->nom,res);
-			}
+			
 
 		}
     
@@ -547,7 +592,7 @@ void checkDef(tree * t, int n){
 				int res = checkPresenceTAB(t->fil->nom,t->ts,t->ts->dimension,t->ts->tailles);
 				if(res == 0){
 					raiseError(t->fil->nom,t->fil->nbLine);
-					return;
+					
 				}
 				//printf("presence du tab %s %d\n",t->fil->nom,res);
 
@@ -557,14 +602,14 @@ void checkDef(tree * t, int n){
 			//visualiseSymb(t->ts->pere);
 			if(res == 0){
 					raiseError(t->nom,t->nbLine);
-					return;
+					
 				}
 			//printf("presence de la variables %s %d\n",t->nom,res);
 		}}
 		if(t->typeNode == APPEL){
 			if(checkPresence(t->nom,t->ts,sizeFils(t->fil)) == 0){
 					raiseError(t->nom,t->nbLine);
-					return;
+					
 				}
 			//printf("nb param de %s: %d\n",t->nom,sizeFils(t->fil));
 			//printf("\n\npresence de l'appel %s %d\n",t->nom,checkPresence(t->nom,t->ts,sizeFils(t->fil)));
@@ -577,7 +622,7 @@ void checkDef(tree * t, int n){
 					}else{
 					raiseError(t->fil->nom,t->fil->nbLine);
 					}
-					return;
+					
 				}
 			//printf("type de l'affectation %s %s %s == %d\n\n",t->fil->nom,t->nom,t->fil->suivants->nom,checkAffectation(t->fil->suivants,1));
 		}
@@ -724,7 +769,9 @@ void raiseError(char * s,int line){
 	exit(1);
 }
 
-
+void warning(char * s){
+	fprintf(stderr,s);
+}
 
 void initTAB(int* p,symbole * f,int index){
 	if(f !=NULL){

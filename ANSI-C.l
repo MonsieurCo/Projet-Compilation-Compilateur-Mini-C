@@ -24,7 +24,6 @@ P                       (\(T\) | \{T\} | \[T\] | \(P\) | \{P\} | \[P\])+
 %%
 "break"                 {  return BREAK; }
 "case"                  {  return CASE; }
-"const"                 { /* return CONSTANTE; */} //surement pas la bonne const
 "default"               {  return DEFAULT; }
 "else"                  {  return ELSE; }
 "extern"                {  return EXTERN; }

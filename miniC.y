@@ -16,13 +16,12 @@ void table_reset();
 %}
 
 %union{
-	int val;
 	char* id;
 	struct _tree *tree;
 	struct _symbole *symb;
 }
  
-%token <id> IDENTIFICATEUR CONSTANTE 
+%token <id> IDENTIFICATEUR CONSTANTE  
 %token <id> VOID INT FOR WHILE IF ELSE SWITCH CASE DEFAULT
 %token <id> BREAK RETURN PLUS MOINS MUL DIV LSHIFT RSHIFT BAND BOR LAND LOR LT GT 
 %token <id> GEQ LEQ EQ NEQ NOT EXTERN
@@ -105,13 +104,14 @@ fonction	:
 																		$$->ts = initialiseTS($2,$1);
 
 																		if(strcmp($1,"int") == 0 ){
+																			
 																			$$->typeVar = TYPE_INT;
-																			$$->ts->type = TYPE_INT;
+																			
 																		} else if (strcmp($1,"void") == 0){
 																			$$->typeVar = TYPE_VOID;
-																			$$->ts->type = TYPE_VOID;
+																			
 																		}else{$$->typeVar = NULE;
-																		$$->ts->type = NULE;}
+																		}
 																		if(sizeFils($4) > 0 ){
 																			$$->ts->nbParam=sizeFils($4)-1;
 																		}

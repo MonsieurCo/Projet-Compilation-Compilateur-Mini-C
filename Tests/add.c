@@ -8,16 +8,20 @@ int plume(){
 
 void coucou(int i, int j){
   printd(i);
-  return;
 }
 
+void coucou2(int i, int j){
+  printd(i);
+  
+}
 
 int main() {
-
   int i,j;
   p = 9;
   i = 45000;
   j = -123;
+
+  
 /*sdkfpsodkfpoksdfpoksdpfokspdokf
 sdfsdfsdfsd
 fsdfsdf*/
@@ -38,7 +42,7 @@ fsdfsdf*/
 
 
  // p = printdpomme(j);
-  return 4 + plume();
+return 4 + plume();
 
 
 }
