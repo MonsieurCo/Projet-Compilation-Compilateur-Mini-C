@@ -420,7 +420,7 @@ int checkPresenceFonc(char * id, symbole *s , int add){
 	}
 	s=s->pere->fil;
 	if(strcmp(s->nom,id) == 0){ //&& s->dimension == nbPar 
-			//printf("%s doit avoir: %d\n",id,s->dimension);
+			// printf("%s doit avoir: %d\n",id,s->dimension);
 			add+=1;
 	
 		}

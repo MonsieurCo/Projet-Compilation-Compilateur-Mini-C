@@ -16,10 +16,13 @@ void coucou2(int i, int j){
 }
 
 int main() {
+  int poire[4];
   int i,j;
   p = 9;
   i = 45000;
   j = -123;
+  j = 3 + poire[2];
+  poire[1] = 1;
 
   
 /*sdkfpsodkfpoksdfpoksdpfokspdokf
