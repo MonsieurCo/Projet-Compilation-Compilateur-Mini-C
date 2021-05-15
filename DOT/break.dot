@@ -1,0 +1,49 @@
+//fichier DOT représentant le graph du fichier c analysé
+digraph mygraph {
+
+node_1 [label="main , int"shape=invtrapezium color=blue];
+node_3 [label="BLOC"];
+node_5 [label="FOR"];
+node_6 [label=":="];
+node_7 [label="i"];
+node_8 [label="0"];
+node_10 [label="<"];
+node_11 [label="i"];
+node_12 [label="10"];
+node_14 [label=":="];
+node_15 [label="i"];
+node_16 [label="+"];
+node_17 [label="i"];
+node_18 [label="1"];
+node_22 [label="IF"shape=diamond];
+node_23 [label="=="];
+node_24 [label="i"];
+node_25 [label="5"];
+node_27 [label="BREAK"shape=box];
+node_30 [label="printd"shape=septagon];
+node_31 [label="i"];
+node_33 [label="RETURN"shape=trapezium color=blue];
+node_34 [label="0"];
+node_1 -> node_3;
+node_3 -> node_5;
+node_3 -> node_30;
+node_3 -> node_33;
+node_5 -> node_6;
+node_5 -> node_10;
+node_5 -> node_14;
+node_5 -> node_22;
+node_6 -> node_7;
+node_6 -> node_8;
+node_10 -> node_11;
+node_10 -> node_12;
+node_14 -> node_15;
+node_14 -> node_16;
+node_16 -> node_17;
+node_16 -> node_18;
+node_22 -> node_23;
+node_22 -> node_27;
+node_23 -> node_24;
+node_23 -> node_25;
+node_30 -> node_31;
+node_33 -> node_34;
+}

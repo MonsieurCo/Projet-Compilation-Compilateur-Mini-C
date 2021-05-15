@@ -103,6 +103,7 @@ void ecritNode(FILE *fichier,tree *t, int n){
 }
 
 void relieFils(FILE *fichier, tree *pere,tree* fils){
+
 	if(fils != NULL){
 		if (0 != strcmp("...",fils->nom)){
 		fprintf(fichier,"%s -> %s;\n",pere->node_name,fils->node_name);
@@ -111,6 +112,7 @@ void relieFils(FILE *fichier, tree *pere,tree* fils){
 	if(fils != NULL && fils->suivants != NULL ){
 		relieFils(fichier,pere,fils->suivants);
 	}
+	
 }
 
 
@@ -133,6 +135,7 @@ void relieRecusif(FILE * fd , tree * node ){
 if (node == NULL){
 		return ;
 	}
+		if(strcmp(node->nom,"extern") != 0){
        relieFils(fd,node,node->fil); 
 	   
         if (node->fil != NULL)
@@ -141,7 +144,7 @@ if (node == NULL){
            relieRecusif(fd,node->fil);
 		   
         }
-
+		}
         relieRecusif(fd,node->suivants);
 
 }
@@ -153,10 +156,12 @@ int printdot(FILE *fd , tree * node,int n){
 	if (node == NULL){
 		return n;
 	}
+		if(strcmp(node->nom,"extern") != 0){
         ecritNode(fd,node,n); 
         if (node->fil != NULL){
            n=printdot(fd,node->fil,n+1);
         }
+		}
         printdot(fd,node->suivants,n+1);  
 }
 
