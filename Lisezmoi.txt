@@ -9,6 +9,8 @@ Un code mal formé provoquera une erreur (différente selon l'origine de l'erreu
 indiquant la ligne où se situe cette dernière.
 Pour l'executer deux methodes s'offrent à vous, 
 Utiliser le makefile avec la commande "make" qui automatisera l'execution,
+pour modifier le fichier executer dans le make il faut utiliser la commande: 
+make FILE=fichier   // Atention il ne faut pas mettre l'extension .c elle sera rajouté par le makefile de plus le fichier doit se trouver dans le répertoire Tests
 sinon vous pouvez taper dans votre terminal les commandes ci-dessous. 
 
 1 ) yacc -d miniC.y 

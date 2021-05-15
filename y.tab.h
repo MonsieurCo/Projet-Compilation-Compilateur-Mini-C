@@ -81,8 +81,7 @@ extern int yydebug;
     NOT = 287,
     EXTERN = 288,
     THEN = 289,
-    OP = 290,
-    REL = 291
+    REL = 290
   };
 #endif
 /* Tokens.  */
@@ -118,20 +117,19 @@ extern int yydebug;
 #define NOT 287
 #define EXTERN 288
 #define THEN 289
-#define OP 290
-#define REL 291
+#define REL 290
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 18 "miniC.y"
+#line 16 "miniC.y"
 
 	char* id;
 	struct _tree *tree;
 	struct _symbole *symb;
 
-#line 135 "y.tab.h"
+#line 133 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

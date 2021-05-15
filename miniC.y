@@ -4,9 +4,7 @@
 #include  "table.h"
 
 
-#define TAILLE 103 /* nombre premier de préférence */
 
-extern int chars;
 extern int yylineno;
 
 
@@ -34,22 +32,19 @@ void table_reset();
 %left LAND LOR
 %nonassoc THEN
 %nonassoc ELSE
-%left OP
 %left REL 
 
-
 %start programme
-%type <symb> liste_declarations declaration declarateur liste_declarateurs 
 
+%type <symb> liste_declarations declaration declarateur liste_declarateurs 
 %type <tree> saut selection instruction variable expression condition affectation bloc liste_instructions  liste_expressions expr_liste_creator appel
-%type<tree> iteration parm 
-%type <id> binary_rel binary_comp binary_op type 
-%type <tree> liste_parms
-%type <tree> params_liste_creator
-%type <tree> fonction
-%type <tree> liste_fonctions	
-%type <tree> programme
-%type <tree> tableau_variable tableau_declarateur
+%type<tree> iteration parm tableau_variable tableau_declarateur programme liste_fonctions fonction
+%type <tree> liste_parms params_liste_creator
+
+%type <id> binary_rel type 
+
+
+
 
 %%
 programme	:	
@@ -58,7 +53,7 @@ programme	:
 											checkDef($$,0);
 											writeDot($2);
 											
-										}// writeDot($$);	visualiseSymb($$->ts); visualise($2);
+										}
 ;
 liste_declarations	:	
 		liste_declarations declaration  {$$=$1; insertSuivantSymb($$,$2);}
@@ -74,11 +69,11 @@ declaration	:
 										
 									} else{
 										yyerror("Typecheck");
-									}}//$$=initialiseTree($1,NULL); $$->fil=$2;addType($2,$1);
+									}}
 ;
 liste_declarateurs	:	
 		liste_declarateurs ',' declarateur {$$ = $1; insertSuivantSymb($1,$3);}
-	|	declarateur  {$$ = $1;}//
+	|	declarateur  {$$ = $1;}
 ;
 declarateur	:	
 		IDENTIFICATEUR   {$$ = initialiseTS($1,"undef");}
@@ -185,7 +180,8 @@ selection	:
 													}
 													$$->fil->suivants = $5;
 													$$->ts=$5->ts;
-													insertSuivantSymb($$->ts,$3->ts);}
+													insertSuivantSymb($$->ts,$3->ts);
+													$$->typeNode=COMP;}
 	|	IF '(' condition ')' instruction ELSE instruction {$$ = initialiseTree("IF",$3,yylineno);
 														if(strcmp($5->nom,"BLOC")==0){
 															$5->nom = "THEN";	
@@ -193,10 +189,12 @@ selection	:
 														$$->fil->suivants = $5;$$->fil->suivants->suivants = initialiseTree("ELSE",$7,yylineno);
 															$$->ts=$3->ts;
 															insertSuivantSymb($$->ts,$5->ts);
-															insertSuivantSymb($$->ts,$7->ts);} 
+															insertSuivantSymb($$->ts,$7->ts);
+															$$->typeNode=COMP;} 
 	|	SWITCH '(' expression ')' instruction {$$ = initialiseTree("SWITCH",$3,yylineno); $$->fil->suivants = $5->fil;
 												$$->ts=$3->ts;
-												insertSuivantSymb($$->ts,$5->ts);}
+												insertSuivantSymb($$->ts,$5->ts);
+												$$->typeNode=COMP;}
 	|	CASE CONSTANTE ':' liste_instructions selection {$$ = initialiseTree("CASE",initialiseTree($2,NULL,yylineno),yylineno); $$->fil->suivants = $4; $$->suivants=$5; 
 														$$->ts=$4->ts;
 														insertSuivantSymb($$->ts,$5->ts);}
@@ -225,7 +223,7 @@ bloc	:
 													$$->ts= initialiseTS("BLOC","");
 													$$->ts->fil = $2;}
 ;
-appel	:	//forme a faire
+appel	:
 	IDENTIFICATEUR '(' liste_expressions ')' ';' {$$=initialiseTree($1,$3,yylineno);$$->typeNode=APPEL;$$->ts = $3->ts; 
 												}
 ;
@@ -292,6 +290,7 @@ expr_liste_creator :                         // création de la liste d'expressi
     expr_liste_creator ',' expression {$$ = $1 ;insertSuivant($$,$3); insertSuivantSymb($$->ts,$3->ts);} // liste à n éléments
     | expression                   {$$=$1;}           // liste à un seul élément
 ;
+
 condition	:	
 		NOT '(' condition ')' {$$ = initialiseTree("not",$3,yylineno);}
 	|	condition binary_rel condition %prec REL {$$ = initialiseTree($2,$1,yylineno); $$->fil->suivants = $3;
@@ -317,28 +316,12 @@ condition	:
 									$$->ts->fil=$1->ts;
 									$$->ts->fil->suivants=$3->ts;}
 ;
-binary_op	:	
-		PLUS  {$$="+";}
-	|   MOINS	{$$="-";} 
-	|	MUL	{$$="*";}
-	|	DIV	{$$ = "/";}
-	|   LSHIFT	{$$ = "<<";}
-	|   RSHIFT	{$$ = ">>"; }
-	|	BAND	{$$="&=";}
-	|	BOR	{$$="|=";}
-;
+
 binary_rel	:	
 		LAND {$$ = "&&"; } 
 	|	LOR	{$$ = "||"; } 
 ;
-binary_comp	:	
-		LT	{$$ = "<"; }
-	|	GT	{$$ = ">"; }
-	|	GEQ	{$$ = ">="; }
-	|	LEQ	{$$ = "<="; }
-	|	EQ	{$$ = "=="; }
-	|	NEQ	{$$ = "!="; }
-;
+
 
 %%
 
@@ -354,7 +337,6 @@ int yywrap() {
 	return 1;
 } 
 int main(void) {
-	//table_reset();
 	while(yyparse());
 }
 

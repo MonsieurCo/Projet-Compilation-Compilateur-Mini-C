@@ -4,19 +4,14 @@ H                       [a-fA-F0-9]
 E                       [Ee][+-]?{D}+
 FS                      (f|F|l|L)
 IS                      (u|U|l|L)*
-T                       (D|L|H|E|FS|IS)+
-P                       (\(T\) | \{T\} | \[T\] | \(P\) | \{P\} | \[P\])+
+
 
 
 %{
 #include <stdio.h>
 #include "table.h"
 #include "y.tab.h"
-// P                       ("("(D|L|H|E|FS|IS)+")"|"{"(D|L|H|E|FS|IS)+"}"|"["(D|L|H|E|FS|IS)+"]")
-//"("*")"|"{"*"}"
 
-/* Ne g�re pas les commentaires. A rajouter */
-/* Supprimer les lignes dont vous n'avez pas besoin. */
 
 
 %}
@@ -37,20 +32,17 @@ P                       (\(T\) | \{T\} | \[T\] | \(P\) | \{P\} | \[P\])+
 
 
 
-{L}({L}|{D})*           {yylval.id = strdup(yytext); return IDENTIFICATEUR; }    // surement identificateur yylval.id = strdup(yytext);
+{L}({L}|{D})*           {yylval.id = strdup(yytext); return IDENTIFICATEUR;}   
 
 0[xX]{H}+{IS}?          {yylval.id = strdup(yytext); return CONSTANTE;} 
-0{D}+{IS}?              {yylval.id = strdup(yytext); return CONSTANTE;} // surement const  yylval.val = atoi(yytext);
-{D}+{IS}?               {yylval.id = strdup(yytext); return CONSTANTE; }
-L?'(\\.|[^\\'])+'       {/* A completer */ }
+0{D}+{IS}?              {yylval.id = strdup(yytext); return CONSTANTE;} 
+{D}+{IS}?               {yylval.id = strdup(yytext); return CONSTANTE;}
+
 
 
 
 {D}+{E}{FS}?            {yylval.id = strdup(yytext);return CONSTANTE; }
-{D}*"."{D}+({E})?{FS}?  {/* A completer */ } //float ?
-{D}+"."{D}*({E})?{FS}?  {/* A completer */ }
 
-L?\"(\\.|[^\\"])*\"     { /* A completer */ }
 
 "+"                     { return PLUS;}
 "-"                     { return MOINS;}

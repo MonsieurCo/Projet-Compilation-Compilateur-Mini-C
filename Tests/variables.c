@@ -22,11 +22,11 @@ int main() {
       if(1<2){
         int j;
         j=2;
-        w=1;
+       // w=1;
       }
     }
   
-
+return 0;
 
 }
 

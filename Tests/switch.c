@@ -1,9 +1,14 @@
 extern int printd(int i);
 
+int coucou(){
+printd(1);
+return 4;
+}
+
 int main() {
    int i,j;
    i=3;
-   switch(i) {
+   switch(coucou()) {
       case 0: printd(0);break;
       case 1: printd(1); break;
       case 2: printd(2); break;
@@ -11,4 +16,5 @@ int main() {
       case 4: printd(4);
       default: printd(-1);
    }
+   return 0;
 }
